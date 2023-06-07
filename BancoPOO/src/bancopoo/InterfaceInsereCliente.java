@@ -174,19 +174,7 @@ class InterfaceInsereCliente extends JDialog {
         int x = mainFrame.getX() + (mainFrame.getWidth() - smallFrame.getWidth()) / 2;
         int y = mainFrame.getY() + (mainFrame.getHeight() - smallFrame.getHeight()) / 2;
         smallFrame.setLocation(x, y);
-
-        // Configura um listener para quando a janela menor for fechada
-        smallFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-                isSmallWindowOpen = false;
-                // Habilita a janela principal
-                mainFrame.setEnabled(true);
-                mainFrame.requestFocus();
-            }
-        });
     }
-
     void showInterface() {
         smallFrame.setVisible(true);
     }
