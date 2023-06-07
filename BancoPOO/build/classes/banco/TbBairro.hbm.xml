@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 06/06/2023 20:44:58 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="banco.TbBairro" table="tb_bairro" catalog="app_mecanico">
+        <id name="baiId" type="java.lang.Integer">
+            <column name="bai_id" />
+            <generator class="identity" />
+        </id>
+        <property name="baiDescricao" type="string">
+            <column name="bai_descricao" length="45" />
+        </property>
+        <set name="tbEndPostals" table="tb_end_postal" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="endP_bai_id" not-null="true" />
+            </key>
+            <one-to-many class="banco.TbEndPostal" />
+        </set>
+    </class>
+</hibernate-mapping>

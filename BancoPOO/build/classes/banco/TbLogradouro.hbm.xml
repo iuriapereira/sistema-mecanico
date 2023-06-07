@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 06/06/2023 20:44:58 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="banco.TbLogradouro" table="tb_logradouro" catalog="app_mecanico">
+        <id name="logId" type="java.lang.Integer">
+            <column name="log_id" />
+            <generator class="identity" />
+        </id>
+        <property name="logDescricao" type="string">
+            <column name="log_descricao" length="45" not-null="true" />
+        </property>
+        <set name="tbEndPostals" table="tb_end_postal" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="endP_log_id" not-null="true" />
+            </key>
+            <one-to-many class="banco.TbEndPostal" />
+        </set>
+    </class>
+</hibernate-mapping>

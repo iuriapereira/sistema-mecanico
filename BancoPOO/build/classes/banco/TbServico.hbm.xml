@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 06/06/2023 20:44:58 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="banco.TbServico" table="tb_servico" catalog="app_mecanico">
+        <id name="serId" type="java.lang.Integer">
+            <column name="ser_id" />
+            <generator class="identity" />
+        </id>
+        <property name="serDescricao" type="string">
+            <column name="ser_descricao" length="300" not-null="true" />
+        </property>
+        <set name="tbVendaSers" table="tb_venda_ser" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="vs_ser_id" not-null="true" />
+            </key>
+            <one-to-many class="banco.TbVendaSer" />
+        </set>
+    </class>
+</hibernate-mapping>

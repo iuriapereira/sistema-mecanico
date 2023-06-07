@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 06/06/2023 20:44:58 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="banco.TbVenda" table="tb_venda" catalog="app_mecanico">
+        <id name="venId" type="java.lang.Integer">
+            <column name="ven_id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="tbCliente" class="banco.TbCliente" fetch="select">
+            <column name="ven_cli_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tbTipoPagamento" class="banco.TbTipoPagamento" fetch="select">
+            <column name="ven_tp_id" not-null="true" />
+        </many-to-one>
+        <property name="venData" type="timestamp">
+            <column name="ven_data" length="19" not-null="true" />
+        </property>
+        <set name="tbVendaSers" table="tb_venda_ser" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="vs_ven_id" not-null="true" />
+            </key>
+            <one-to-many class="banco.TbVendaSer" />
+        </set>
+        <set name="tbVenPecas" table="tb_ven_peca" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="vp_ven_id" not-null="true" />
+            </key>
+            <one-to-many class="banco.TbVenPeca" />
+        </set>
+    </class>
+</hibernate-mapping>

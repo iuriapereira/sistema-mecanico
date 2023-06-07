@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 02/06/2023 13:27:55 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="banco.TbModelo" table="tb_modelo" catalog="concessionaria" optimistic-lock="version">
+        <id name="modCod" type="int">
+            <column name="mod_cod" />
+            <generator class="assigned" />
+        </id>
+        <property name="modDescricao" type="string">
+            <column name="mod_descricao" length="45" not-null="true" />
+        </property>
+        <property name="modAno" type="string">
+            <column name="mod_ano" length="10" not-null="true" />
+        </property>
+        <set name="tbAutomovelfabs" table="tb_automovelfab" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="autoFab_fab_cod" not-null="true" />
+            </key>
+            <one-to-many class="banco.TbAutomovelfab" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 02/06/2023 13:27:55 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="banco.TbPecas" table="tb_pecas" catalog="concessionaria" optimistic-lock="version">
+        <id name="pecasCod" type="java.lang.Integer">
+            <column name="pecas_cod" />
+            <generator class="identity" />
+        </id>
+        <property name="pecasDescricao" type="string">
+            <column name="pecas_descricao" length="100" not-null="true" />
+        </property>
+        <property name="pecasPreco" type="float">
+            <column name="pecas_preco" precision="12" scale="0" not-null="true" />
+        </property>
+        <set name="tbPecasautomovels" table="tb_pecasautomovel" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pecasAuto_pecas_cod" not-null="true" />
+            </key>
+            <one-to-many class="banco.TbPecasautomovel" />
+        </set>
+    </class>
+</hibernate-mapping>
