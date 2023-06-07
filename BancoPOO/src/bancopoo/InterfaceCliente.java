@@ -56,7 +56,7 @@ class InterfaceCliente {
                     if (!isSmallWindowOpen) {
                         if (label.equals("Inserir")) {
                             InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame);
-                            inserir.show();
+                            inserir.showInterface();
                         } else if (label.equals("Alterar")) {
                             //InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame);
                             //forne.show();
