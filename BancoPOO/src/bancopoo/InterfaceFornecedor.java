@@ -11,12 +11,12 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
     private Session session;
 
     public InterfaceFornecedor(JFrame mainFrame, Session session) {
-        super(mainFrame, "Janela Menor - Fornecedor");
+        super(mainFrame,session);
         this.session = session;
     }
 
     @Override
-    protected JTable createTableFromDatabase() {
+    protected JTable createTable(Session session) {
         Criteria criteria = session.createCriteria(TbFornecedor.class);
         ArrayList<TbFornecedor> fornecedores = (ArrayList<TbFornecedor>) criteria.list();
 
