@@ -14,10 +14,17 @@ class InterfaceInsereCliente extends JDialog {
     private JTextField emailField;
     private JTextField enderecoField;
     private JTextField bairroField;
+    private JTextField cepField;
+    private JTextField logradouroField;
+    private JTextField numeroField;
+    private JTextField complementoField;
+    private JTextField cidadeField;
+    private JTextField estadoField;
     private JRadioButton pessoaFisicaRadioButton;
     private JRadioButton pessoaJuridicaRadioButton;
     private JTextField dataNascimentoField;
     private JButton limparCamposButton;
+    
 
     public InterfaceInsereCliente(JFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -30,8 +37,10 @@ class InterfaceInsereCliente extends JDialog {
 
         JLabel nomeLabel = new JLabel("Nome:");
         nomeField = new JTextField(20);
-        JLabel documentoLabel = new JLabel("Documento:");
+        JLabel documentoLabel = new JLabel("CPF/CNPJ:");
         documentoField = new JTextField(20);
+        JLabel dataNascimentoLabel = new JLabel("Data de Nascimento:");
+        dataNascimentoField = new JTextField(20);
         JLabel fantasiaLabel = new JLabel("Nome Fantasia:");
         fantasiaField = new JTextField(20);
         JLabel rgieLabel = new JLabel("RG/Inscrição Estadual:");
@@ -40,12 +49,22 @@ class InterfaceInsereCliente extends JDialog {
         foneField = new JTextField(20);
         JLabel emailLabel = new JLabel("Email:");
         emailField = new JTextField(20);
+        JLabel cepLabel = new JLabel("CEP:");
+        cepField = new JTextField(20);
+        JLabel logradouroLabel = new JLabel("Logradouro:"); // combobox
+        logradouroField = new JTextField(20);
         JLabel enderecoLabel = new JLabel("Endereço:");
         enderecoField = new JTextField(20);
+        JLabel numeroLabel = new JLabel("Número:");
+        numeroField = new JTextField(20);
+        JLabel complementoLabel = new JLabel("Complemento:");
+        complementoField = new JTextField(20);
         JLabel bairroLabel = new JLabel("Bairro:");
         bairroField = new JTextField(20);
-        JLabel dataNascimentoLabel = new JLabel("Data de Nascimento:");
-        dataNascimentoField = new JTextField(20);
+        JLabel cidadeLabel = new JLabel("Cidade:");
+        cidadeField = new JTextField(20);
+        JLabel estadoLabel = new JLabel("Estado:"); // combobox
+        estadoField = new JTextField(20);
 
         pessoaFisicaRadioButton = new JRadioButton("Pessoa Física");
         pessoaFisicaRadioButton.setBounds(10, 10, 150, 20);
@@ -59,32 +78,31 @@ class InterfaceInsereCliente extends JDialog {
         tipoClienteGroup.add(pessoaJuridicaRadioButton);
 
         JButton cadastrarButton = new JButton("Cadastrar");
-        cadastrarButton.setBounds(10, 320, 300, 30);
+        cadastrarButton.setBounds(70, 500, 100, 30);
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nome = nomeField.getText();
-                String documento = documentoField.getText();
-                String fantasia = fantasiaField.getText();
-                String rgie = rgieField.getText();
-                String fone = foneField.getText();
-                String email = emailField.getText();
-                String endereco = enderecoField.getText();
-                String bairro = bairroField.getText();
-                String dataNascimento = dataNascimentoField.getText();
-
                 if (pessoaFisicaRadioButton.isSelected()) {
                     // Lógica para cadastrar pessoa física
-                    JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa física:\nNome: " + nome + "\nDocumento: " + documento + "\nFantasia: " + fantasia + "\nRG/IE: " + rgie + "\nFone: " + fone + "\nEmail: " + email + "\nEndereço: " + endereco + "\nBairro: " + bairro + "\nData de Nascimento: " + dataNascimento);
+                    JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa física inserido com sucesso!");
                 } else if (pessoaJuridicaRadioButton.isSelected()) {
                     // Lógica para cadastrar pessoa jurídica
-                    JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa jurídica:\nNome: " + nome + "\nDocumento: " + documento + "\nFantasia: " + fantasia + "\nRG/IE: " + rgie + "\nFone: " + fone + "\nEmail: " + email + "\nEndereço: " + endereco + "\nBairro: " + bairro);
+                    JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa jurídica inserido com sucesso!");
                 } else {
                     JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Selecione o tipo de cliente (Pessoa Física ou Jurídica).");
                 }
             }
         });
-        
+
+        limparCamposButton = new JButton("Limpar");
+        limparCamposButton.setBounds(200, 500, 100, 30);
+        limparCamposButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                limparCampos();
+            }
+        });
+
         pessoaJuridicaRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -92,20 +110,11 @@ class InterfaceInsereCliente extends JDialog {
                 dataNascimentoField.setText("");
             }
         });
-        
+
         pessoaFisicaRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dataNascimentoField.setEnabled(true); // Desativa a caixa de texto de Data de Nascimento
-            }
-        });
-        
-        limparCamposButton = new JButton("Limpar");
-        limparCamposButton.setBounds(10, 360, 300, 30);
-        limparCamposButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                limparCampos();
+                dataNascimentoField.setEnabled(true); // Ativa a caixa de texto de Data de Nascimento
             }
         });
 
@@ -122,7 +131,11 @@ class InterfaceInsereCliente extends JDialog {
         y += yGap;
         documentoLabel.setBounds(x, y, labelWidth, 20);
         documentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-
+        
+        y += yGap;
+        dataNascimentoLabel.setBounds(x, y, labelWidth, 20);
+        dataNascimentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
         y += yGap;
         fantasiaLabel.setBounds(x, y, labelWidth, 20);
         fantasiaField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
@@ -140,52 +153,98 @@ class InterfaceInsereCliente extends JDialog {
         emailField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
+        cepLabel.setBounds(x, y, labelWidth, 20);
+        cepField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        logradouroLabel.setBounds(x, y, labelWidth, 20);
+        logradouroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
         enderecoLabel.setBounds(x, y, labelWidth, 20);
         enderecoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        numeroLabel.setBounds(x, y, labelWidth, 20);
+        numeroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        complementoLabel.setBounds(x, y, labelWidth, 20);
+        complementoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
         bairroLabel.setBounds(x, y, labelWidth, 20);
         bairroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-        dataNascimentoLabel.setBounds(x, y, labelWidth, 20);
-        dataNascimentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        cidadeLabel.setBounds(x, y, labelWidth, 20);
+        cidadeField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        estadoLabel.setBounds(x, y, labelWidth, 20);
+        estadoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        
 
         // Adicione os componentes ao painel principal
         mainPanel.add(pessoaFisicaRadioButton);
         mainPanel.add(pessoaJuridicaRadioButton);
+
         mainPanel.add(nomeLabel);
         mainPanel.add(nomeField);
+
         mainPanel.add(documentoLabel);
         mainPanel.add(documentoField);
-        mainPanel.add(fantasiaLabel);
-        mainPanel.add(fantasiaField);
-        mainPanel.add(rgieLabel);
-        mainPanel.add(rgieField);
-        mainPanel.add(foneLabel);
-        mainPanel.add(foneField);
-        mainPanel.add(emailLabel);
-        mainPanel.add(emailField);
-        mainPanel.add(enderecoLabel);
-        mainPanel.add(enderecoField);
-        mainPanel.add(bairroLabel);
-        mainPanel.add(bairroField);
+        
         mainPanel.add(dataNascimentoLabel);
         mainPanel.add(dataNascimentoField);
+
+        mainPanel.add(fantasiaLabel);
+        mainPanel.add(fantasiaField);
+
+        mainPanel.add(rgieLabel);
+        mainPanel.add(rgieField);
+
+        mainPanel.add(foneLabel);
+        mainPanel.add(foneField);
+
+        mainPanel.add(emailLabel);
+        mainPanel.add(emailField);
+
+        mainPanel.add(cepLabel);
+        mainPanel.add(cepField);
+
+        mainPanel.add(logradouroLabel);
+        mainPanel.add(logradouroField);
+
+        mainPanel.add(enderecoLabel);
+        mainPanel.add(enderecoField);
+
+        mainPanel.add(numeroLabel);
+        mainPanel.add(numeroField);
+
+        mainPanel.add(complementoLabel);
+        mainPanel.add(complementoField);
+
+        mainPanel.add(bairroLabel);
+        mainPanel.add(bairroField);
+
+        mainPanel.add(cidadeLabel);
+        mainPanel.add(cidadeField);
+
+        mainPanel.add(estadoLabel);
+        mainPanel.add(estadoField);
+        // botão para limpar
         mainPanel.add(cadastrarButton);
         mainPanel.add(limparCamposButton);
 
         // Defina o tamanho do painel principal
-        mainPanel.setPreferredSize(new Dimension(380, 420));
+        mainPanel.setPreferredSize(new Dimension(380, 550));
 
         // Adicione o painel principal à janela de diálogo
         getContentPane().add(mainPanel);
         pack();
         setLocationRelativeTo(mainFrame);
-    }
-
-    void showInterface() {
-        setVisible(true);
     }
 
     private void limparCampos() {
@@ -195,8 +254,19 @@ class InterfaceInsereCliente extends JDialog {
         rgieField.setText("");
         foneField.setText("");
         emailField.setText("");
+        cepField.setText("");
+        logradouroField.setText("");
         enderecoField.setText("");
+        numeroField.setText("");
+        complementoField.setText("");
         bairroField.setText("");
+        cidadeField.setText("");
+        estadoField.setText("");
         dataNascimentoField.setText("");
+    }
+    
+    public void showInterface() {
+        // Exibe a janela menor
+        setVisible(true);
     }
 }
