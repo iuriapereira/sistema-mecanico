@@ -8,14 +8,18 @@ import org.hibernate.Session;
 
 public abstract class InterfaceAbstrata {
     private final JFrame smallFrame;
-    private final JFrame mainFrame;
-    private static boolean isSmallWindowOpen = false;
+    protected final JFrame mainFrame;
+    protected static boolean isSmallWindowOpen = false;
     private Session session;
+    protected String[] buttonLabels = {"Inserir", "Alterar", "Remover"};
+    protected String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png"};
+    protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
     public InterfaceAbstrata(JFrame mainFrame, Session session) {
         this.smallFrame = new JFrame("Clientes");
         this.mainFrame = mainFrame;
         this.session = session;
+
         
         smallFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -33,37 +37,8 @@ public abstract class InterfaceAbstrata {
         // Painel da janela menor
         JPanel smallPanel = new JPanel(new BorderLayout());
 
-        // Parte superior com os botões flutuantes
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        String[] buttonLabels = {"Inserir", "Alterar", "Remover"};
-        String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png"};
         
-        for (int i = 0; i < buttonLabels.length; i++) {
-            JButton button = createSmallButton(buttonIcons[i]);
-            String label = buttonLabels[i];
-            button.addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Verifica se uma janela menor já está aberta
-                    if (!isSmallWindowOpen) {
-                        if (label.equals("Inserir")) {
-                            InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame);
-                            inserir.showInterface();
-                        } else if (label.equals("Alterar")) {
-                            //InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame);
-                            //forne.show();
-                        } else if (label.equals("Remover")) {
-                            //InterfaceFuncionario func = new InterfaceFuncionario(mainFrame);
-                            //func.show();
-                        }
-                    }
-                }
-                
-            });
-            buttonPanel.add(button);
-        }
-
+       
         // Parte inferior com a tabela
         JTable table = createTable(session);
         table.setEnabled(false); // Torna a tabela não editável
@@ -97,7 +72,7 @@ public abstract class InterfaceAbstrata {
         smallFrame.setVisible(true);
     }
 
-    private JButton createSmallButton(String iconPath) {
+    protected JButton createSmallButton(String iconPath) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(50, 50));
         ImageIcon icon = new ImageIcon(iconPath);

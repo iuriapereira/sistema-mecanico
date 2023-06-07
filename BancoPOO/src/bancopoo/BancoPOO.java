@@ -20,7 +20,7 @@ import org.hibernate.cfg.Configuration;
 
 class BancoPOO {
 
-    private static JFrame mainFrame; // Referência para a janela principal
+    protected static JFrame mainFrame; // Referência para a janela principal
     private static final boolean isSmallWindowOpen = false; // Verifica se uma janela menor está aberta
     private static SessionFactory sessionFactory;
     private static Session session;
