@@ -1,11 +1,10 @@
 package bancopoo;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 
 class InterfaceInsereCliente extends JDialog {
-    private final JFrame smallFrame;
     private final JFrame mainFrame;
     private JTextField nomeField;
     private JTextField documentoField;
@@ -15,32 +14,19 @@ class InterfaceInsereCliente extends JDialog {
     private JTextField emailField;
     private JTextField enderecoField;
     private JTextField bairroField;
-    private JCheckBox pessoaFisicaCheckbox;
-    private JCheckBox pessoaJuridicaCheckbox;
+    private JRadioButton pessoaFisicaRadioButton;
+    private JRadioButton pessoaJuridicaRadioButton;
     private JTextField dataNascimentoField;
-    private boolean isSmallWindowOpen;
+    private JButton limparCamposButton;
 
     public InterfaceInsereCliente(JFrame mainFrame) {
-        this.smallFrame = new JFrame("Clientes");
         this.mainFrame = mainFrame;
 
-        smallFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int) (screenSize.width * 0.6);
-        int height = (int) (screenSize.height * 0.6);
-        smallFrame.setSize(width, height);
-        smallFrame.setResizable(false);
-        smallFrame.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 
-        // Verifica se a janela menor está aberta
-        isSmallWindowOpen = false;
-
-        // Desabilita a janela principal
-        mainFrame.setEnabled(false);
         // Painel da janela menor
-        JPanel smallPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(10, 10, 10, 10);
+        JPanel mainPanel = new JPanel(null); // Define o layout como null
 
         JLabel nomeLabel = new JLabel("Nome:");
         nomeField = new JTextField(20);
@@ -60,30 +46,20 @@ class InterfaceInsereCliente extends JDialog {
         bairroField = new JTextField(20);
         JLabel dataNascimentoLabel = new JLabel("Data de Nascimento:");
         dataNascimentoField = new JTextField(20);
-        dataNascimentoLabel.setVisible(false);
-        dataNascimentoField.setVisible(false);
 
-        pessoaFisicaCheckbox = new JCheckBox("Pessoa Física");
-        pessoaFisicaCheckbox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pessoaJuridicaCheckbox.setSelected(false);
-                dataNascimentoLabel.setVisible(true);
-                dataNascimentoField.setVisible(true);
-            }
-        });
+        pessoaFisicaRadioButton = new JRadioButton("Pessoa Física");
+        pessoaFisicaRadioButton.setBounds(10, 10, 150, 20);
+        pessoaFisicaRadioButton.setSelected(true);
 
-        pessoaJuridicaCheckbox = new JCheckBox("Pessoa Jurídica");
-        pessoaJuridicaCheckbox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pessoaFisicaCheckbox.setSelected(false);
-                dataNascimentoLabel.setVisible(false);
-                dataNascimentoField.setVisible(false);
-            }
-        });
+        pessoaJuridicaRadioButton = new JRadioButton("Pessoa Jurídica");
+        pessoaJuridicaRadioButton.setBounds(170, 10, 150, 20);
+
+        ButtonGroup tipoClienteGroup = new ButtonGroup();
+        tipoClienteGroup.add(pessoaFisicaRadioButton);
+        tipoClienteGroup.add(pessoaJuridicaRadioButton);
 
         JButton cadastrarButton = new JButton("Cadastrar");
+        cadastrarButton.setBounds(10, 320, 300, 30);
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -97,10 +73,10 @@ class InterfaceInsereCliente extends JDialog {
                 String bairro = bairroField.getText();
                 String dataNascimento = dataNascimentoField.getText();
 
-                if (pessoaFisicaCheckbox.isSelected()) {
+                if (pessoaFisicaRadioButton.isSelected()) {
                     // Lógica para cadastrar pessoa física
                     JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa física:\nNome: " + nome + "\nDocumento: " + documento + "\nFantasia: " + fantasia + "\nRG/IE: " + rgie + "\nFone: " + fone + "\nEmail: " + email + "\nEndereço: " + endereco + "\nBairro: " + bairro + "\nData de Nascimento: " + dataNascimento);
-                } else if (pessoaJuridicaCheckbox.isSelected()) {
+                } else if (pessoaJuridicaRadioButton.isSelected()) {
                     // Lógica para cadastrar pessoa jurídica
                     JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa jurídica:\nNome: " + nome + "\nDocumento: " + documento + "\nFantasia: " + fantasia + "\nRG/IE: " + rgie + "\nFone: " + fone + "\nEmail: " + email + "\nEndereço: " + endereco + "\nBairro: " + bairro);
                 } else {
@@ -108,74 +84,119 @@ class InterfaceInsereCliente extends JDialog {
                 }
             }
         });
+        
+        pessoaJuridicaRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dataNascimentoField.setEnabled(false); // Desativa a caixa de texto de Data de Nascimento
+                dataNascimentoField.setText("");
+            }
+        });
+        
+        pessoaFisicaRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dataNascimentoField.setEnabled(true); // Desativa a caixa de texto de Data de Nascimento
+            }
+        });
+        
+        limparCamposButton = new JButton("Limpar");
+        limparCamposButton.setBounds(10, 360, 300, 30);
+        limparCamposButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                limparCampos();
+            }
+        });
 
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        smallPanel.add(pessoaFisicaCheckbox, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(pessoaJuridicaCheckbox, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        smallPanel.add(nomeLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(nomeField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        smallPanel.add(documentoLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(documentoField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        smallPanel.add(fantasiaLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(fantasiaField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 4;
-        smallPanel.add(rgieLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(rgieField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 5;
-        smallPanel.add(foneLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(foneField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 6;
-        smallPanel.add(emailLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(emailField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 7;
-        smallPanel.add(enderecoLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(enderecoField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 8;
-        smallPanel.add(bairroLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(bairroField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 9;
-        smallPanel.add(dataNascimentoLabel, constraints);
-        constraints.gridx = 1;
-        smallPanel.add(dataNascimentoField, constraints);
-        constraints.gridx = 0;
-        constraints.gridy = 10;
-        constraints.gridwidth = 2;
-        constraints.anchor = GridBagConstraints.CENTER;
-        smallPanel.add(cadastrarButton, constraints);
+        // Define as coordenadas de posicionamento dos componentes
+        int x = 10;
+        int y = 40;
+        int yGap = 30;
+        int labelWidth = 150;
+        int fieldWidth = 200;
 
-        add(smallPanel);
+        nomeLabel.setBounds(x, y, labelWidth, 20);
+        nomeField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
-        // Adiciona o painel da janela menor na janela menor
-        smallFrame.getContentPane().add(smallPanel);
+        y += yGap;
+        documentoLabel.setBounds(x, y, labelWidth, 20);
+        documentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
-        // Centraliza a janela menor em relação à janela principal
-        int x = mainFrame.getX() + (mainFrame.getWidth() - smallFrame.getWidth()) / 2;
-        int y = mainFrame.getY() + (mainFrame.getHeight() - smallFrame.getHeight()) / 2;
-        smallFrame.setLocation(x, y);
+        y += yGap;
+        fantasiaLabel.setBounds(x, y, labelWidth, 20);
+        fantasiaField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        rgieLabel.setBounds(x, y, labelWidth, 20);
+        rgieField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        foneLabel.setBounds(x, y, labelWidth, 20);
+        foneField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        emailLabel.setBounds(x, y, labelWidth, 20);
+        emailField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        enderecoLabel.setBounds(x, y, labelWidth, 20);
+        enderecoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        bairroLabel.setBounds(x, y, labelWidth, 20);
+        bairroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        y += yGap;
+        dataNascimentoLabel.setBounds(x, y, labelWidth, 20);
+        dataNascimentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+
+        // Adicione os componentes ao painel principal
+        mainPanel.add(pessoaFisicaRadioButton);
+        mainPanel.add(pessoaJuridicaRadioButton);
+        mainPanel.add(nomeLabel);
+        mainPanel.add(nomeField);
+        mainPanel.add(documentoLabel);
+        mainPanel.add(documentoField);
+        mainPanel.add(fantasiaLabel);
+        mainPanel.add(fantasiaField);
+        mainPanel.add(rgieLabel);
+        mainPanel.add(rgieField);
+        mainPanel.add(foneLabel);
+        mainPanel.add(foneField);
+        mainPanel.add(emailLabel);
+        mainPanel.add(emailField);
+        mainPanel.add(enderecoLabel);
+        mainPanel.add(enderecoField);
+        mainPanel.add(bairroLabel);
+        mainPanel.add(bairroField);
+        mainPanel.add(dataNascimentoLabel);
+        mainPanel.add(dataNascimentoField);
+        mainPanel.add(cadastrarButton);
+        mainPanel.add(limparCamposButton);
+
+        // Defina o tamanho do painel principal
+        mainPanel.setPreferredSize(new Dimension(380, 420));
+
+        // Adicione o painel principal à janela de diálogo
+        getContentPane().add(mainPanel);
+        pack();
+        setLocationRelativeTo(mainFrame);
     }
+
     void showInterface() {
-        smallFrame.setVisible(true);
+        setVisible(true);
+    }
+
+    private void limparCampos() {
+        nomeField.setText("");
+        documentoField.setText("");
+        fantasiaField.setText("");
+        rgieField.setText("");
+        foneField.setText("");
+        emailField.setText("");
+        enderecoField.setText("");
+        bairroField.setText("");
+        dataNascimentoField.setText("");
     }
 }
