@@ -1,23 +1,15 @@
 package bancopoo;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -25,7 +17,7 @@ import org.hibernate.cfg.Configuration;
 class BancoPOO {
 
     private static JFrame mainFrame; // Referência para a janela principal
-    private static boolean isSmallWindowOpen = false; // Verifica se uma janela menor está aberta
+    private static final boolean isSmallWindowOpen = false; // Verifica se uma janela menor está aberta
     private static SessionFactory sessionFactory;
     private static Session session;
 

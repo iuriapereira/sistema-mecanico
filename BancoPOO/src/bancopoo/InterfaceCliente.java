@@ -1,55 +1,71 @@
 package bancopoo;
-import banco.TbCliente;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import org.hibernate.Criteria;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+
 
 class InterfaceCliente {
 
-    private final JDialog smallFrame;
+    private final JFrame smallFrame;
     private final JFrame mainFrame;
     private static boolean isSmallWindowOpen = false;
+    private String[] buttonLabels;
     private final Session session;
 
     public InterfaceCliente(JFrame mainFrame, Session session) {
-        this.smallFrame = new JDialog(mainFrame, "Janela Menor", Dialog.ModalityType.APPLICATION_MODAL);
+        this.smallFrame = new JFrame("Clientes");
         this.mainFrame = mainFrame;
         this.session = session;
-
-        smallFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        
+        smallFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.6);
         int height = (int) (screenSize.height * 0.6);
         smallFrame.setSize(width, height);
         smallFrame.setResizable(false);
+        smallFrame.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 
         // Verifica se a janela menor está aberta
-        isSmallWindowOpen = true;
+        isSmallWindowOpen = false;
 
         // Desabilita a janela principal
         mainFrame.setEnabled(false);
-
+        System.out.println("entrei na interface cliente");
         // Painel da janela menor
         JPanel smallPanel = new JPanel(new BorderLayout());
 
         // Parte superior com os botões flutuantes
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        String[] buttonNames = {"Botão 1", "Botão 2", "Botão 3"};
+        String[] buttonLabels = {"Inserir", "Alterar", "Remover"};
         String[] buttonIcons = {"caminho/para/imagem1.png", "caminho/para/imagem2.png", "caminho/para/imagem3.png"};
-
-        for (int i = 0; i < buttonNames.length; i++) {
+        
+        for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
+            String label = buttonLabels[i];
+            button.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Verifica se uma janela menor já está aberta
+                    if (!isSmallWindowOpen) {
+                        if (label.equals("Inserir")) {
+                            InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame);
+                            inserir.show();
+                        } else if (label.equals("Alterar")) {
+                            //InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame);
+                            //forne.show();
+                        } else if (label.equals("Remover")) {
+                            //InterfaceFuncionario func = new InterfaceFuncionario(mainFrame);
+                            //func.show();
+                        }
+                    }
+                }
+                
+            });
             buttonPanel.add(button);
         }
 
@@ -96,22 +112,14 @@ class InterfaceCliente {
 
     private JTable createTableFromDatabase() {
         // Código para buscar os dados do banco de dados usando Hibernate
-        Criteria criteria = session.createCriteria(TbCliente.class);
-        ArrayList<TbCliente> clientes = (ArrayList<TbCliente>) criteria.list();
 
         // Dados da tabela
-        Object[][] data = new Object[clientes.size()][7];
-        for (int i = 0; i < clientes.size(); i++) {
-            TbCliente cliente = clientes.get(i);
-            data[i][0] = cliente.getTbEntidade().getEntCpfCnpj();
-            data[i][1] = cliente.getTbEntidade().getEntNome();
-            data[i][2] = cliente.getTbEntidade().getEntNomeFantasia();
-            data[i][3] = cliente.getTbEntidade().getEntFone();
-            data[i][4] = cliente.getTbEntidade().getEntSexo();
-            data[i][5] = cliente.getTbEntidade().getEntEmail();
-            data[i][6] = cliente.getTbEntidade().getEntTipo();
-        }
-        String[] columnNames = {"Cpf/Cnpj", "Nome", "Nome Fantasia", "Fone", "Sexo", "Email", "Tipo"};
+        String[] columnNames = {"Coluna 1", "Coluna 2", "Coluna 3"};
+        Object[][] data = {
+            {"Valor 1", "Valor 2", "Valor 3"},
+            {"Valor 4", "Valor 5", "Valor 6"},
+            {"Valor 7", "Valor 8", "Valor 9"}
+        };
 
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
