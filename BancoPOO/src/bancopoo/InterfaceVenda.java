@@ -45,7 +45,7 @@ class InterfaceVenda {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         String[] buttonNames = {"Botão 1", "Botão 2", "Botão 3"};
-        String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png"};
+        String[] buttonIcons = {"caminho/para/imagem1.png", "caminho/para/imagem2.png", "caminho/para/imagem3.png"};
 
         for (int i = 0; i < buttonNames.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
@@ -88,9 +88,7 @@ class InterfaceVenda {
     private JButton createSmallButton(String iconPath) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(50, 50));
-        ImageIcon icon = new ImageIcon(iconPath);
-        Image scaledImage = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-        button.setIcon(new ImageIcon(scaledImage));
+        button.setIcon(new ImageIcon(iconPath));
         button.setFocusPainted(false);
         return button;
     }

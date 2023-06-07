@@ -1,17 +1,27 @@
 package bancopoo;
 
-
-import java.awt.Image;
+import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -31,6 +41,15 @@ class BancoPOO {
         // Configuração da janela principal
         mainFrame = new JFrame("Interface Gráfica");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Fechar a sessão do Hibernate e encerrar a aplicação
+                session.close();
+                sessionFactory.close();
+                System.exit(0);
+            }
+        });
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         // Criação e configuração da sessão do Hibernate

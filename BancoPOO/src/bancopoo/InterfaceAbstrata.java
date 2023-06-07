@@ -1,26 +1,18 @@
-
 package bancopoo;
 
-import banco.TbVendaSer;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
-class InterfaceServ {
+public abstract class InterfaceAbstrata {
     private final JFrame smallFrame;
     private final JFrame mainFrame;
     private static boolean isSmallWindowOpen = false;
-    private final Session session;
 
-    public InterfaceServ(JFrame mainFrame, Session session) {
-        this.smallFrame = new JFrame("Janela Menor");
+    public InterfaceAbstrata(JFrame mainFrame, String smallWindowTitle) {
+        this.smallFrame = new JFrame(smallWindowTitle);
         this.mainFrame = mainFrame;
-        this.session = session;
 
         smallFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -91,35 +83,5 @@ class InterfaceServ {
         return button;
     }
 
-    private JTable createTableFromDatabase() {
-        Criteria criteria = session.createCriteria(TbVendaSer.class);
-        ArrayList<TbVendaSer> servicos = (ArrayList<TbVendaSer>) criteria.list();
-
-        // Dados da tabela
-        Object[][] data = new Object[servicos.size()][6];
-        for (int i = 0; i < servicos.size(); i++) {
-            TbVendaSer servico = servicos.get(i);
-            data[i][0] = servico.getTbServico().getSerDescricao();
-            data[i][1] = servico.getVsValorServico();
-            data[i][2] = servico.getTbVenda().getTbCliente().getTbEntidade().getEntNomeFantasia();
-            data[i][3] = servico.getTbVeiculo().getVeiMarca();
-            data[i][4] = servico.getTbVeiculo().getVeiModelo();
-            data[i][5] = servico.getTbVeiculo().getVeiPlaca();
-        }
-        String[] columnNames = {"Serviço", "Valor", "Cliente", "Marca Veiculo", "Modelo Veiculo", "Placa Veiculo" };
-
-        // Modelo da tabela não editável
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        // Cria a tabela
-        JTable table = new JTable(model);
-        table.setFillsViewportHeight(true);
-
-        return table;
-    }
+    protected abstract JTable createTableFromDatabase();
 }
