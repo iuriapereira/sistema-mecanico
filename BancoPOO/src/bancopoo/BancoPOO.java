@@ -56,7 +56,7 @@ class BancoPOO {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
            
         String[] buttonLabels = {"Cliente", "Fornecedor", "Funcionário", "Peça", "Serviço", "Venda"};
-        String[] buttonIcons = {"src/resources/images/clientes.png", "caminho/para/imagem2.png", "caminho/para/imagem3.png",
+        String[] buttonIcons = {"src/resources/images/clientes.png", "src/resources/images/fornecedor.png", "caminho/para/imagem3.png",
                 "src/resources/images/produto.png", "src/resources/images/servico.png", "src/resources/images/venda.png"};
 
         for (int i = 0; i < buttonLabels.length; i++) {

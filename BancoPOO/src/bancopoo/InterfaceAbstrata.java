@@ -20,7 +20,6 @@ public abstract class InterfaceAbstrata {
         int height = (int) (screenSize.height * 0.6);
         smallFrame.setSize(width, height);
         smallFrame.setResizable(false);
-        smallFrame.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
 
         // Verifica se a janela menor está aberta
         isSmallWindowOpen = true;
