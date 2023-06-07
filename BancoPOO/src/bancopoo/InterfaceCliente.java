@@ -1,10 +1,13 @@
 package bancopoo;
 
+import banco.TbCliente;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 
 
@@ -53,7 +56,7 @@ class InterfaceCliente {
                     if (!isSmallWindowOpen) {
                         if (label.equals("Inserir")) {
                             InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame);
-                            inserir.showInterface();
+                            inserir.show();
                         } else if (label.equals("Alterar")) {
                             //InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame);
                             //forne.show();
@@ -113,20 +116,28 @@ class InterfaceCliente {
 
     private JTable createTableFromDatabase() {
         // Código para buscar os dados do banco de dados usando Hibernate
+        Criteria criteria = session.createCriteria(TbCliente.class);
+        ArrayList<TbCliente> clientes = (ArrayList<TbCliente>) criteria.list();
 
         // Dados da tabela
-        String[] columnNames = {"Coluna 1", "Coluna 2", "Coluna 3"};
-        Object[][] data = {
-            {"Valor 1", "Valor 2", "Valor 3"},
-            {"Valor 4", "Valor 5", "Valor 6"},
-            {"Valor 7", "Valor 8", "Valor 9"}
-        };
+        Object[][] data = new Object[clientes.size()][7];
+        for (int i = 0; i < clientes.size(); i++) {
+            TbCliente cliente = clientes.get(i);
+            data[i][0] = cliente.getTbEntidade().getEntCpfCnpj();
+            data[i][1] = cliente.getTbEntidade().getEntNome();
+            data[i][2] = cliente.getTbEntidade().getEntNomeFantasia();
+            data[i][3] = cliente.getTbEntidade().getEntFone();
+            data[i][4] = cliente.getTbEntidade().getEntSexo();
+            data[i][5] = cliente.getTbEntidade().getEntEmail();
+            data[i][6] = cliente.getTbEntidade().getEntTipo();
+        }
+        String[] columnNames = {"Cpf/Cnpj", "Nome", "Nome Fantasia", "Fone", "Sexo", "Email", "Tipo"};
 
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true;
+                return false;
             }
         };
 
