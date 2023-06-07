@@ -34,7 +34,6 @@ class InterfaceCliente {
 
         // Desabilita a janela principal
         mainFrame.setEnabled(false);
-        System.out.println("entrei na interface cliente");
         // Painel da janela menor
         JPanel smallPanel = new JPanel(new BorderLayout());
 
@@ -42,7 +41,7 @@ class InterfaceCliente {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         String[] buttonLabels = {"Inserir", "Alterar", "Remover"};
-        String[] buttonIcons = {"caminho/para/imagem1.png", "caminho/para/imagem2.png", "caminho/para/imagem3.png"};
+        String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png"};
         
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
@@ -105,7 +104,9 @@ class InterfaceCliente {
     private JButton createSmallButton(String iconPath) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(50, 50));
-        button.setIcon(new ImageIcon(iconPath));
+        ImageIcon icon = new ImageIcon(iconPath);
+        Image scaledImage = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        button.setIcon(new ImageIcon(scaledImage));
         button.setFocusPainted(false);
         return button;
     }

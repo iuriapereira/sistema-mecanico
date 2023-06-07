@@ -1,5 +1,7 @@
 package bancopoo;
 
+
+import java.awt.Image;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -41,10 +43,10 @@ class BancoPOO {
 
         // Parte superior com os botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
+           
         String[] buttonLabels = {"Cliente", "Fornecedor", "Funcionário", "Peça", "Serviço", "Venda"};
-        String[] buttonIcons = {"Imgs/Clientes.png", "caminho/para/imagem2.png", "caminho/para/imagem3.png",
-                "caminho/para/imagem4.png", "caminho/para/imagem5.png", "caminho/para/imagem6.png"};
+        String[] buttonIcons = {"src/resources/images/clientes.png", "caminho/para/imagem2.png", "caminho/para/imagem3.png",
+                "src/resources/images/produto.png", "src/resources/images/servico.png", "src/resources/images/venda.png"};
 
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSquareButton(buttonIcons[i]);
@@ -95,7 +97,9 @@ class BancoPOO {
     private static JButton createSquareButton(String iconPath) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(100, 100));
-        button.setIcon(new ImageIcon(iconPath));
+        ImageIcon icon = new ImageIcon(iconPath);
+        Image scaledImage = icon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
+        button.setIcon(new ImageIcon(scaledImage));
         button.setVerticalTextPosition(SwingConstants.BOTTOM);
         button.setHorizontalTextPosition(SwingConstants.CENTER);
         button.setFocusPainted(false);
