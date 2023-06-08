@@ -64,7 +64,7 @@ class InterfaceCliente extends InterfaceAbstrata {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereFuncionario inserir = new InterfaceInsereFuncionario(mainFrame, session);
+                        InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame, session);
                         inserir.showInterface();
                     }
                 });

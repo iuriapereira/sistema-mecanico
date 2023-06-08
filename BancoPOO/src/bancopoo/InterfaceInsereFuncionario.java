@@ -4,10 +4,8 @@ import banco.TbCargo;
 import banco.TbCidEst;
 import banco.TbEstado;
 import banco.TbLogradouro;
-import static bancopoo.InterfaceAbstrata.isSmallWindowOpen;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,13 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DateFormatter;
-import javax.swing.text.DocumentFilter;
 import javax.swing.text.MaskFormatter;
-import javax.swing.text.NumberFormatter;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -341,11 +333,11 @@ class InterfaceInsereFuncionario extends JDialog {
             Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
         }
         mainPanel.add(dataNascimentoField);
-        System.out.println(dataNascimentoField.getText());
         
         mainPanel.add(fantasiaLabel);
         mainPanel.add(fantasiaField);
-
+        
+        // RG/IE NA TELA
         mainPanel.add(rgieLabel);
         // MaskFormatter para permitir apenas números
         MaskFormatter maskFormatter = null;
