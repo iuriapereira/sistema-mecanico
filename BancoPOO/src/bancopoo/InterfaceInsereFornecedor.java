@@ -5,15 +5,23 @@ import banco.TbEstado;
 import banco.TbLogradouro;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 class InterfaceInsereFornecedor extends JDialog {
+
     private final JFrame mainFrame;
     private JTextField nomeField;
     private JTextField documentoField;
@@ -34,36 +42,35 @@ class InterfaceInsereFornecedor extends JDialog {
     private JTextField dataNascimentoField;
     private JButton limparCamposButton;
     private Session session;
-    
 
     public InterfaceInsereFornecedor(JFrame mainFrame, Session session) {
         this.mainFrame = mainFrame;
         this.session = session;
-        
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo dados do fornecedor");
-        
+
         // CONEXÃO COM O BANCO TB_ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
         ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-        
+
         // COMBOBOX DO ESTADO
         JComboBox<String> listEstado = new JComboBox<>();
         DefaultComboBoxModel<String> est = new DefaultComboBoxModel<>();
         est.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
-        listEstado.setModel(est); 
+        listEstado.setModel(est);
         for (TbEstado descricao : estado) {
             listEstado.addItem(descricao.getEstSigla());
         }
-        
+
         // CONEXÃO COM O BANCO TB_CIDEST
         Criteria cid = session.createCriteria(TbCidEst.class);
         ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
-        
+
         // COMBOBOX DA CIDADE
         JComboBox<String> listCidade = new JComboBox<>();
-        
+
         listEstado.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,16 +87,15 @@ class InterfaceInsereFornecedor extends JDialog {
                     model.addElement(cidade);
                 }
                 ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-                
+
                 listCidade.setModel(model);
-                
 
                 // ATUALIZAR A INTERFACE
                 revalidate();
                 repaint();
             }
         });
-           
+
         // CONEXÃO COM O BANCO TB_LOGRADOURO
         Criteria log = session.createCriteria(TbLogradouro.class);
         ArrayList<TbLogradouro> logradouro = (ArrayList<TbLogradouro>) log.list();
@@ -97,14 +103,14 @@ class InterfaceInsereFornecedor extends JDialog {
         JComboBox<String> listLogradouro = new JComboBox<>();
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
-        listLogradouro.setModel(logr); 
+        listLogradouro.setModel(logr);
         for (TbLogradouro descricao : logradouro) {
             listLogradouro.addItem(descricao.getLogDescricao());
         }
-        
+
         // PAINEL DA JANELA MENOR
         JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
-        
+
         JLabel nomeLabel = new JLabel("Nome:");
         nomeField = new JTextField(20);
         JLabel documentoLabel = new JLabel("CNPJ:");
@@ -136,13 +142,60 @@ class InterfaceInsereFornecedor extends JDialog {
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (nomeField == null || documentoField == null || dataNascimentoField == null || fantasiaField == null || ieField == null || foneField == null || emailField == null || cepField == null || enderecoField == null || numeroField == null || complementoField == null || bairroField == null) {
-                    // Lógica para cadastrar pessoa física
-                    JOptionPane.showMessageDialog(InterfaceInsereFornecedor.this, "Preencha todos os campos corretamente!");
-                } else if(listEstado.getModel() == null || listCidade.getModel() == null || listLogradouro.getModel() == null) {
-                    JOptionPane.showMessageDialog(InterfaceInsereFornecedor.this, "Selecione os campos!");
-                }else {
-                    JOptionPane.showMessageDialog(InterfaceInsereFornecedor.this, "Fornecedor inserido com sucesso!");
+                String hql = "SELECT c.cepId FROM TbCidEst c WHERE c.tbCidade.cidDescricao = '" + listCidade.getSelectedItem() + "' AND c.tbEstado = '" + listEstado.getSelectedItem() + "'";
+                Query query = session.createQuery(hql);
+
+                String hql2 = "SELECT l.logId FROM TbLogradouro l WHERE l.logDescricao = '" + listLogradouro.getSelectedItem() + "'";
+                Query query2 = session.createQuery(hql2);
+
+                int logId = (int) query2.uniqueResult();
+                int cidId = (int) query.uniqueResult();
+
+                Transaction transaction = session.beginTransaction();
+                try {
+
+                    banco.TbBairro tbBairro = new banco.TbBairro();
+                    tbBairro.setBaiDescricao(bairroField.getText());
+                    session.save(tbBairro);
+
+                    banco.TbEndPostal tbEndPostal = new banco.TbEndPostal();
+                    tbEndPostal.setTbBairro(tbBairro);
+                    tbEndPostal.setEndPNomerua(enderecoField.getText());
+                    tbEndPostal.setEndPCep(cepField.getText());
+                    Object log = session.load(TbLogradouro.class, logId);
+                    tbEndPostal.setTbLogradouro((TbLogradouro) log);
+                    Object cidest = session.load(TbCidEst.class, cidId);
+                    tbEndPostal.setTbCidEst((TbCidEst) cidest);
+                    session.save(tbEndPostal);
+
+                    banco.TbEndereco tbendereco = new banco.TbEndereco();
+                    tbendereco.setTbEndPostal(tbEndPostal);
+                    tbendereco.setEndNumero(numeroField.getText());
+                    tbendereco.setEndComplemento(complementoField.getText());
+                    session.save(tbendereco);
+
+                    banco.TbEntidade tbentidade = new banco.TbEntidade();
+                    tbentidade.setEntCpfCnpj(documentoField.getText());
+                    tbentidade.setTbEndereco(tbendereco);
+                    tbentidade.setEntNome(nomeField.getText());
+                    tbentidade.setEntNomeFantasia(fantasiaField.getText());
+                    tbentidade.setEntRgIe(ieField.getText());
+                    tbentidade.setEntFone(foneField.getText());
+                    tbentidade.setEntEmail(emailField.getText());
+                    tbentidade.setEntTipo("Juridica");
+                    session.save(tbentidade);
+
+                    banco.TbFornecedor tbfornecedor = new banco.TbFornecedor();
+                    tbfornecedor.setTbEntidade(tbentidade);
+                    session.save(tbfornecedor);
+
+                    transaction.commit();
+                    JOptionPane.showMessageDialog(null, "Fornecedor Inserido com Sucesso!");
+                    dispose();
+
+                } catch (HibernateException ex) {
+                    transaction.rollback();
+                    JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -169,7 +222,7 @@ class InterfaceInsereFornecedor extends JDialog {
         y += yGap;
         documentoLabel.setBounds(x, y, labelWidth, 20);
         documentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        
+
         y += yGap;
         fantasiaLabel.setBounds(x, y, labelWidth, 20);
         fantasiaField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
@@ -213,7 +266,7 @@ class InterfaceInsereFornecedor extends JDialog {
         y += yGap;
         estadoLabel.setBounds(x, y, labelWidth, 20);
         listEstado.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        
+
         y += yGap;
         cidadeLabel.setBounds(x, y, labelWidth, 20);
         listCidade.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
@@ -254,19 +307,18 @@ class InterfaceInsereFornecedor extends JDialog {
 
         mainPanel.add(bairroLabel);
         mainPanel.add(bairroField);
-        
+
         // Adiciona o JComboBox ao JFrame
         mainPanel.add(estadoLabel);
         mainPanel.add(listEstado);
-        
+
         mainPanel.add(cidadeLabel);
         mainPanel.add(listCidade);
-        
+
         // botão para limpar
         mainPanel.add(cadastrarButton);
         mainPanel.add(limparCamposButton);
-        
-        
+
         // Defina o tamanho do painel principal
         mainPanel.setPreferredSize(new Dimension(380, 550));
 
@@ -289,7 +341,7 @@ class InterfaceInsereFornecedor extends JDialog {
         complementoField.setText("");
         bairroField.setText("");
     }
-    
+
     public void showInterface() {
         // Exibe a janela menor
         setVisible(true);
