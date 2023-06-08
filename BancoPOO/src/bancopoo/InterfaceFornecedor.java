@@ -54,8 +54,8 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
                     // Verifica se uma janela menor já está aberta
                     if (!isSmallWindowOpen) {
                         if (label.equals("Inserir")) {
-                            //InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame);
-                            //inserir.showInterface();
+                            InterfaceInsereFornecedor inserir = new InterfaceInsereFornecedor(mainFrame, session);
+                            inserir.showInterface();
                         } else if (label.equals("Alterar")) {
                             //InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame);
                             //forne.show();
