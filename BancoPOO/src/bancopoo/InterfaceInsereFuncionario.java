@@ -68,10 +68,6 @@ class InterfaceInsereFuncionario extends JDialog {
             listEstado.addItem(descricao.getEstSigla());
         }
 
-        // CONEXÃO COM O BANCO TB_CIDEST
-        Criteria cid = session.createCriteria(TbCidEst.class);
-        ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
-
         // COMBOBOX DA CIDADE
         JComboBox<String> listCidade = new JComboBox<>();
 
@@ -90,8 +86,6 @@ class InterfaceInsereFuncionario extends JDialog {
                 for (String cidade : cidades) {
                     model.addElement(cidade);
                 }
-                ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-
                 listCidade.setModel(model);
 
                 // ATUALIZAR A INTERFACE
@@ -251,6 +245,9 @@ class InterfaceInsereFuncionario extends JDialog {
                     session.save(tbfuncionario);
 
                     transaction.commit();
+                    JOptionPane.showMessageDialog(null,"Funcionario Inserido com Sucesso!");
+                    dispose();
+                    
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);

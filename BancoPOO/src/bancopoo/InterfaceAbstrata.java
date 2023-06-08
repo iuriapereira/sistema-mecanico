@@ -11,8 +11,8 @@ public abstract class InterfaceAbstrata {
     protected final JFrame mainFrame;
     protected static boolean isSmallWindowOpen = false;
     private Session session;
-    protected String[] buttonLabels = {"Inserir", "Alterar", "Remover"};
-    protected String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png"};
+    protected String[] buttonLabels = {"Inserir", "Alterar", "Remover", "Atualizar"};
+    protected String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png",""};
     protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
     public InterfaceAbstrata(JFrame mainFrame, Session session) {
@@ -41,7 +41,7 @@ public abstract class InterfaceAbstrata {
        
         // Parte inferior com a tabela
         JTable table = createTable(session);
-        table.setEnabled(false); // Torna a tabela não editável
+        table.setEnabled(true); // Torna a tabela não editável
 
         // Adiciona os painéis no painel da janela menor
         smallPanel.add(buttonPanel, BorderLayout.NORTH);
