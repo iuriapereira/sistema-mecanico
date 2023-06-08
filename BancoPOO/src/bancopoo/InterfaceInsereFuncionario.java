@@ -4,8 +4,10 @@ import banco.TbCargo;
 import banco.TbCidEst;
 import banco.TbEstado;
 import banco.TbLogradouro;
+import static bancopoo.InterfaceAbstrata.isSmallWindowOpen;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +17,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DateFormatter;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.MaskFormatter;
+import javax.swing.text.NumberFormatter;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -22,17 +31,16 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 class InterfaceInsereFuncionario extends JDialog {
-
     private final JFrame mainFrame;
     private JTextField nomeField;
-    private JTextField documentoField;
+    private JFormattedTextField documentoField;
     private JTextField fantasiaField;
     private JTextField rgieField;
-    private JTextField foneField;
+    private JFormattedTextField foneField;
     private JTextField emailField;
     private JTextField enderecoField;
     private JTextField bairroField;
-    private JTextField cepField;
+    private JFormattedTextField cepField; 
     private JTextField logradouroField;
     private JTextField numeroField;
     private JTextField complementoField;
@@ -41,36 +49,43 @@ class InterfaceInsereFuncionario extends JDialog {
     private JRadioButton sexoMasculino;
     private JRadioButton sexoFeminino;
     private JRadioButton sexoOutros;
-    private JTextField dataNascimentoField;
+    private JFormattedTextField dataNascimentoField;
     private JButton limparCamposButton;
     private Session session;
     private final JTextField usuarioField;
     private final JPasswordField senhaField;
+    private Object passwordCheckBox;
+    
 
     public InterfaceInsereFuncionario(JFrame mainFrame, Session session) {
         this.mainFrame = mainFrame;
         this.session = session;
-
+        
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo dados do funcionário");
-
+        setResizable(false);
+        
         // CONEXÃO COM O BANCO TB_ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
         ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-
+        
         // COMBOBOX DO ESTADO
         JComboBox<String> listEstado = new JComboBox<>();
         DefaultComboBoxModel<String> est = new DefaultComboBoxModel<>();
         est.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
-        listEstado.setModel(est);
+        listEstado.setModel(est); 
         for (TbEstado descricao : estado) {
             listEstado.addItem(descricao.getEstSigla());
         }
-
+        
+        // CONEXÃO COM O BANCO TB_CIDEST
+        Criteria cid = session.createCriteria(TbCidEst.class);
+        ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
+        
         // COMBOBOX DA CIDADE
         JComboBox<String> listCidade = new JComboBox<>();
-
+        
         listEstado.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -86,27 +101,30 @@ class InterfaceInsereFuncionario extends JDialog {
                 for (String cidade : cidades) {
                     model.addElement(cidade);
                 }
+                ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
+                
                 listCidade.setModel(model);
+                
 
                 // ATUALIZAR A INTERFACE
                 revalidate();
                 repaint();
             }
         });
-
+           
         // CONEXÃO COM O BANCO TB_LOGRADOURO
         Criteria log = session.createCriteria(TbLogradouro.class);
         ArrayList<TbLogradouro> logradouro = (ArrayList<TbLogradouro>) log.list();
-
+        
         // COMBOBOX DO LOGRADOURO
         JComboBox<String> listLogradouro = new JComboBox<>();
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
-        listLogradouro.setModel(logr);
+        listLogradouro.setModel(logr); 
         for (TbLogradouro descricao : logradouro) {
             listLogradouro.addItem(descricao.getLogDescricao());
         }
-
+        
         // CONEXÃO COM O BANCO TB_CARGO
         Criteria cag = session.createCriteria(TbCargo.class);
         ArrayList<TbCargo> cargo = (ArrayList<TbCargo>) cag.list();
@@ -114,32 +132,27 @@ class InterfaceInsereFuncionario extends JDialog {
         JComboBox<String> listCargo = new JComboBox<>();
         DefaultComboBoxModel<String> carg = new DefaultComboBoxModel<>();
         carg.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS CARGOS
-        listCargo.setModel(carg);
+        listCargo.setModel(carg); 
         for (TbCargo descricao : cargo) {
             listCargo.addItem(descricao.getCarDescricao());
         }
-
+        
         // PAINEL DA JANELA MENOR
         JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
-
+        
         JLabel cargoLabel = new JLabel("Cargo:");
         JLabel nomeLabel = new JLabel("Nome:");
         nomeField = new JTextField(20);
         JLabel sexoLabel = new JLabel("Sexo:");
         JLabel documentoLabel = new JLabel("CPF:");
-        documentoField = new JTextField(20);
         JLabel dataNascimentoLabel = new JLabel("Data de Nascimento:");
-        dataNascimentoField = new JTextField(20);
         JLabel fantasiaLabel = new JLabel("Nome Fantasia:");
         fantasiaField = new JTextField(20);
         JLabel rgieLabel = new JLabel("RG:");
-        rgieField = new JTextField(20);
         JLabel foneLabel = new JLabel("Fone:");
-        foneField = new JTextField(20);
         JLabel emailLabel = new JLabel("Email:");
         emailField = new JTextField(20);
         JLabel cepLabel = new JLabel("CEP:");
-        cepField = new JTextField(20);
         JLabel logradouroLabel = new JLabel("Logradouro:");
         JLabel enderecoLabel = new JLabel("Endereço:");
         enderecoField = new JTextField(20);
@@ -156,6 +169,18 @@ class InterfaceInsereFuncionario extends JDialog {
         usuarioField = new JTextField(20);
         JLabel senhaLabel = new JLabel("Senha:");
         senhaField = new JPasswordField(8);
+        
+        JCheckBox mostrarSenha = new JCheckBox("Mostrar senha");
+        mostrarSenha.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (mostrarSenha.isSelected()) {
+                    senhaField.setEchoChar('\u0000'); // Caractere de eco nulo para mostrar a senha
+                } else {
+                    senhaField.setEchoChar('*'); // Caractere de eco '*' para ocultar a senha
+                }
+            }
+        });
 
         sexoMasculino = new JRadioButton("Masculino");
         sexoMasculino.setBounds(80, 80, 90, 20);
@@ -163,7 +188,7 @@ class InterfaceInsereFuncionario extends JDialog {
 
         sexoFeminino = new JRadioButton("Feminino");
         sexoFeminino.setBounds(170, 80, 80, 20);
-
+        
         sexoOutros = new JRadioButton("Outro");
         sexoOutros.setBounds(250, 80, 60, 20);
 
@@ -171,10 +196,10 @@ class InterfaceInsereFuncionario extends JDialog {
         tipoSexoGroup.add(sexoMasculino);
         tipoSexoGroup.add(sexoFeminino);
         tipoSexoGroup.add(sexoOutros);
-
+        
         // BOTÃO CADASTRAR
         JButton cadastrarButton = new JButton("Cadastrar");
-        cadastrarButton.setBounds(70, 590, 100, 30);
+        cadastrarButton.setBounds(70, 620, 100, 30);
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -245,9 +270,6 @@ class InterfaceInsereFuncionario extends JDialog {
                     session.save(tbfuncionario);
 
                     transaction.commit();
-                    JOptionPane.showMessageDialog(null,"Funcionario Inserido com Sucesso!");
-                    dispose();
-                    
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -256,25 +278,146 @@ class InterfaceInsereFuncionario extends JDialog {
                 }
             }
         });
-
+        
         // BOTÃO LIMPAR
         limparCamposButton = new JButton("Limpar");
-
-        limparCamposButton.setBounds(
-                200, 590, 100, 30);
-        limparCamposButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e
-                    ) {
-                        limparCampos();
-                        listEstado.setSelectedIndex(0);
-                        listLogradouro.setSelectedIndex(0);
-                        listCidade.setSelectedIndex(0);
-                        listCargo.setSelectedIndex(0);
-                    }
+        limparCamposButton.setBounds(200, 620, 100, 30);
+        limparCamposButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                limparCampos();
+                listEstado.setSelectedIndex(0);
+                listLogradouro.setSelectedIndex(0);
+                listCidade.setSelectedIndex(0);
+                listCargo.setSelectedIndex(0);
+            }
+        });
+        
+        // Adicione os componentes ao painel principal
+        mainPanel.add(cargoLabel);
+        mainPanel.add(listCargo);
+        
+        mainPanel.add(nomeLabel);
+        mainPanel.add(nomeField);
+        
+        mainPanel.add(sexoLabel);
+        mainPanel.add(sexoMasculino);
+        mainPanel.add(sexoFeminino);
+        mainPanel.add(sexoOutros);
+        
+        // CPF NA TELA
+        mainPanel.add(documentoLabel);
+        try {
+            MaskFormatter mf = new MaskFormatter("###.###.###-##");
+            documentoField = new JFormattedTextField(mf);
+        } catch (ParseException ex) {
+            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mainPanel.add(documentoField);
+        
+        // DATA DE NASCIMENTO NA TELA 
+        mainPanel.add(dataNascimentoLabel);
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            MaskFormatter maskFormatter = new MaskFormatter("##/##/####");
+            maskFormatter.setPlaceholderCharacter('_');
+            JFormattedTextField.AbstractFormatter formatter = new JFormattedTextField.AbstractFormatter() {
+                @Override
+                public Object stringToValue(String text) throws ParseException {
+                    return dateFormat.parseObject(text);
                 }
-        );
+
+                @Override
+                public String valueToString(Object value) throws ParseException {
+                    if (value instanceof java.util.Date) {
+                        return dateFormat.format(value);
+                    }
+                    return "";
+                }
+            };
+            dataNascimentoField = new JFormattedTextField(formatter);
+            dataNascimentoField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(maskFormatter));
+        } catch (ParseException ex) {
+            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mainPanel.add(dataNascimentoField);
+        System.out.println(dataNascimentoField.getText());
+        
+        mainPanel.add(fantasiaLabel);
+        mainPanel.add(fantasiaField);
+
+        mainPanel.add(rgieLabel);
+        // MaskFormatter para permitir apenas números
+        MaskFormatter maskFormatter = null;
+        try {
+            maskFormatter = new MaskFormatter("##############");
+            maskFormatter.setValidCharacters("0123456789"); // Permite apenas números
+            maskFormatter.setPlaceholderCharacter('_'); // Define um caractere de espaço reservado
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // JFormattedTextField usando o MaskFormatter
+        JFormattedTextField rgieField = new JFormattedTextField(maskFormatter);
+        mainPanel.add(rgieField);
+        
+        // TELEFONE NA TELA
+        mainPanel.add(foneLabel);
+        try {
+            MaskFormatter mf = new MaskFormatter("(##) #####-####");
+            foneField = new JFormattedTextField(mf);
+        } catch (ParseException ex) {
+            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mainPanel.add(foneField);
+
+        mainPanel.add(emailLabel);
+        mainPanel.add(emailField);
+        
+        // CEP NA TELA
+        mainPanel.add(cepLabel);
+        try {
+            MaskFormatter mf = new MaskFormatter("#####-###");
+            cepField = new JFormattedTextField(mf);
+        } catch (ParseException ex) {
+            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mainPanel.add(cepField);
+
+        mainPanel.add(logradouroLabel);
+        mainPanel.add(listLogradouro);
+
+        mainPanel.add(enderecoLabel);
+        mainPanel.add(enderecoField);
+
+        mainPanel.add(numeroLabel);
+        mainPanel.add(numeroField);
+
+        mainPanel.add(complementoLabel);
+        mainPanel.add(complementoField);
+
+        mainPanel.add(bairroLabel);
+        mainPanel.add(bairroField);
+        
+        // Adiciona o JComboBox ao JFrame
+        mainPanel.add(estadoLabel);
+        mainPanel.add(listEstado);
+        
+        mainPanel.add(cidadeLabel);
+        mainPanel.add(listCidade);
+        
+        // DADOS DE LOGIN
+        mainPanel.add(usuarioLabel);
+        mainPanel.add(usuarioField);
+        
+        mainPanel.add(senhaLabel);
+        mainPanel.add(senhaField);
+        mainPanel.add(mostrarSenha);
+        
+        // botão para limpar
+        mainPanel.add(cadastrarButton);
+        mainPanel.add(limparCamposButton);
 
         // Define as coordenadas de posicionamento dos componentes
         int x = 10;
@@ -282,233 +425,90 @@ class InterfaceInsereFuncionario extends JDialog {
         int yGap = 30;
         int labelWidth = 150;
         int fieldWidth = 200;
-
-        cargoLabel.setBounds(x, y, labelWidth,
-                20);
-        listCargo.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        
+        cargoLabel.setBounds(x, y, labelWidth, 20);
+        listCargo.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
+        y += yGap;
+        nomeLabel.setBounds(x, y, labelWidth, 20);
+        nomeField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
+        y += yGap;
+        sexoLabel.setBounds(x, y, labelWidth, 20);
 
         y += yGap;
-
-        nomeLabel.setBounds(x, y, labelWidth,
-                20);
-        nomeField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        documentoLabel.setBounds(x, y, labelWidth, 20);
+        documentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
+        y += yGap;
+        dataNascimentoLabel.setBounds(x, y, labelWidth, 20);
+        dataNascimentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
+        y += yGap;
+        fantasiaLabel.setBounds(x, y, labelWidth, 20);
+        fantasiaField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        sexoLabel.setBounds(x, y, labelWidth,
-                20);
-
-        y += yGap;
-
-        documentoLabel.setBounds(x, y, labelWidth,
-                20);
-        documentoField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        rgieLabel.setBounds(x, y, labelWidth, 20);
+        rgieField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        dataNascimentoLabel.setBounds(x, y, labelWidth,
-                20);
-        dataNascimentoField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        foneLabel.setBounds(x, y, labelWidth, 20);
+        foneField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        fantasiaLabel.setBounds(x, y, labelWidth,
-                20);
-        fantasiaField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        emailLabel.setBounds(x, y, labelWidth, 20);
+        emailField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        rgieLabel.setBounds(x, y, labelWidth,
-                20);
-        rgieField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        cepLabel.setBounds(x, y, labelWidth, 20);
+        cepField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        foneLabel.setBounds(x, y, labelWidth,
-                20);
-        foneField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        logradouroLabel.setBounds(x, y, labelWidth, 20);
+        listLogradouro.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        emailLabel.setBounds(x, y, labelWidth,
-                20);
-        emailField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        enderecoLabel.setBounds(x, y, labelWidth, 20);
+        enderecoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        cepLabel.setBounds(x, y, labelWidth,
-                20);
-        cepField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        numeroLabel.setBounds(x, y, labelWidth, 20);
+        numeroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        logradouroLabel.setBounds(x, y, labelWidth,
-                20);
-        listLogradouro.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        complementoLabel.setBounds(x, y, labelWidth, 20);
+        complementoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        enderecoLabel.setBounds(x, y, labelWidth,
-                20);
-        enderecoField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
+        bairroLabel.setBounds(x, y, labelWidth, 20);
+        bairroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-
-        numeroLabel.setBounds(x, y, labelWidth,
-                20);
-        numeroField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
-
+        estadoLabel.setBounds(x, y, labelWidth, 20);
+        listEstado.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
         y += yGap;
-
-        complementoLabel.setBounds(x, y, labelWidth,
-                20);
-        complementoField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
-
+        cidadeLabel.setBounds(x, y, labelWidth, 20);
+        listCidade.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
         y += yGap;
-
-        bairroLabel.setBounds(x, y, labelWidth,
-                20);
-        bairroField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
-
+        usuarioLabel.setBounds(x, y, labelWidth, 20);
+        usuarioField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
         y += yGap;
-
-        estadoLabel.setBounds(x, y, labelWidth,
-                20);
-        listEstado.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
-
+        senhaLabel.setBounds(x, y, labelWidth, 20);
+        senhaField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
         y += yGap;
-
-        cidadeLabel.setBounds(x, y, labelWidth,
-                20);
-        listCidade.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
-
-        y += yGap;
-
-        usuarioLabel.setBounds(x, y, labelWidth,
-                20);
-        usuarioField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
-
-        y += yGap;
-
-        senhaLabel.setBounds(x, y, labelWidth,
-                20);
-        senhaField.setBounds(x
-                + labelWidth + 10, y, fieldWidth, 20);
-
-        // Adicione os componentes ao painel principal
-        mainPanel.add(cargoLabel);
-
-        mainPanel.add(listCargo);
-
-        mainPanel.add(nomeLabel);
-
-        mainPanel.add(nomeField);
-
-        mainPanel.add(sexoLabel);
-
-        mainPanel.add(sexoMasculino);
-
-        mainPanel.add(sexoFeminino);
-
-        mainPanel.add(sexoOutros);
-
-        mainPanel.add(documentoLabel);
-
-        mainPanel.add(documentoField);
-
-        mainPanel.add(dataNascimentoLabel);
-
-        mainPanel.add(dataNascimentoField);
-
-        mainPanel.add(fantasiaLabel);
-
-        mainPanel.add(fantasiaField);
-
-        mainPanel.add(rgieLabel);
-
-        mainPanel.add(rgieField);
-
-        mainPanel.add(foneLabel);
-
-        mainPanel.add(foneField);
-
-        mainPanel.add(emailLabel);
-
-        mainPanel.add(emailField);
-
-        mainPanel.add(cepLabel);
-
-        mainPanel.add(cepField);
-
-        mainPanel.add(logradouroLabel);
-
-        mainPanel.add(listLogradouro);
-
-        mainPanel.add(enderecoLabel);
-
-        mainPanel.add(enderecoField);
-
-        mainPanel.add(numeroLabel);
-
-        mainPanel.add(numeroField);
-
-        mainPanel.add(complementoLabel);
-
-        mainPanel.add(complementoField);
-
-        mainPanel.add(bairroLabel);
-
-        mainPanel.add(bairroField);
-
-        // Adiciona o JComboBox ao JFrame
-        mainPanel.add(estadoLabel);
-
-        mainPanel.add(listEstado);
-
-        mainPanel.add(cidadeLabel);
-
-        mainPanel.add(listCidade);
-
-        // DADOS DE LOGIN
-        mainPanel.add(usuarioLabel);
-
-        mainPanel.add(usuarioField);
-
-        mainPanel.add(senhaLabel);
-
-        mainPanel.add(senhaField);
-
-        // botão para limpar
-        mainPanel.add(cadastrarButton);
-
-        mainPanel.add(limparCamposButton);
-
+        mostrarSenha.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
         // Defina o tamanho do painel principal
-        mainPanel.setPreferredSize(
-                new Dimension(380, 630));
+        mainPanel.setPreferredSize(new Dimension(380, 660));
 
         // Adicione o painel principal à janela de diálogo
-        getContentPane()
-                .add(mainPanel);
+        getContentPane().add(mainPanel);
         pack();
-
         setLocationRelativeTo(mainFrame);
     }
 
@@ -528,7 +528,7 @@ class InterfaceInsereFuncionario extends JDialog {
         usuarioField.setText("");
         senhaField.setText("");
     }
-
+    
     public void showInterface() {
         // Exibe a janela menor
         setVisible(true);
