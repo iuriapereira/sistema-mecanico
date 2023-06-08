@@ -6,13 +6,20 @@ import banco.TbEstado;
 import banco.TbLogradouro;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 class InterfaceInsereFuncionario extends JDialog {
 
@@ -221,7 +228,7 @@ class InterfaceInsereFuncionario extends JDialog {
                     tbentidade.setEntFone(foneField.getText());
                     tbentidade.setEntEmail(emailField.getText());
 
-                    ButtonModel selectedButtonModel = tipoClienteGroup.getSelection();
+                    ButtonModel selectedButtonModel = tipoSexoGroup.getSelection();
                     if (selectedButtonModel == sexoMasculino.getModel()) {
                         tbentidade.setEntSexo("M");
                     } else if (selectedButtonModel == sexoFeminino.getModel()) {
@@ -251,290 +258,264 @@ class InterfaceInsereFuncionario extends JDialog {
                     Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }
-    }
-    );
-        
+        });
+
         // BOTÃO LIMPAR
-        limparCamposButton  = new JButton("Limpar");
+        limparCamposButton = new JButton("Limpar");
 
-    limparCamposButton.setBounds (
-
-    200, 590, 100, 30);
-    limparCamposButton.addActionListener ( 
-        new ActionListener() {
-            @Override
-        public void actionPerformed
-        (ActionEvent e
-        
-            ) {
-                limparCampos();
-            listEstado.setSelectedIndex(0);
-            listLogradouro.setSelectedIndex(0);
-            listCidade.setSelectedIndex(0);
-            listCargo.setSelectedIndex(0);
-        }
-    }
-    );
+        limparCamposButton.setBounds(
+                200, 590, 100, 30);
+        limparCamposButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e
+                    ) {
+                        limparCampos();
+                        listEstado.setSelectedIndex(0);
+                        listLogradouro.setSelectedIndex(0);
+                        listCidade.setSelectedIndex(0);
+                        listCargo.setSelectedIndex(0);
+                    }
+                }
+        );
 
         // Define as coordenadas de posicionamento dos componentes
         int x = 10;
-    int y = 20;
-    int yGap = 30;
-    int labelWidth = 150;
-    int fieldWidth = 200;
+        int y = 20;
+        int yGap = 30;
+        int labelWidth = 150;
+        int fieldWidth = 200;
 
-    cargoLabel.setBounds (x, y, labelWidth, 
+        cargoLabel.setBounds(x, y, labelWidth,
+                20);
+        listCargo.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    listCargo.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-        
-        y += yGap ;
+        y += yGap;
 
-    nomeLabel.setBounds (x, y, labelWidth, 
+        nomeLabel.setBounds(x, y, labelWidth,
+                20);
+        nomeField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    nomeField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-        
-        y += yGap ;
+        y += yGap;
 
-    sexoLabel.setBounds (x, y, labelWidth, 
-    20);
+        sexoLabel.setBounds(x, y, labelWidth,
+                20);
 
-        y += yGap ;
+        y += yGap;
 
-    documentoLabel.setBounds (x, y, labelWidth, 
+        documentoLabel.setBounds(x, y, labelWidth,
+                20);
+        documentoField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    documentoField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-        
-        y += yGap ;
+        y += yGap;
 
-    dataNascimentoLabel.setBounds (x, y, labelWidth, 
+        dataNascimentoLabel.setBounds(x, y, labelWidth,
+                20);
+        dataNascimentoField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    dataNascimentoField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-        
-        y += yGap ;
+        y += yGap;
 
-    fantasiaLabel.setBounds (x, y, labelWidth, 
+        fantasiaLabel.setBounds(x, y, labelWidth,
+                20);
+        fantasiaField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    fantasiaField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        y += yGap;
 
-        y += yGap ;
+        rgieLabel.setBounds(x, y, labelWidth,
+                20);
+        rgieField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    rgieLabel.setBounds (x, y, labelWidth, 
+        y += yGap;
 
-    20);
-    rgieField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        foneLabel.setBounds(x, y, labelWidth,
+                20);
+        foneField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-        y += yGap ;
+        y += yGap;
 
-    foneLabel.setBounds (x, y, labelWidth, 
+        emailLabel.setBounds(x, y, labelWidth,
+                20);
+        emailField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    foneField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        y += yGap;
 
-        y += yGap ;
+        cepLabel.setBounds(x, y, labelWidth,
+                20);
+        cepField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    emailLabel.setBounds (x, y, labelWidth, 
+        y += yGap;
 
-    20);
-    emailField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        logradouroLabel.setBounds(x, y, labelWidth,
+                20);
+        listLogradouro.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-        y += yGap ;
+        y += yGap;
 
-    cepLabel.setBounds (x, y, labelWidth, 
+        enderecoLabel.setBounds(x, y, labelWidth,
+                20);
+        enderecoField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    cepField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        y += yGap;
 
-        y += yGap ;
+        numeroLabel.setBounds(x, y, labelWidth,
+                20);
+        numeroField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    logradouroLabel.setBounds (x, y, labelWidth, 
+        y += yGap;
 
-    20);
-    listLogradouro.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        complementoLabel.setBounds(x, y, labelWidth,
+                20);
+        complementoField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-        y += yGap ;
+        y += yGap;
 
-    enderecoLabel.setBounds (x, y, labelWidth, 
+        bairroLabel.setBounds(x, y, labelWidth,
+                20);
+        bairroField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    enderecoField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        y += yGap;
 
-        y += yGap ;
+        estadoLabel.setBounds(x, y, labelWidth,
+                20);
+        listEstado.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    numeroLabel.setBounds (x, y, labelWidth, 
+        y += yGap;
 
-    20);
-    numeroField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        cidadeLabel.setBounds(x, y, labelWidth,
+                20);
+        listCidade.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-        y += yGap ;
+        y += yGap;
 
-    complementoLabel.setBounds (x, y, labelWidth, 
+        usuarioLabel.setBounds(x, y, labelWidth,
+                20);
+        usuarioField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    20);
-    complementoField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
+        y += yGap;
 
-        y += yGap ;
+        senhaLabel.setBounds(x, y, labelWidth,
+                20);
+        senhaField.setBounds(x
+                + labelWidth + 10, y, fieldWidth, 20);
 
-    bairroLabel.setBounds (x, y, labelWidth, 
-
-    20);
-    bairroField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-
-        y += yGap ;
-
-    estadoLabel.setBounds (x, y, labelWidth, 
-
-    20);
-    listEstado.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-        
-        y += yGap ;
-
-    cidadeLabel.setBounds (x, y, labelWidth, 
-
-    20);
-    listCidade.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-        
-        y += yGap ;
-
-    usuarioLabel.setBounds (x, y, labelWidth, 
-
-    20);
-    usuarioField.setBounds (x 
-    + labelWidth + 10, y, fieldWidth, 20);
-        
-        y += yGap ;
-
-    senhaLabel.setBounds (x, y, labelWidth, 
-
-    20);
-    senhaField.setBounds (x 
-
-    + labelWidth + 10, y, fieldWidth, 20);
-        
         // Adicione os componentes ao painel principal
-    mainPanel.add (cargoLabel);
+        mainPanel.add(cargoLabel);
 
-    mainPanel.add (listCargo);
+        mainPanel.add(listCargo);
 
-    mainPanel.add (nomeLabel);
+        mainPanel.add(nomeLabel);
 
-    mainPanel.add (nomeField);
+        mainPanel.add(nomeField);
 
-    mainPanel.add (sexoLabel);
+        mainPanel.add(sexoLabel);
 
-    mainPanel.add (sexoMasculino);
+        mainPanel.add(sexoMasculino);
 
-    mainPanel.add (sexoFeminino);
+        mainPanel.add(sexoFeminino);
 
-    mainPanel.add (sexoOutros);
+        mainPanel.add(sexoOutros);
 
-    mainPanel.add (documentoLabel);
+        mainPanel.add(documentoLabel);
 
-    mainPanel.add (documentoField);
+        mainPanel.add(documentoField);
 
-    mainPanel.add (dataNascimentoLabel);
+        mainPanel.add(dataNascimentoLabel);
 
-    mainPanel.add (dataNascimentoField);
+        mainPanel.add(dataNascimentoField);
 
-    mainPanel.add (fantasiaLabel);
+        mainPanel.add(fantasiaLabel);
 
-    mainPanel.add (fantasiaField);
+        mainPanel.add(fantasiaField);
 
-    mainPanel.add (rgieLabel);
+        mainPanel.add(rgieLabel);
 
-    mainPanel.add (rgieField);
+        mainPanel.add(rgieField);
 
-    mainPanel.add (foneLabel);
+        mainPanel.add(foneLabel);
 
-    mainPanel.add (foneField);
+        mainPanel.add(foneField);
 
-    mainPanel.add (emailLabel);
+        mainPanel.add(emailLabel);
 
-    mainPanel.add (emailField);
+        mainPanel.add(emailField);
 
-    mainPanel.add (cepLabel);
+        mainPanel.add(cepLabel);
 
-    mainPanel.add (cepField);
+        mainPanel.add(cepField);
 
-    mainPanel.add (logradouroLabel);
+        mainPanel.add(logradouroLabel);
 
-    mainPanel.add (listLogradouro);
+        mainPanel.add(listLogradouro);
 
-    mainPanel.add (enderecoLabel);
+        mainPanel.add(enderecoLabel);
 
-    mainPanel.add (enderecoField);
+        mainPanel.add(enderecoField);
 
-    mainPanel.add (numeroLabel);
+        mainPanel.add(numeroLabel);
 
-    mainPanel.add (numeroField);
+        mainPanel.add(numeroField);
 
-    mainPanel.add (complementoLabel);
+        mainPanel.add(complementoLabel);
 
-    mainPanel.add (complementoField);
+        mainPanel.add(complementoField);
 
-    mainPanel.add (bairroLabel);
+        mainPanel.add(bairroLabel);
 
-    mainPanel.add (bairroField);
+        mainPanel.add(bairroField);
 
-    // Adiciona o JComboBox ao JFrame
-    mainPanel.add (estadoLabel);
+        // Adiciona o JComboBox ao JFrame
+        mainPanel.add(estadoLabel);
 
-    mainPanel.add (listEstado);
+        mainPanel.add(listEstado);
 
-    mainPanel.add (cidadeLabel);
+        mainPanel.add(cidadeLabel);
 
-    mainPanel.add (listCidade);
+        mainPanel.add(listCidade);
 
-    // DADOS DE LOGIN
-    mainPanel.add (usuarioLabel);
+        // DADOS DE LOGIN
+        mainPanel.add(usuarioLabel);
 
-    mainPanel.add (usuarioField);
+        mainPanel.add(usuarioField);
 
-    mainPanel.add (senhaLabel);
+        mainPanel.add(senhaLabel);
 
-    mainPanel.add (senhaField);
+        mainPanel.add(senhaField);
 
-    // botão para limpar
-    mainPanel.add (cadastrarButton);
+        // botão para limpar
+        mainPanel.add(cadastrarButton);
 
-    mainPanel.add (limparCamposButton);
+        mainPanel.add(limparCamposButton);
 
-    // Defina o tamanho do painel principal
-    mainPanel.setPreferredSize (
-
-    new Dimension(380, 630));
+        // Defina o tamanho do painel principal
+        mainPanel.setPreferredSize(
+                new Dimension(380, 630));
 
         // Adicione o painel principal à janela de diálogo
-    getContentPane()
+        getContentPane()
+                .add(mainPanel);
+        pack();
 
-    .add(mainPanel);
-    pack();
+        setLocationRelativeTo(mainFrame);
+    }
 
-    setLocationRelativeTo(mainFrame);
-}
-
-private void limparCampos() {
+    private void limparCampos() {
         nomeField.setText("");
         documentoField.setText("");
         fantasiaField.setText("");
@@ -550,7 +531,7 @@ private void limparCampos() {
         usuarioField.setText("");
         senhaField.setText("");
     }
-    
+
     public void showInterface() {
         // Exibe a janela menor
         setVisible(true);

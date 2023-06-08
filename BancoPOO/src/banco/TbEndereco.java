@@ -13,7 +13,7 @@ public class TbEndereco  implements java.io.Serializable {
 
      private Integer endId;
      private TbEndPostal tbEndPostal;
-     private int endNumero;
+     private String endNumero;
      private String endComplemento;
      private Set tbEntidades = new HashSet(0);
 
@@ -21,11 +21,11 @@ public class TbEndereco  implements java.io.Serializable {
     }
 
 	
-    public TbEndereco(TbEndPostal tbEndPostal, int endNumero) {
+    public TbEndereco(TbEndPostal tbEndPostal, String endNumero) {
         this.tbEndPostal = tbEndPostal;
         this.endNumero = endNumero;
     }
-    public TbEndereco(TbEndPostal tbEndPostal, int endNumero, String endComplemento, Set tbEntidades) {
+    public TbEndereco(TbEndPostal tbEndPostal, String endNumero, String endComplemento, Set tbEntidades) {
        this.tbEndPostal = tbEndPostal;
        this.endNumero = endNumero;
        this.endComplemento = endComplemento;
@@ -46,11 +46,11 @@ public class TbEndereco  implements java.io.Serializable {
     public void setTbEndPostal(TbEndPostal tbEndPostal) {
         this.tbEndPostal = tbEndPostal;
     }
-    public int getEndNumero() {
+    public String getEndNumero() {
         return this.endNumero;
     }
     
-    public void setEndNumero(int endNumero) {
+    public void setEndNumero(String endNumero) {
         this.endNumero = endNumero;
     }
     public String getEndComplemento() {
