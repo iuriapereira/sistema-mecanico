@@ -1,8 +1,18 @@
 package bancopoo;
 
-import javax.swing.*;
+import banco.TbCidEst;
+import banco.TbEstado;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 class InterfaceInsereCliente extends JDialog {
     private final JFrame mainFrame;
@@ -24,14 +34,72 @@ class InterfaceInsereCliente extends JDialog {
     private JRadioButton pessoaJuridicaRadioButton;
     private JTextField dataNascimentoField;
     private JButton limparCamposButton;
+    private Session session;
     
 
-    public InterfaceInsereCliente(JFrame mainFrame) {
+    public InterfaceInsereCliente(JFrame mainFrame, Session session) {
         this.mainFrame = mainFrame;
-
+        this.session = session;
+        
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        setTitle("Inserindo dados do cliente");
+        
+        // CONEXÃO COM O BANCO TB_ESTADO
+        Criteria estd = session.createCriteria(TbEstado.class);
+        ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
+        // COMBOBOX DO ESTADO
+        JComboBox<String> listEstado = new JComboBox<>();
+        for (TbEstado descricao : estado) {
+            listEstado.addItem(descricao.getEstSigla());
+        }
+          
+        // CONEXÃO COM O BANCO TB_CIDEST
+        Criteria cid = session.createCriteria(TbCidEst.class);
+        ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
+        JComboBox<String> listCidade = new JComboBox<>();
+        
 
+        // COMBOBOX DO CIDADE
+        //JComboBox<String> listCidade = new JComboBox<>();
+        
+        
+        listEstado.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedEstado = (String) listEstado.getSelectedItem();
+
+                // Obter as cidades correspondentes ao estado selecionado
+                // ArrayList<TbCidEst> cidadesDoEstado = new ArrayList<>();
+                String hql = "SELECT ce.tbCidade.cidDescricao FROM TbCidEst ce WHERE ce.tbEstado.estSigla = '" + selectedEstado + "'";
+                Query query = session.createQuery(hql);
+                //String[] array = Arrays.asList(query.list()).toArray(new String[0]);
+                List<String> cidades = (List<String>) query.list();
+
+                DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+                for (String cidade : cidades) {
+                    model.addElement(cidade);
+                    System.out.println(cidade);
+                }
+                ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
+                
+                listCidade.setModel(model);
+                /*for (TbCidEst descricao : cidade) 
+                    if (descricao.getTbEstado().getEstSigla().equals(selectedEstado)) {
+                        cidadesDoEstado.add(descricao);
+                    }
+                }*/
+
+                // Limpar o JComboBox de cidade
+                //listCidade.removeAllItems();
+
+                // Atualizar a interface
+                revalidate();
+                repaint();
+            }
+        });
+        
+        
         // Painel da janela menor
         JPanel mainPanel = new JPanel(null); // Define o layout como null
 
@@ -61,10 +129,8 @@ class InterfaceInsereCliente extends JDialog {
         complementoField = new JTextField(20);
         JLabel bairroLabel = new JLabel("Bairro:");
         bairroField = new JTextField(20);
+        JLabel estadoLabel = new JLabel("Estado:");
         JLabel cidadeLabel = new JLabel("Cidade:");
-        cidadeField = new JTextField(20);
-        JLabel estadoLabel = new JLabel("Estado:"); // combobox
-        estadoField = new JTextField(20);
 
         pessoaFisicaRadioButton = new JRadioButton("Pessoa Física");
         pessoaFisicaRadioButton.setBounds(10, 10, 150, 20);
@@ -177,12 +243,13 @@ class InterfaceInsereCliente extends JDialog {
         bairroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
 
         y += yGap;
-        cidadeLabel.setBounds(x, y, labelWidth, 20);
-        cidadeField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-
-        y += yGap;
         estadoLabel.setBounds(x, y, labelWidth, 20);
-        estadoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        listEstado.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
+        y += yGap;
+        cidadeLabel.setBounds(x, y, labelWidth, 20);
+        listCidade.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        
 
         
 
@@ -228,16 +295,19 @@ class InterfaceInsereCliente extends JDialog {
 
         mainPanel.add(bairroLabel);
         mainPanel.add(bairroField);
-
-        mainPanel.add(cidadeLabel);
-        mainPanel.add(cidadeField);
-
+        
+        // Adiciona o JComboBox ao JFrame
         mainPanel.add(estadoLabel);
-        mainPanel.add(estadoField);
+        mainPanel.add(listEstado);
+        
+        mainPanel.add(cidadeLabel);
+        mainPanel.add(listCidade);
+        
         // botão para limpar
         mainPanel.add(cadastrarButton);
         mainPanel.add(limparCamposButton);
-
+        
+        
         // Defina o tamanho do painel principal
         mainPanel.setPreferredSize(new Dimension(380, 550));
 

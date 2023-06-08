@@ -11,7 +11,7 @@ import org.hibernate.Session;
 
 
 class InterfaceCliente extends InterfaceAbstrata{
-    private final Session session;
+    protected final Session session;
 
     public InterfaceCliente(JFrame mainFrame, Session session) {
         super(mainFrame,session);
@@ -56,7 +56,7 @@ class InterfaceCliente extends InterfaceAbstrata{
                     // Verifica se uma janela menor já está aberta
                     if (!isSmallWindowOpen) {
                         if (label.equals("Inserir")) {
-                            InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame);
+                            InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame, session);
                             inserir.showInterface();
                         } else if (label.equals("Alterar")) {
                             //InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame);
