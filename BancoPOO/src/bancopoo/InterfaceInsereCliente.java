@@ -5,14 +5,12 @@ import banco.TbEstado;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 class InterfaceInsereCliente extends JDialog {
     private final JFrame mainFrame;
@@ -59,39 +57,24 @@ class InterfaceInsereCliente extends JDialog {
         ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
         JComboBox<String> listCidade = new JComboBox<>();
         
-
-        // COMBOBOX DO CIDADE
-        //JComboBox<String> listCidade = new JComboBox<>();
-        
-        
         listEstado.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedEstado = (String) listEstado.getSelectedItem();
 
                 // Obter as cidades correspondentes ao estado selecionado
-                // ArrayList<TbCidEst> cidadesDoEstado = new ArrayList<>();
                 String hql = "SELECT ce.tbCidade.cidDescricao FROM TbCidEst ce WHERE ce.tbEstado.estSigla = '" + selectedEstado + "'";
                 Query query = session.createQuery(hql);
-                //String[] array = Arrays.asList(query.list()).toArray(new String[0]);
                 List<String> cidades = (List<String>) query.list();
 
                 DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
                 for (String cidade : cidades) {
                     model.addElement(cidade);
-                    System.out.println(cidade);
                 }
                 ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
                 
                 listCidade.setModel(model);
-                /*for (TbCidEst descricao : cidade) 
-                    if (descricao.getTbEstado().getEstSigla().equals(selectedEstado)) {
-                        cidadesDoEstado.add(descricao);
-                    }
-                }*/
-
-                // Limpar o JComboBox de cidade
-                //listCidade.removeAllItems();
+                
 
                 // Atualizar a interface
                 revalidate();
