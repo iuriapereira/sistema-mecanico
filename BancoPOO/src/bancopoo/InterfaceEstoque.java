@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 class InterfaceEstoque extends InterfaceAbstrata{
@@ -20,31 +22,31 @@ class InterfaceEstoque extends InterfaceAbstrata{
 
     @Override
     protected JTable createTable(Session session) {
-        Criteria criteria = session.createCriteria(TbEstoque.class);
-        ArrayList<TbEstoque> Pecas = (ArrayList<TbEstoque>) criteria.list();
+        // Código para buscar os dados do banco de dados usando Hibernate
+        String hql = "SELECT e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
+        Query query = session.createQuery(hql);
 
-        // Dados da tabela
-        Object[][] data = new Object[Pecas.size()][4];
-        for (int i = 0; i < Pecas.size(); i++) {
-            TbEstoque peca = Pecas.get(i);
-            data[i][0] = peca.getTbFornecedorHasPeca().getTbPeca().getPeDescricao();
-            data[i][2] = peca.getEstoQuantidade();
-            data[i][1] = peca.getEstoValorUni();
-            data[i][2] = peca.getTbFornecedorHasPeca().getTbPeca().getPeQuantMin();
-            data[i][3] = peca.getTbFornecedorHasPeca().getTbFornecedor().getTbEntidade().getEntNomeFantasia();
-
-        }
         String[] columnNames = {"Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Quantidade Mínima", "Fornecedor"};
 
         // Modelo da tabela não editável
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        
-                // Parte superior com os botões flutuantes
+
+        List<Object[]> results = query.list();
+        for (Object[] result : results) {
+            String nome = (String) result[0];
+            int qtd_e = (int) result[1];
+            int valor = (int) result[2];
+            int qtd_m = (int) result[3];
+            String fornecedor = (String) result[4];          
+            
+            model.addRow(new Object[]{nome, qtd_e,valor,qtd_m,fornecedor}); // Adicione outras colunas conforme necessário
+        }
+         // Parte superior com os botões flutuantes
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
             String label = buttonLabels[i];

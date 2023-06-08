@@ -55,9 +55,9 @@ class BancoPOO {
         // Parte superior com os botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
            
-        String[] buttonLabels = {"Cliente", "Fornecedor", "Funcionário", "Peça", "Serviço", "Venda"};
+        String[] buttonLabels = {"Cliente", "Fornecedor", "Funcionário", "Peça", "Venda"};
         String[] buttonIcons = {"src/resources/images/clientes.png", "src/resources/images/fornecedor.png", "caminho/para/imagem3.png",
-                "src/resources/images/produto.png", "src/resources/images/servico.png", "src/resources/images/venda.png"};
+                "src/resources/images/produto.png", "src/resources/images/venda.png"};
 
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSquareButton(buttonIcons[i]);
@@ -77,10 +77,7 @@ class BancoPOO {
                     } else if (label.equals("Peça")) {
                         InterfaceEstoque pec = new InterfaceEstoque(mainFrame, session);
                         pec.show();
-                    } else if (label.equals("Serviço")) {
-                        InterfaceServ serv = new InterfaceServ(mainFrame, session);
-                        serv.show();
-                    } else if (label.equals("Venda")) {
+                    }else if (label.equals("Venda")) {
                         InterfaceVenda venda = new InterfaceVenda(mainFrame, session);
                         venda.show();
                     }

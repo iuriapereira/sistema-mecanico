@@ -6,7 +6,9 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 class InterfaceVenda extends InterfaceAbstrata {
@@ -19,27 +21,35 @@ class InterfaceVenda extends InterfaceAbstrata {
 
     @Override
     protected JTable createTable(Session session) {
-        Criteria criteria = session.createCriteria(TbVenPeca.class);
-        ArrayList<TbVenPeca> vendas = (ArrayList<TbVenPeca>) criteria.list();
+        
+    String hql = "SELECT v.venId, SUM(vp.vpQuantidade * e.estoValorUni) + vs.vsValorServico, v.venData, v.tbTipoPagamento " +
+             "FROM TbVenda v " +
+             "JOIN v.tbVenPecas vp " +
+             "JOIN vp.tbEstoque e " +
+             "JOIN v.tbVendaSers vs " +
+             "GROUP BY v.venId, v.venData, v.tbTipoPagamento";
 
-        // Dados da tabela
-        Object[][] data = new Object[vendas.size()][2];
-        for (int i = 0; i < vendas.size(); i++) {
-            TbVenPeca venda = vendas.get(i);
-            data[i][0] = venda.getTbVenda().getVenId();
-            data[i][1] = venda.getTbVenda().getTbCliente().getTbEntidade().getEntNomeFantasia();
-        }
-
-        String[] columnNames = {"ID", "Cliente", "Valor Total", "Marca Veiculo", "Modelo Veiculo", "Placa Veiculo"};
+        Query query = session.createQuery(hql);
+        String[] columnNames = {"ID", "Nome Cliente", "Valor Total", "Data","Tipo Pagamento"};
 
         // Modelo da tabela não editável
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        
+
+        List<Object[]> results = query.list();
+        for (Object[] result : results) {
+            int id = (int) result[0];
+            String nome = (String) result[1];
+            float valor = (float) result[2];
+            String data = (String) result[3];
+            String pagamento = (String) result[4];
+            
+            model.addRow(new Object[]{id, nome,valor,data,pagamento}); // Adicione outras colunas conforme necessário
+        }         
                 // Parte superior com os botões flutuantes
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);

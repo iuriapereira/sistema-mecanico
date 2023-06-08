@@ -6,7 +6,9 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 public class InterfaceFornecedor extends InterfaceAbstrata {
@@ -19,27 +21,29 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
 
     @Override
     protected JTable createTable(Session session) {
-        Criteria criteria = session.createCriteria(TbFornecedor.class);
-        ArrayList<TbFornecedor> fornecedores = (ArrayList<TbFornecedor>) criteria.list();
+        // Código para buscar os dados do banco de dados usando Hibernate
+        String hql = "SELECT f.tbEntidade.entCpfCnpj, f.tbEntidade.entNomeFantasia, f.tbEntidade.entFone, f.tbEntidade.entEmail FROM TbFornecedor f";
+        Query query = session.createQuery(hql);
 
-        // Dados da tabela
-        Object[][] data = new Object[fornecedores.size()][4];
-        for (int i = 0; i < fornecedores.size(); i++) {
-            TbFornecedor fornecedor = fornecedores.get(i);
-            data[i][0] = fornecedor.getTbEntidade().getEntCpfCnpj();
-            data[i][1] = fornecedor.getTbEntidade().getEntNomeFantasia();
-            data[i][2] = fornecedor.getTbEntidade().getEntFone();
-            data[i][3] = fornecedor.getTbEntidade().getEntEmail();
-        }
         String[] columnNames = {"Cpf/Cnpj", "Nome Fantasia", "Fone", "Email"};
-
         // Modelo da tabela não editável
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+
+        List<Object[]> results = query.list();
+        for (Object[] result : results) {
+            String cnpj = (String) result[0];
+            String nome = (String) result[1];
+            String fone = (String) result[2];
+            String email = (String) result[3];         
+            
+            model.addRow(new Object[]{cnpj, nome,fone,email}); // Adicione outras colunas conforme necessário
+        }
+
         // Parte superior com os botões flutuantes
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
