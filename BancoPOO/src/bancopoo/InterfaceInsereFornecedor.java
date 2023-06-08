@@ -288,7 +288,6 @@ class InterfaceInsereFornecedor extends JDialog {
         numeroField.setText("");
         complementoField.setText("");
         bairroField.setText("");
-        dataNascimentoField.setText("");
     }
     
     public void showInterface() {

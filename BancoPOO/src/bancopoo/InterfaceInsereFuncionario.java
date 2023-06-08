@@ -46,7 +46,7 @@ class InterfaceInsereFuncionario extends JDialog {
         
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
-        setTitle("Inserindo dados do cliente");
+        setTitle("Inserindo dados do funcionário");
         
         // CONEXÃO COM O BANCO TB_ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
@@ -97,10 +97,11 @@ class InterfaceInsereFuncionario extends JDialog {
         // CONEXÃO COM O BANCO TB_LOGRADOURO
         Criteria log = session.createCriteria(TbLogradouro.class);
         ArrayList<TbLogradouro> logradouro = (ArrayList<TbLogradouro>) log.list();
+        
         // COMBOBOX DO LOGRADOURO
         JComboBox<String> listLogradouro = new JComboBox<>();
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
-        logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
         listLogradouro.setModel(logr); 
         for (TbLogradouro descricao : logradouro) {
             listLogradouro.addItem(descricao.getLogDescricao());
@@ -109,10 +110,10 @@ class InterfaceInsereFuncionario extends JDialog {
         // CONEXÃO COM O BANCO TB_CARGO
         Criteria cag = session.createCriteria(TbCargo.class);
         ArrayList<TbCargo> cargo = (ArrayList<TbCargo>) cag.list();
-        // COMBOBOX DO LOGRADOURO
+        // COMBOBOX DO CARGO
         JComboBox<String> listCargo = new JComboBox<>();
         DefaultComboBoxModel<String> carg = new DefaultComboBoxModel<>();
-        carg.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        carg.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS CARGOS
         listCargo.setModel(carg); 
         for (TbCargo descricao : cargo) {
             listCargo.addItem(descricao.getCarDescricao());
@@ -166,10 +167,10 @@ class InterfaceInsereFuncionario extends JDialog {
         sexoOutros = new JRadioButton("Outro");
         sexoOutros.setBounds(250, 80, 60, 20);
 
-        ButtonGroup tipoClienteGroup = new ButtonGroup();
-        tipoClienteGroup.add(sexoMasculino);
-        tipoClienteGroup.add(sexoFeminino);
-        tipoClienteGroup.add(sexoOutros);
+        ButtonGroup tipoSexoGroup = new ButtonGroup();
+        tipoSexoGroup.add(sexoMasculino);
+        tipoSexoGroup.add(sexoFeminino);
+        tipoSexoGroup.add(sexoOutros);
         
         // BOTÃO CADASTRAR
         JButton cadastrarButton = new JButton("Cadastrar");
@@ -197,6 +198,10 @@ class InterfaceInsereFuncionario extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 limparCampos();
+                listEstado.setSelectedIndex(0);
+                listLogradouro.setSelectedIndex(0);
+                listCidade.setSelectedIndex(0);
+                listCargo.setSelectedIndex(0);
             }
         });
 
