@@ -43,7 +43,7 @@ class InterfaceEstoque extends InterfaceAbstrata {
         for (Object[] result : results) {
             String nome = (String) result[0];
             int qtd_e = (int) result[1];
-            int valor = (int) result[2];
+            Float valor = (Float) result[2];
             int qtd_m = (int) result[3];
             String fornecedor = (String) result[4];
 
@@ -82,7 +82,7 @@ class InterfaceEstoque extends InterfaceAbstrata {
                         // Verifica se uma linha está selecionada
                         if (selectedRow != -1) {
                             // Obtém o CPF da linha selecionada
-                            selectedPeca = (String) table.getValueAt(selectedRow, 2);
+                            selectedPeca = (String) table.getValueAt(selectedRow, 0);
                             Transaction transaction = session.beginTransaction();
                             try {
                                 String hql = "DELETE FROM TbEstoque e WHERE e.tbFornecedorHasPeca.tbPeca.peDescricao = :Nome Produto";
@@ -133,7 +133,7 @@ class InterfaceEstoque extends InterfaceAbstrata {
         for (Object[] result : results) {
             String nome = (String) result[0];
             int qtd_e = (int) result[1];
-            int valor = (int) result[2];
+            float valor = (float) result[2];
             int qtd_m = (int) result[3];
             String fornecedor = (String) result[4];
 

@@ -17,6 +17,9 @@
         <property name="estoValorUni" type="float">
             <column name="esto_valor_uni" not-null="true" />
         </property>
+        <property name="estoMargeLucro" type="float">
+            <column name="esto_margLucro" not-null="true" />
+        </property>
         <property name="estoMedida" type="string">
             <column length="8" name="esto_medida"/>
         </property>

@@ -15,7 +15,7 @@
             <column name="pe_quant_min" not-null="true" />
         </property>
         <property name="peQuantRepos" type="int">
-            <column name="pe_quant_repos" not-null="true" />
+            <column name="pe_quant_repos" not-null="false" />
         </property>
         <set name="tbFornecedorHasPecas" table="tb_fornecedor_has_peca" inverse="true" lazy="true" fetch="select">
             <key>

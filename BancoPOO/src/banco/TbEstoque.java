@@ -15,8 +15,17 @@ public class TbEstoque  implements java.io.Serializable {
      private Integer estoId;
      private TbFornecedorHasPeca tbFornecedorHasPeca;
      private int estoQuantidade;
+
+    public float getEstoMargeLucro() {
+        return estoMargeLucro;
+    }
+
+    public void setEstoMargeLucro(float estoMargeLucro) {
+        this.estoMargeLucro = estoMargeLucro;
+    }
      private float estoValorUni;
      private int estoFpId;
+     private float estoMargeLucro;
      private String estoMedida;
      private Set tbVenPecas = new HashSet(0);
 
@@ -24,17 +33,19 @@ public class TbEstoque  implements java.io.Serializable {
     }
 
 	
-    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, float estoValorUni, int estoFpId) {
+    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, float estoValorUni, int estoFpId, float estoMargeLucro) {
         this.tbFornecedorHasPeca = tbFornecedorHasPeca;
         this.estoQuantidade = estoQuantidade;
         this.estoValorUni = estoValorUni;
+        this.estoMargeLucro = estoMargeLucro;
     }
-    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, float estoValorUni, String estoMedida, Set tbVenPecas) {
+    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, float estoValorUni, String estoMedida, Set tbVenPecas, float estoMargeLucro) {
        this.tbFornecedorHasPeca = tbFornecedorHasPeca;
        this.estoQuantidade = estoQuantidade;
        this.estoValorUni = estoValorUni;
        this.tbVenPecas = tbVenPecas;
        this.estoMedida = estoMedida;
+       this.estoMargeLucro = estoMargeLucro;
     }
    
     public Integer getEstoId() {

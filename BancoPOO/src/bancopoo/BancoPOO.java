@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -30,29 +31,28 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-
 class BancoPOO {
 
     protected static JFrame mainFrame; // Referência para a janela principal
     private static final boolean isSmallWindowOpen = false; // Verifica se uma janela menor está aberta
-    private static Configuration configuration; 
+    private static Configuration configuration;
     private static SessionFactory sessionFactory;
     private static Session session;
     private static JLabel diagnosticLabel;
     private static JButton tentarConexaoButton;
     private static JButton loginButton;
-    
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(BancoPOO::createAndShowLoginFrame);
     }
-    
-    private static void createAndShowLoginFrame(){
+
+    private static void createAndShowLoginFrame() {
         //Criando uma mainFrame que não possui relação direta com a mainFrame do programa
         mainFrame = new JFrame("Login");
         mainFrame.setSize(600, 350);
         mainFrame.setResizable(false);
         mainFrame.setLocationRelativeTo(null);
-        
+
         //Instaciando todos os atribudos da frame de login
         tentarConexaoButton = new JButton();
         diagnosticLabel = new JLabel("Tentando conexão com o servidor...");
@@ -67,7 +67,7 @@ class BancoPOO {
 
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Definindo a operação padrão ao finalizar o programa
         mainFrame.setLayout(null); // Definindo o layout
-        
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -81,26 +81,26 @@ class BancoPOO {
         //Criando evendo para o botão de mostrar senha, alterando o Echo do TextField
         passwordCheckBox.addActionListener(e -> {
             if (!isSmallWindowOpen) {
-                if(passwordCheckBox.isSelected()){
+                if (passwordCheckBox.isSelected()) {
                     senhaTextField.setEchoChar('\0');
-                } else{
+                } else {
                     senhaTextField.setEchoChar('*');
                 }
             }
         });
-        
+
         //Instanciando a logo do programa
         ImageIcon icon = new ImageIcon("src/resources/images/logo.png");
         Image scaledLogo = icon.getImage().getScaledInstance(270, 153, Image.SCALE_SMOOTH);
         logo.setIcon(new ImageIcon(scaledLogo));
-        
+
         //Setando os atributos do botão de login
         loginButton.setText("Login");
         loginButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         loginButton.setHorizontalTextPosition(SwingConstants.CENTER);
         loginButton.setFocusPainted(false);
         loginButton.setVisible(false);
-        
+
         senhaTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -109,7 +109,7 @@ class BancoPOO {
                 }
             }
         });
-        
+
         //Setando os atributos do botão de testar conexão
         tentarConexaoButton.setText("Testar conexão");
         tentarConexaoButton.setFocusPainted(false);
@@ -119,10 +119,10 @@ class BancoPOO {
         tentarConexaoButton.addActionListener(e -> {
             realizarConexao();
         });
-        
+
         //Deixando o texto do diagnósitico no centro
         diagnosticLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         //Adicionando evento para o botão login
         loginButton.addActionListener(e -> {
             if (session.isConnected()) {
@@ -134,20 +134,20 @@ class BancoPOO {
                 query.setParameter("usuario", usuario);
                 query.setParameter("senha", String.valueOf(password));
                 Object result = query.uniqueResult();
-                
+
                 //Retornando erro de login para o dianóstico
-                if (result == null){
+                if (result == null) {
                     System.out.println("nulo");
                     diagnosticLabel.setForeground(Color.red);
                     diagnosticLabel.setText("Credenciais inválidas!");
-                } else{
+                } else {
                     //Fechando a janela de login e abrindo o programa.
                     mainFrame.dispose();
                     SwingUtilities.invokeLater(BancoPOO::createAndShowGUI);
                 }
             }
         });
-        
+
         //Setando a posição de todos os elementos
         logo.setBounds(165, 13, 270, 153);
         usuarioLabel.setBounds(115, 180, 150, 20);
@@ -158,39 +158,39 @@ class BancoPOO {
         checkPasswordLabel.setBounds(195, 240, 100, 20);
         loginButton.setBounds(350, 240, 70, 22);
         tentarConexaoButton.setBounds(290, 240, 130, 22);
-        diagnosticLabel.setBounds(200, 270, 200, 20);       
-        
+        diagnosticLabel.setBounds(200, 270, 200, 20);
+
         //Adicionando todos os elementos na mainFrame
         mainFrame.add(logo);
-        
+
         mainFrame.add(usuarioLabel);
         mainFrame.add(usuarioTextField);
         mainFrame.add(senhaLabel);
         mainFrame.add(senhaTextField);
         mainFrame.add(loginButton);
-        
+
         mainFrame.add(passwordCheckBox);
         mainFrame.add(checkPasswordLabel);
-        
+
         mainFrame.add(loginButton);
-        
+
         mainFrame.add(tentarConexaoButton);
         mainFrame.add(diagnosticLabel);
         // Exibe a janela principal
         mainFrame.setVisible(true);
-        
+
         //Crio uma nova Thread para verifica a conexão com o banco, com isso a janela é primeiramente renderizada e posteriormente é realizado a conexão
         new Thread(BancoPOO::realizarConexao).start();
     }
 
     private static void createAndShowGUI() {
-        //Configuração da janela principal
+        // Configuração da janela principal
         mainFrame = new JFrame("Interface Gráfica");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                //Fechar a sessão do Hibernate e encerrar a aplicação
+                // Fechar a sessão do Hibernate e encerrar a aplicação
                 session.close();
                 sessionFactory.close();
                 System.exit(0);
@@ -204,13 +204,26 @@ class BancoPOO {
 
         // Parte superior com os botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-           
+        buttonPanel.setBackground(new Color(255, 246, 216)); // Define uma cor diferente para o painel de botões
+
         String[] buttonLabels = {"Cliente", "Fornecedor", "Funcionário", "Peça", "Venda"};
         String[] buttonIcons = {"src/resources/images/clientes.png", "src/resources/images/fornecedor.png", "src/resources/images/funcionario.png",
-                "src/resources/images/produto.png", "src/resources/images/vendas.png"};
+            "src/resources/images/produto.png", "src/resources/images/vendas.png"};
 
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSquareButton(buttonIcons[i]);
+            button.setContentAreaFilled(false); // Torna o preenchimento do botão transparente
+            button.setBorderPainted(false); // Remove a borda do botão
+            button.setOpaque(false); // Torna o botão transparente
+            button.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    button.setOpaque(true); // Torna o botão opaco quando o mouse entra
+                }
+
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    button.setOpaque(false); // Torna o botão transparente quando o mouse sai
+                }
+            });
             String label = buttonLabels[i];
             button.addActionListener(e -> {
                 // Verifica se uma janela menor já está aberta
@@ -231,19 +244,24 @@ class BancoPOO {
                         InterfaceVenda venda = new InterfaceVenda(mainFrame, session);
                         venda.show();
                     }
-
                 }
             });
             buttonPanel.add(button);
         }
 
+        // Adiciona uma linha de divisão
+        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+
         // Parte inferior com a foto da empresa
-        JLabel companyLogo = new JLabel(new ImageIcon("caminho/para/imagem_empresa.png"));
+        JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        imagePanel.setPreferredSize(new Dimension(600, 590));
+        JLabel companyLogo = new JLabel(new ImageIcon(""));
         companyLogo.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Adiciona os painéis no painel principal
         mainPanel.add(buttonPanel, BorderLayout.NORTH);
-        mainPanel.add(companyLogo, BorderLayout.CENTER);
+        mainPanel.add(separator, BorderLayout.CENTER);
+        mainPanel.add(imagePanel, BorderLayout.SOUTH);
 
         // Adiciona o painel principal na janela principal
         mainFrame.getContentPane().add(mainPanel);
@@ -253,8 +271,10 @@ class BancoPOO {
     }
 
     private static JButton createSquareButton(String iconPath) {
-        //Método para a criação de botões
+        // Método para a criação de botões
         JButton button = new JButton();
+        button.setContentAreaFilled(false); // Torna o preenchimento do botão transparente
+        button.setBorderPainted(false);
         button.setPreferredSize(new Dimension(100, 100));
         ImageIcon icon = new ImageIcon(iconPath);
         Image scaledImage = icon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
@@ -264,15 +284,15 @@ class BancoPOO {
         button.setFocusPainted(false);
         return button;
     }
-    
+
     private static void realizarConexao() {
         tentarConexaoButton.setEnabled(false);
-        try{
+        try {
             // Criação e configuração da sessão do Hibernate
             configuration = new Configuration().configure();;
             sessionFactory = configuration.buildSessionFactory();;
             session = sessionFactory.openSession();
-        } catch (HibernateException e){
+        } catch (HibernateException e) {
             //Habilitando o botão de testar a conexão, e retornando o diagnóstico
             tentarConexaoButton.setEnabled(true);
             diagnosticLabel.setText("Falha na conexão!");
@@ -288,4 +308,3 @@ class BancoPOO {
         }
     }
 }
-
