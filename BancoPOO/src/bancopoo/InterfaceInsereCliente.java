@@ -5,13 +5,20 @@ import banco.TbEstado;
 import banco.TbLogradouro;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 class InterfaceInsereCliente extends JDialog {
     private final JFrame mainFrame;
@@ -164,20 +171,89 @@ class InterfaceInsereCliente extends JDialog {
         tipoSexoGroup.add(sexoFeminino);
         tipoSexoGroup.add(sexoOutros);
 
-        // BOTÃO CADASTRAR
         JButton cadastrarButton = new JButton("Cadastrar");
         cadastrarButton.setBounds(70, 540, 100, 30);
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (pessoaFisicaRadioButton.isSelected()) {
-                    // Lógica para cadastrar pessoa física
-                    JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa física inserido com sucesso!");
-                } else if (pessoaJuridicaRadioButton.isSelected()) {
-                    // Lógica para cadastrar pessoa jurídica
-                    JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Cadastro de pessoa jurídica inserido com sucesso!");
-                } else {
-                    JOptionPane.showMessageDialog(InterfaceInsereCliente.this, "Selecione o tipo de cliente (Pessoa Física ou Jurídica).");
+                String hql = "SELECT c.cepId FROM TbCidEst c WHERE c.tbCidade.cidDescricao = '" + listCidade.getSelectedItem() + "' AND c.tbEstado = '" + listEstado.getSelectedItem() + "'";
+                Query query = session.createQuery(hql);
+
+                String hql2 = "SELECT l.logId FROM TbLogradouro l WHERE l.logDescricao = '" + listLogradouro.getSelectedItem() + "'";
+                Query query2 = session.createQuery(hql2);
+
+                int logId = (int) query2.uniqueResult();
+                int cidId = (int) query.uniqueResult();
+
+                Transaction transaction = session.beginTransaction();
+                try {
+
+                    banco.TbBairro tbBairro = new banco.TbBairro();
+                    tbBairro.setBaiDescricao(bairroField.getText());
+                    session.save(tbBairro);
+
+                    banco.TbEndPostal tbEndPostal = new banco.TbEndPostal();
+                    tbEndPostal.setTbBairro(tbBairro);
+                    tbEndPostal.setEndPNomerua(enderecoField.getText());
+                    tbEndPostal.setEndPCep(cepField.getText());
+                    Object log = session.load(TbLogradouro.class, logId);
+                    tbEndPostal.setTbLogradouro((TbLogradouro) log);
+                    Object cidest = session.load(TbCidEst.class, cidId);
+                    tbEndPostal.setTbCidEst((TbCidEst) cidest);
+                    session.save(tbEndPostal);
+
+                    banco.TbEndereco tbendereco = new banco.TbEndereco();
+                    tbendereco.setTbEndPostal(tbEndPostal);
+                    tbendereco.setEndNumero(numeroField.getText());
+                    tbendereco.setEndComplemento(complementoField.getText());
+                    session.save(tbendereco);
+
+                    banco.TbEntidade tbentidade = new banco.TbEntidade();
+                    tbentidade.setEntCpfCnpj(documentoField.getText());
+                    tbentidade.setTbEndereco(tbendereco);
+                    tbentidade.setEntNome(nomeField.getText());
+                    tbentidade.setEntNomeFantasia(fantasiaField.getText());
+                    tbentidade.setEntRgIe(rgieField.getText());
+                    tbentidade.setEntFone(foneField.getText());
+                    tbentidade.setEntEmail(emailField.getText());
+
+                    ButtonModel selectedButtonModel = tipoSexoGroup.getSelection();
+                    if (selectedButtonModel == sexoMasculino.getModel()) {
+                        tbentidade.setEntSexo("M");
+                    } else if (selectedButtonModel == sexoFeminino.getModel()) {
+                        tbentidade.setEntSexo("F");
+                    } else if (selectedButtonModel == sexoOutros.getModel()) {
+                        tbentidade.setEntSexo("Outros");
+                    } else {
+                        tbentidade.setEntSexo(null);
+                    }
+                    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                    if (dataNascimentoField.getText().isEmpty()) {
+                        tbentidade.setEntDtNasc(null);
+                    } else {
+                        Date data = formato.parse(dataNascimentoField.getText());
+                        tbentidade.setEntDtNasc(data);
+                    }
+                    if (pessoaJuridicaRadioButton.isSelected()) {
+                        tbentidade.setEntTipo("Juridica");
+                    } else if (pessoaFisicaRadioButton.isSelected()) {
+                        tbentidade.setEntTipo("Fisica");
+                    }
+                    session.save(tbentidade);
+
+                    banco.TbCliente tbcliente = new banco.TbCliente();
+                    tbcliente.setTbEntidade(tbentidade);
+                    session.save(tbcliente);
+
+                    transaction.commit();
+                    JOptionPane.showMessageDialog(null, "Funcionario Inserido com Sucesso!");
+                    dispose();
+
+                } catch (HibernateException ex) {
+                    transaction.rollback();
+                    JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (ParseException ex) {
+                    Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });

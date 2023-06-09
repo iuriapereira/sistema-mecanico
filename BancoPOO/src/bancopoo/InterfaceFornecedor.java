@@ -87,6 +87,7 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
                                 deleteQuery.setParameter("cpf", selectedCPF);
                                 deleteQuery.executeUpdate();
                                 transaction.commit();
+                                updateTableData(model);
                                 JOptionPane.showMessageDialog(null, "Forncedor Removido");
                             } catch (HibernateException ex) {
                                 transaction.rollback();

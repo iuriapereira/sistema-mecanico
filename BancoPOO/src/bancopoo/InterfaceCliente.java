@@ -102,6 +102,13 @@ class InterfaceCliente extends InterfaceAbstrata {
                         }
                     }
                 });
+            } else if(label.equals("Atualizar")){
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateTableData(model); 
+                    }
+                });
             }
 
             buttonPanel.add(button);
