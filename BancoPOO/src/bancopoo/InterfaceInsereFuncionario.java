@@ -42,7 +42,6 @@ class InterfaceInsereFuncionario extends JDialog {
     private JRadioButton sexoFeminino;
     private JRadioButton sexoOutros;
     private JFormattedTextField dataNascimentoField;
-    private JButton limparCamposButton;
     private Session session;
     private final JTextField usuarioField;
     private final JPasswordField senhaField;
@@ -190,7 +189,10 @@ class InterfaceInsereFuncionario extends JDialog {
         tipoSexoGroup.add(sexoOutros);
         
         // BOTÃO CADASTRAR
-        JButton cadastrarButton = new JButton("Cadastrar");
+        JButton cadastrarButton = new JButton();
+        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        cadastrarButton.setIcon(new ImageIcon(scaledCads));
         cadastrarButton.setBounds(70, 620, 100, 30);
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
@@ -274,9 +276,13 @@ class InterfaceInsereFuncionario extends JDialog {
         });
         
         // BOTÃO LIMPAR
-        limparCamposButton = new JButton("Limpar");
-        limparCamposButton.setBounds(200, 620, 100, 30);
-        limparCamposButton.addActionListener(new ActionListener() {
+        JButton limparCampos = new JButton();
+        limparCampos = new JButton();
+        ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
+        Image scaledLimpar = limp.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        limparCampos.setIcon(new ImageIcon(scaledLimpar));
+        limparCampos.setBounds(200, 620, 100, 30);
+        limparCampos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 limparCampos();
@@ -411,7 +417,7 @@ class InterfaceInsereFuncionario extends JDialog {
         
         // botão para limpar
         mainPanel.add(cadastrarButton);
-        mainPanel.add(limparCamposButton);
+        mainPanel.add(limparCampos);
 
         // Define as coordenadas de posicionamento dos componentes
         int x = 10;

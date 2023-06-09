@@ -25,8 +25,6 @@ class InterfaceInsereEstoque extends JDialog {
     private JRadioButton sexoMasculino;
     private JRadioButton sexoFeminino;
     private JRadioButton sexoOutros;
-    private final JButton cadastrar;
-    private final JButton limparCamposButton;
     private Session session;
     
     public InterfaceInsereEstoque(JFrame mainFrame, Session session) {
@@ -93,7 +91,10 @@ class InterfaceInsereEstoque extends JDialog {
         
         
         // BOTÃO CADASTRAR
-        cadastrar = new JButton("Cadastrar");
+        JButton cadastrar = new JButton();
+        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        cadastrar.setIcon(new ImageIcon(scaledCads));
         cadastrar.setBounds(70, 250, 100, 30);
         cadastrar.addActionListener(new ActionListener() {
             @Override
@@ -112,9 +113,13 @@ class InterfaceInsereEstoque extends JDialog {
         });
         
         // BOTÃO LIMPAR
-        limparCamposButton = new JButton("Limpar");
-        limparCamposButton.setBounds(200, 250, 100, 30);
-        limparCamposButton.addActionListener(new ActionListener() {
+        JButton limparCampos = new JButton();
+        limparCampos = new JButton();
+        ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
+        Image scaledLimpar = limp.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        limparCampos.setIcon(new ImageIcon(scaledLimpar));
+        limparCampos.setBounds(200, 250, 100, 30);
+        limparCampos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 limparCampos();
@@ -191,7 +196,7 @@ class InterfaceInsereEstoque extends JDialog {
 
         // botão para limpar
         mainPanel.add(cadastrar);
-        mainPanel.add(limparCamposButton);
+        mainPanel.add(limparCampos);
         
         // Defina o tamanho do painel principal
         mainPanel.setPreferredSize(new Dimension(380, 300));

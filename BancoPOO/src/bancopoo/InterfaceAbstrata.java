@@ -12,7 +12,7 @@ public abstract class InterfaceAbstrata {
     protected static boolean isSmallWindowOpen = false;
     private Session session;
     protected String[] buttonLabels = {"Inserir", "Alterar", "Remover", "Atualizar"};
-    protected String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png",""};
+    protected String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png","src/resources/images/atualizar.png"};
     protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
     public InterfaceAbstrata(JFrame mainFrame, Session session) {

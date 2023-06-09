@@ -44,7 +44,6 @@ class InterfaceInsereCliente extends JDialog {
     private JRadioButton sexoMasculino;
     private JRadioButton sexoFeminino;
     private JRadioButton sexoOutros;
-    private JButton limparCamposButton;
     private Session session;
     
     private String tipo;
@@ -170,7 +169,10 @@ class InterfaceInsereCliente extends JDialog {
         tipoSexoGroup.add(sexoFeminino);
         tipoSexoGroup.add(sexoOutros);
 
-        JButton cadastrarButton = new JButton("Cadastrar");
+        JButton cadastrarButton = new JButton();
+        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        cadastrarButton.setIcon(new ImageIcon(scaledCads));
         cadastrarButton.setBounds(70, 540, 100, 30);
         cadastrarButton.addActionListener(new ActionListener() {
             @Override
@@ -258,9 +260,13 @@ class InterfaceInsereCliente extends JDialog {
         });
         
         // BOTÃO LIMPAR
-        limparCamposButton = new JButton("Limpar");
-        limparCamposButton.setBounds(200, 540, 100, 30);
-        limparCamposButton.addActionListener(new ActionListener() {
+        JButton limparCampos = new JButton();
+        limparCampos = new JButton();
+        ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
+        Image scaledLimpar = limp.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        limparCampos.setIcon(new ImageIcon(scaledLimpar));
+        limparCampos.setBounds(200, 540, 100, 30);
+        limparCampos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 limparCampos();
@@ -420,7 +426,7 @@ class InterfaceInsereCliente extends JDialog {
         
         // botão para limpar
         mainPanel.add(cadastrarButton);
-        mainPanel.add(limparCamposButton);
+        mainPanel.add(limparCampos);
 
         // Define as coordenadas de posicionamento dos componentes
         int x = 10;
