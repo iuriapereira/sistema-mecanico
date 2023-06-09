@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -23,27 +25,29 @@ import org.hibernate.Transaction;
 class InterfaceInsereCliente extends JDialog {
     private final JFrame mainFrame;
     private JTextField nomeField;
-    private JTextField documentoField;
+    private JFormattedTextField documentoField = new JFormattedTextField();
     private JTextField fantasiaField;
     private JTextField rgieField;
-    private JTextField foneField;
+    private JFormattedTextField foneField;
     private JTextField emailField;
     private JTextField enderecoField;
     private JTextField bairroField;
-    private JTextField cepField;
+    private JFormattedTextField cepField;
     private JTextField logradouroField;
     private JTextField numeroField;
     private JTextField complementoField;
     private JTextField cidadeField;
     private JTextField estadoField;
+    private JFormattedTextField dataNascimentoField;
     private JRadioButton pessoaFisicaRadioButton;
     private JRadioButton pessoaJuridicaRadioButton;
     private JRadioButton sexoMasculino;
     private JRadioButton sexoFeminino;
     private JRadioButton sexoOutros;
-    private JTextField dataNascimentoField;
     private JButton limparCamposButton;
     private Session session;
+    
+    private String tipo;
     
 
     public InterfaceInsereCliente(JFrame mainFrame, Session session) {
@@ -119,20 +123,15 @@ class InterfaceInsereCliente extends JDialog {
         JLabel nomeLabel = new JLabel("Nome:");
         nomeField = new JTextField(20);
         JLabel sexoLabel = new JLabel("Sexo:");
-        JLabel documentoLabel = new JLabel("CPF/CNPJ:");
-        documentoField = new JTextField(20);
+        JLabel documentoLabel = new JLabel();
         JLabel dataNascimentoLabel = new JLabel("Data de Nascimento:");
-        dataNascimentoField = new JTextField(20);
         JLabel fantasiaLabel = new JLabel("Nome Fantasia:");
         fantasiaField = new JTextField(20);
         JLabel rgieLabel = new JLabel("RG/Inscrição Estadual:");
-        rgieField = new JTextField(20);
         JLabel foneLabel = new JLabel("Fone:");
-        foneField = new JTextField(20);
         JLabel emailLabel = new JLabel("Email:");
         emailField = new JTextField(20);
         JLabel cepLabel = new JLabel("CEP:");
-        cepField = new JTextField(20);
         JLabel logradouroLabel = new JLabel("Logradouro:");
         JLabel enderecoLabel = new JLabel("Endereço:");
         enderecoField = new JTextField(20);
@@ -272,9 +271,19 @@ class InterfaceInsereCliente extends JDialog {
         });
 
         pessoaJuridicaRadioButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                dataNascimentoField.setEnabled(false); // Desativa a caixa de texto de Data de Nascimento
+                try {
+                    MaskFormatter mf = new MaskFormatter("##.###.###/####-##");
+                    documentoField.setFormatterFactory(new DefaultFormatterFactory(mf));
+                } catch (ParseException ex) {
+                    Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                mainPanel.remove(documentoField); // Remova o documentoField existente do mainPanel
+                mainPanel.add(documentoField); // Adicione o documentoField atualizado ao mainPanel
+                mainPanel.revalidate(); // Revalide o mainPanel para atualizar a exibição
+                mainPanel.repaint(); // Repinte o mainPanel para atualizar a exibição
+                documentoLabel.setText("CNPJ:");
+                dataNascimentoField.setEnabled(false);
                 dataNascimentoField.setText("");
                 sexoMasculino.setEnabled(false);
                 sexoFeminino.setEnabled(false);
@@ -283,14 +292,135 @@ class InterfaceInsereCliente extends JDialog {
         });
 
         pessoaFisicaRadioButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
-                dataNascimentoField.setEnabled(true); // Ativa a caixa de texto de Data de Nascimento
+                try {
+                    MaskFormatter mf = new MaskFormatter("###.###.###-##");
+                    documentoField.setFormatterFactory(new DefaultFormatterFactory(mf));
+                } catch (ParseException ex) {
+                    Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                mainPanel.remove(documentoField); // Remova o documentoField existente do mainPanel
+                mainPanel.add(documentoField); // Adicione o documentoField atualizado ao mainPanel
+                mainPanel.revalidate(); // Revalide o mainPanel para atualizar a exibição
+                mainPanel.repaint(); // Repinte o mainPanel para atualizar a exibição
+                documentoLabel.setText("CPF:");
+                dataNascimentoField.setEnabled(true);
                 sexoMasculino.setEnabled(true);
                 sexoFeminino.setEnabled(true);
                 sexoOutros.setEnabled(true);
             }
         });
+        
+        
+        
+        // Adicione os componentes ao painel principal
+        mainPanel.add(pessoaFisicaRadioButton);
+        mainPanel.add(pessoaJuridicaRadioButton);
+
+        mainPanel.add(nomeLabel);
+        mainPanel.add(nomeField);
+        
+        mainPanel.add(documentoLabel);
+
+        mainPanel.add(sexoLabel);
+        mainPanel.add(sexoMasculino);
+        mainPanel.add(sexoFeminino);
+        mainPanel.add(sexoOutros);
+
+        mainPanel.add(fantasiaLabel);
+        mainPanel.add(fantasiaField);
+
+        // RG/IE NA TELA
+        mainPanel.add(rgieLabel);
+        // MaskFormatter para permitir apenas números
+        MaskFormatter rgie = null;
+        try {
+            rgie = new MaskFormatter("##############");
+            rgie.setValidCharacters("0123456789"); // Permite apenas números
+            rgie.setPlaceholderCharacter('_'); // Define um caractere de espaço reservado
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        // JFormattedTextField usando o MaskFormatter
+        JFormattedTextField rgieField = new JFormattedTextField(rgie);
+        mainPanel.add(rgieField);
+
+        // DATA DE NASCIMENTO NA TELA 
+        mainPanel.add(dataNascimentoLabel);
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            MaskFormatter maskFormatter = new MaskFormatter("##/##/####");
+            maskFormatter.setPlaceholderCharacter('_');
+            JFormattedTextField.AbstractFormatter formatter = new JFormattedTextField.AbstractFormatter() {
+                @Override
+                public Object stringToValue(String text) throws ParseException {
+                    return dateFormat.parseObject(text);
+                }
+
+                @Override
+                public String valueToString(Object value) throws ParseException {
+                    if (value instanceof java.util.Date) {
+                        return dateFormat.format(value);
+                    }
+                    return "";
+                }
+            };
+            dataNascimentoField = new JFormattedTextField(formatter);
+            dataNascimentoField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(maskFormatter));
+        } catch (ParseException ex) {
+            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mainPanel.add(dataNascimentoField);
+        
+        // TELEFONE NA TELA
+        mainPanel.add(foneLabel);
+        try {
+            MaskFormatter mf = new MaskFormatter("(##) #####-####");
+            foneField = new JFormattedTextField(mf);
+        } catch (ParseException ex) {
+            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mainPanel.add(foneField);
+
+        mainPanel.add(emailLabel);
+        mainPanel.add(emailField);
+
+        // CEP NA TELA
+        mainPanel.add(cepLabel);
+        try {
+            MaskFormatter mf = new MaskFormatter("#####-###");
+            cepField = new JFormattedTextField(mf);
+        } catch (ParseException ex) {
+            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mainPanel.add(cepField);
+
+        mainPanel.add(logradouroLabel);
+        mainPanel.add(listLogradouro);
+        
+        mainPanel.add(enderecoLabel);
+        mainPanel.add(enderecoField);
+
+        mainPanel.add(numeroLabel);
+        mainPanel.add(numeroField);
+
+        mainPanel.add(complementoLabel);
+        mainPanel.add(complementoField);
+
+        mainPanel.add(bairroLabel);
+        mainPanel.add(bairroField);
+        
+        // Adiciona o JComboBox ao JFrame
+        mainPanel.add(estadoLabel);
+        mainPanel.add(listEstado);
+        
+        mainPanel.add(cidadeLabel);
+        mainPanel.add(listCidade);
+        
+        // botão para limpar
+        mainPanel.add(cadastrarButton);
+        mainPanel.add(limparCamposButton);
 
         // Define as coordenadas de posicionamento dos componentes
         int x = 10;
@@ -360,65 +490,9 @@ class InterfaceInsereCliente extends JDialog {
         y += yGap;
         cidadeLabel.setBounds(x, y, labelWidth, 20);
         listCidade.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        pessoaFisicaRadioButton.doClick();
 
-        // Adicione os componentes ao painel principal
-        mainPanel.add(pessoaFisicaRadioButton);
-        mainPanel.add(pessoaJuridicaRadioButton);
-
-        mainPanel.add(nomeLabel);
-        mainPanel.add(nomeField);
-
-        mainPanel.add(sexoLabel);
-        mainPanel.add(sexoMasculino);
-        mainPanel.add(sexoFeminino);
-        mainPanel.add(sexoOutros);
-
-        mainPanel.add(documentoLabel);
-        mainPanel.add(documentoField);
         
-        mainPanel.add(dataNascimentoLabel);
-        mainPanel.add(dataNascimentoField);
-
-        mainPanel.add(fantasiaLabel);
-        mainPanel.add(fantasiaField);
-
-        mainPanel.add(rgieLabel);
-        mainPanel.add(rgieField);
-
-        mainPanel.add(foneLabel);
-        mainPanel.add(foneField);
-
-        mainPanel.add(emailLabel);
-        mainPanel.add(emailField);
-
-        mainPanel.add(cepLabel);
-        mainPanel.add(cepField);
-
-        mainPanel.add(logradouroLabel);
-        mainPanel.add(listLogradouro);
-        
-        mainPanel.add(enderecoLabel);
-        mainPanel.add(enderecoField);
-
-        mainPanel.add(numeroLabel);
-        mainPanel.add(numeroField);
-
-        mainPanel.add(complementoLabel);
-        mainPanel.add(complementoField);
-
-        mainPanel.add(bairroLabel);
-        mainPanel.add(bairroField);
-        
-        // Adiciona o JComboBox ao JFrame
-        mainPanel.add(estadoLabel);
-        mainPanel.add(listEstado);
-        
-        mainPanel.add(cidadeLabel);
-        mainPanel.add(listCidade);
-        
-        // botão para limpar
-        mainPanel.add(cadastrarButton);
-        mainPanel.add(limparCamposButton);
         
         
         // Defina o tamanho do painel principal
