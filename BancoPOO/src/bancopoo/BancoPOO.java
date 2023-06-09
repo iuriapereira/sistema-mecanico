@@ -101,7 +101,7 @@ class BancoPOO {
         loginButton.setFocusPainted(false);
         loginButton.setVisible(false);
         
-        loginButton.addKeyListener(new KeyAdapter() {
+        senhaTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {

@@ -24,7 +24,7 @@ class InterfaceInsereFornecedor extends JDialog {
     private JTextField nomeField;
     private JFormattedTextField documentoField;
     private JTextField fantasiaField;
-    private JTextField ieField;
+    private JFormattedTextField ieField;
     private JFormattedTextField foneField;
     private JTextField emailField;
     private JTextField enderecoField;
@@ -117,7 +117,6 @@ class InterfaceInsereFornecedor extends JDialog {
         JLabel fantasiaLabel = new JLabel("Nome Fantasia:");
         fantasiaField = new JTextField(20);
         JLabel ieLabel = new JLabel("Inscrição Estadual:");
-        ieField = new JTextField(20);
         JLabel foneLabel = new JLabel("Fone:");
         JLabel emailLabel = new JLabel("Email:");
         emailField = new JTextField(20);
@@ -236,7 +235,7 @@ class InterfaceInsereFornecedor extends JDialog {
         }
 
         // JFormattedTextField usando o MaskFormatter
-        JFormattedTextField ieField = new JFormattedTextField(maskFormatter);
+        ieField = new JFormattedTextField(maskFormatter);
         mainPanel.add(ieField);
 
         // TELEFONE NA TELA

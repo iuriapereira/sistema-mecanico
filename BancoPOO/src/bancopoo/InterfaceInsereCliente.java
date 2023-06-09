@@ -27,7 +27,7 @@ class InterfaceInsereCliente extends JDialog {
     private JTextField nomeField;
     private JFormattedTextField documentoField = new JFormattedTextField();
     private JTextField fantasiaField;
-    private JTextField rgieField;
+    private JFormattedTextField rgieField;
     private JFormattedTextField foneField;
     private JTextField emailField;
     private JTextField enderecoField;
@@ -245,7 +245,7 @@ class InterfaceInsereCliente extends JDialog {
                     session.save(tbcliente);
 
                     transaction.commit();
-                    JOptionPane.showMessageDialog(null, "Funcionario Inserido com Sucesso!");
+                    JOptionPane.showMessageDialog(null, "Cleinte Inserido com Sucesso!");
                     dispose();
 
                 } catch (HibernateException ex) {
@@ -343,7 +343,7 @@ class InterfaceInsereCliente extends JDialog {
             e.printStackTrace();
         }
         // JFormattedTextField usando o MaskFormatter
-        JFormattedTextField rgieField = new JFormattedTextField(rgie);
+        rgieField = new JFormattedTextField(rgie);
         mainPanel.add(rgieField);
 
         // DATA DE NASCIMENTO NA TELA 

@@ -27,7 +27,7 @@ class InterfaceInsereFuncionario extends JDialog {
     private JTextField nomeField;
     private JFormattedTextField documentoField;
     private JTextField fantasiaField;
-    private JTextField rgieField;
+    private JFormattedTextField rgieField;
     private JFormattedTextField foneField;
     private JTextField emailField;
     private JTextField enderecoField;
@@ -262,6 +262,8 @@ class InterfaceInsereFuncionario extends JDialog {
                     session.save(tbfuncionario);
 
                     transaction.commit();
+                    JOptionPane.showMessageDialog(null,"Funcionario Inserido com Sucesso!");
+                    dispose();
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -351,7 +353,7 @@ class InterfaceInsereFuncionario extends JDialog {
         }
 
         // JFormattedTextField usando o MaskFormatter
-        JFormattedTextField rgieField = new JFormattedTextField(maskFormatter);
+        rgieField = new JFormattedTextField(maskFormatter);
         mainPanel.add(rgieField);
         
         // TELEFONE NA TELA
