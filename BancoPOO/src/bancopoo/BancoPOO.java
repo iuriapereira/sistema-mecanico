@@ -10,6 +10,8 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
@@ -98,6 +100,15 @@ class BancoPOO {
         loginButton.setHorizontalTextPosition(SwingConstants.CENTER);
         loginButton.setFocusPainted(false);
         loginButton.setVisible(false);
+        
+        loginButton.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    loginButton.doClick();
+                }
+            }
+        });
         
         //Setando os atributos do botão de testar conexão
         tentarConexaoButton.setText("Testar conexão");
