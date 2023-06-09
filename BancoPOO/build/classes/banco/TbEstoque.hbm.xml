@@ -14,7 +14,7 @@
         <property name="estoQuantidade" type="int">
             <column name="esto_quantidade" not-null="true" />
         </property>
-        <property name="estoValorUni" type="int">
+        <property name="estoValorUni" type="float">
             <column name="esto_valor_uni" not-null="true" />
         </property>
         <property name="estoMedida" type="string">

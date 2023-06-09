@@ -16,7 +16,6 @@
     <mapping resource="banco/TbLogradouro.hbm.xml"/>
     <mapping resource="banco/TbEstoque.hbm.xml"/>
     <mapping resource="banco/TbVeiculo.hbm.xml"/>
-    <mapping resource="banco/TbServico.hbm.xml"/>
     <mapping resource="banco/TbPeca.hbm.xml"/>
     <mapping resource="banco/TbCidade.hbm.xml"/>
     <mapping resource="banco/TbVenPeca.hbm.xml"/>

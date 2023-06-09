@@ -8,9 +8,6 @@
             <column name="vs_id" />
             <generator class="identity" />
         </id>
-        <many-to-one name="tbServico" class="banco.TbServico" fetch="select">
-            <column name="vs_ser_id" not-null="true" />
-        </many-to-one>
         <many-to-one name="tbVenda" class="banco.TbVenda" fetch="select">
             <column name="vs_ven_id" not-null="true" />
         </many-to-one>
@@ -19,6 +16,9 @@
         </many-to-one>
         <property name="vsValorServico" type="float">
             <column name="vs_valor_servico" precision="10" not-null="true" />
+        </property>
+        <property name="vsSerDescricao" type="string">
+            <column name="vs_ser_descricao" length="300" not-null="true" />
         </property>
         <property name="vsKmPercorrido" type="java.lang.Integer">
             <column name="vs_km_percorrido" />

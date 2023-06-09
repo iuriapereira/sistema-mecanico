@@ -15,7 +15,7 @@ public class TbEstoque  implements java.io.Serializable {
      private Integer estoId;
      private TbFornecedorHasPeca tbFornecedorHasPeca;
      private int estoQuantidade;
-     private int estoValorUni;
+     private float estoValorUni;
      private int estoFpId;
      private String estoMedida;
      private Set tbVenPecas = new HashSet(0);
@@ -24,12 +24,12 @@ public class TbEstoque  implements java.io.Serializable {
     }
 
 	
-    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, int estoValorUni, int estoFpId) {
+    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, float estoValorUni, int estoFpId) {
         this.tbFornecedorHasPeca = tbFornecedorHasPeca;
         this.estoQuantidade = estoQuantidade;
         this.estoValorUni = estoValorUni;
     }
-    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, int estoValorUni, String estoMedida, Set tbVenPecas) {
+    public TbEstoque(TbFornecedorHasPeca tbFornecedorHasPeca, int estoQuantidade, float estoValorUni, String estoMedida, Set tbVenPecas) {
        this.tbFornecedorHasPeca = tbFornecedorHasPeca;
        this.estoQuantidade = estoQuantidade;
        this.estoValorUni = estoValorUni;
@@ -51,11 +51,11 @@ public class TbEstoque  implements java.io.Serializable {
     public void setEstoQuantidade(int estoQuantidade) {
         this.estoQuantidade = estoQuantidade;
     }
-    public int getEstoValorUni() {
+    public float getEstoValorUni() {
         return this.estoValorUni;
     }
     
-    public void setEstoValorUni(int estoValorUni) {
+    public void setEstoValorUni(float estoValorUni) {
         this.estoValorUni = estoValorUni;
     }
     public int getEstoFpId() {

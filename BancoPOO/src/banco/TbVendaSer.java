@@ -10,7 +10,7 @@ public class TbVendaSer  implements java.io.Serializable {
 
 
      private Integer vsId;
-     private TbServico tbServico;
+     private String vsSerDescricao;
      private TbVenda tbVenda;
      private TbVeiculo tbVeiculo;
      private float vsValorServico;
@@ -21,14 +21,14 @@ public class TbVendaSer  implements java.io.Serializable {
     }
 
 	
-    public TbVendaSer(TbServico tbServico, TbVenda tbVenda, TbVeiculo tbVeiculo, float vsValorServico) {
-        this.tbServico = tbServico;
+    public TbVendaSer(String vsSerDescricao, TbVenda tbVenda, TbVeiculo tbVeiculo, float vsValorServico) {
+        this.vsSerDescricao = vsSerDescricao;
         this.tbVenda = tbVenda;
         this.tbVeiculo = tbVeiculo;
         this.vsValorServico = vsValorServico;
     }
-    public TbVendaSer(TbServico tbServico, TbVenda tbVenda, TbVeiculo tbVeiculo, float vsValorServico, Integer vsKmPercorrido, Float vsValorKm) {
-       this.tbServico = tbServico;
+    public TbVendaSer(String vsSerDescricao, TbVenda tbVenda, TbVeiculo tbVeiculo, float vsValorServico, Integer vsKmPercorrido, Float vsValorKm) {
+       this.vsSerDescricao = vsSerDescricao;
        this.tbVenda = tbVenda;
        this.tbVeiculo = tbVeiculo;
        this.vsValorServico = vsValorServico;
@@ -43,13 +43,7 @@ public class TbVendaSer  implements java.io.Serializable {
     public void setVsId(Integer vsId) {
         this.vsId = vsId;
     }
-    public TbServico getTbServico() {
-        return this.tbServico;
-    }
     
-    public void setTbServico(TbServico tbServico) {
-        this.tbServico = tbServico;
-    }
     public TbVenda getTbVenda() {
         return this.tbVenda;
     }
@@ -80,6 +74,14 @@ public class TbVendaSer  implements java.io.Serializable {
     }
     public Float getVsValorKm() {
         return this.vsValorKm;
+    }
+
+    public String getVsSerDescricao() {
+        return vsSerDescricao;
+    }
+
+    public void setVsSerDescricao(String vsSerDescricao) {
+        this.vsSerDescricao = vsSerDescricao;
     }
     
     public void setVsValorKm(Float vsValorKm) {

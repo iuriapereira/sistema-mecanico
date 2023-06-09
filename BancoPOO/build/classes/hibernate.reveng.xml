@@ -18,7 +18,6 @@
   <table-filter match-name="tb_tipo_pagamento"/>
   <table-filter match-name="tb_cargo"/>
   <table-filter match-name="tb_fornecedor_has_peca"/>
-  <table-filter match-name="tb_servico"/>
   <table-filter match-name="tb_estoque"/>
   <table-filter match-name="tb_entidade"/>
   <table-filter match-name="tb_cidade"/>
