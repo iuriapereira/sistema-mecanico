@@ -1,4 +1,3 @@
-
 package bancopoo;
 
 import banco.TbEstoque;
@@ -9,14 +8,18 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-class InterfaceEstoque extends InterfaceAbstrata{
+class InterfaceEstoque extends InterfaceAbstrata {
+
     private final Session session;
+    private String selectedPeca; // Variável para armazenar o CPF selecionado
 
     public InterfaceEstoque(JFrame mainFrame, Session session) {
-        super(mainFrame,session);
+        super(mainFrame, session);
         this.session = session;
     }
 
@@ -42,40 +45,99 @@ class InterfaceEstoque extends InterfaceAbstrata{
             int qtd_e = (int) result[1];
             int valor = (int) result[2];
             int qtd_m = (int) result[3];
-            String fornecedor = (String) result[4];          
-            
-            model.addRow(new Object[]{nome, qtd_e,valor,qtd_m,fornecedor}); // Adicione outras colunas conforme necessário
+            String fornecedor = (String) result[4];
+
+            model.addRow(new Object[]{nome, qtd_e, valor, qtd_m, fornecedor}); // Adicione outras colunas conforme necessário
         }
-         // Parte superior com os botões flutuantes
+        // Cria a tabela
+        JTable table = new JTable(model);
+        table.setFillsViewportHeight(true);
+        // Parte superior com os botões flutuantes
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
             String label = buttonLabels[i];
-            button.addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Verifica se uma janela menor já está aberta
-                    if (!isSmallWindowOpen) {
-                        if (label.equals("Inserir")) {
-                            InterfaceInsereEstoque inserir = new InterfaceInsereEstoque(mainFrame, session);
-                            inserir.showInterface();
-                        } else if (label.equals("Alterar")) {
-                            //InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame);
-                            //forne.show();
-                        } else if (label.equals("Remover")) {
-                            //InterfaceFuncionario func = new InterfaceFuncionario(mainFrame);
-                            //func.show();
+
+            if (label.equals("Inserir")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        InterfaceInsereEstoque inserir = new InterfaceInsereEstoque(mainFrame, session);
+                        inserir.showInterface();
+                    }
+                });
+            } else if (label.equals("Alterar")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Implemente a lógica para a ação de alteração
+                        // ...
+                    }
+                });
+            } else if (label.equals("Remover")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        int selectedRow = table.getSelectedRow();
+
+                        // Verifica se uma linha está selecionada
+                        if (selectedRow != -1) {
+                            // Obtém o CPF da linha selecionada
+                            selectedPeca = (String) table.getValueAt(selectedRow, 2);
+                            Transaction transaction = session.beginTransaction();
+                            try {
+                                String hql = "DELETE FROM TbEstoque e WHERE e.tbFornecedorHasPeca.tbPeca.peDescricao = :Nome Produto";
+                                Query deleteQuery = session.createQuery(hql);
+                                deleteQuery.setParameter("Nome Produto", selectedPeca);
+                                deleteQuery.executeUpdate();
+                                
+                                String hql2 = "DELETE FROM TbFornecedorHasPeca t WHERE t.tbPeca.peDescricao = :Nome Produto";
+                                Query deleteQuery2 = session.createQuery(hql2);
+                                deleteQuery2.setParameter("Nome Produto", selectedPeca);
+                                deleteQuery2.executeUpdate();
+
+                                String hql3 = "DELETE FROM TbPeca p WHERE p.peDescricao = :Nome Produto";
+                                Query deleteQuery3 = session.createQuery(hql3);
+                                deleteQuery3.setParameter("Nome Produto", selectedPeca);
+                                deleteQuery3.executeUpdate();
+
+                                transaction.commit();
+                                JOptionPane.showMessageDialog(null, "Produto Removido");
+                                updateTableData(model);
+                            } catch (HibernateException ex) {
+                                transaction.rollback();
+                                JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
                     }
-                }
-                
-            });
+                });
+            } else if (label.equals("Atualizar")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateTableData(model);
+                    }
+                });
+            }
+
             buttonPanel.add(button);
         }
-        
-        // Cria a tabela
-        JTable table = new JTable(model);
-        table.setFillsViewportHeight(true);      
-
         return table;
+    }
+
+    private void updateTableData(DefaultTableModel model) {
+        String hql = "SELECT e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
+        Query query = session.createQuery(hql);
+
+        List<Object[]> results = query.list();
+        model.setRowCount(0); // Limpa os dados da tabela antes de atualizar
+        for (Object[] result : results) {
+            String nome = (String) result[0];
+            int qtd_e = (int) result[1];
+            int valor = (int) result[2];
+            int qtd_m = (int) result[3];
+            String fornecedor = (String) result[4];
+
+            model.addRow(new Object[]{nome, qtd_e, valor, qtd_m, fornecedor});  // Adicione outras colunas conforme necessário
+        }
     }
 }

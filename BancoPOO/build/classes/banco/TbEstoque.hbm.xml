@@ -17,6 +17,9 @@
         <property name="estoValorUni" type="int">
             <column name="esto_valor_uni" not-null="true" />
         </property>
+        <property name="estoMedida" type="string">
+            <column length="8" name="esto_medida"/>
+        </property>
         <set name="tbVenPecas" table="tb_ven_peca" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="vp_esto_id" not-null="true" />

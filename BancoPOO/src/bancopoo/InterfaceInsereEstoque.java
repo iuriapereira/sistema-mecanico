@@ -90,7 +90,7 @@ class InterfaceInsereEstoque extends JDialog {
         JLabel finalLabel = new JLabel("VALOR FINAL:"); // float
         
         
-        // BOTÃO CADASTRAR
+       // BOTÃO CADASTRAR
         JButton cadastrar = new JButton();
         ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
