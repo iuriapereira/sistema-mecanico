@@ -76,7 +76,7 @@ class InterfaceVenda extends InterfaceAbstrata {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame, session);
+                    InterfaceInsereVenda inserir = new InterfaceInsereVenda(mainFrame, session);
                     inserir.showInterface();
                 }
             });

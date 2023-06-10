@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,6 +60,8 @@ class BancoPOO {
         JLabel logo = new JLabel();
         JLabel usuarioLabel = new JLabel("Usuario:");
         JTextField usuarioTextField = new JTextField();
+        Font fonte = new Font("Comic Sans MS", Font.BOLD, 16);
+        usuarioTextField.setFont(fonte);
         JLabel senhaLabel = new JLabel("Senha:");
         JPasswordField senhaTextField = new JPasswordField();
         loginButton = new JButton();

@@ -59,7 +59,7 @@ class InterfaceInsereEstoque extends JDialog {
         }
 
         // Define o formato para números de ponto flutuante
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
         decimalFormat.setParseBigDecimal(true);
 
         // Cria um NumberFormatter com o formato definido
