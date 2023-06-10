@@ -42,9 +42,9 @@ class InterfaceEstoque extends InterfaceAbstrata {
         List<Object[]> results = query.list();
         for (Object[] result : results) {
             String nome = (String) result[0];
-            int qtd_e = (int) result[1];
+            float qtd_e = (float) result[1];
             Float valor = (Float) result[2];
-            int qtd_m = (int) result[3];
+            float qtd_m = (float) result[3];
             String fornecedor = (String) result[4];
 
             model.addRow(new Object[]{nome, qtd_e, valor, qtd_m, fornecedor}); // Adicione outras colunas conforme necessário
@@ -132,9 +132,9 @@ class InterfaceEstoque extends InterfaceAbstrata {
         model.setRowCount(0); // Limpa os dados da tabela antes de atualizar
         for (Object[] result : results) {
             String nome = (String) result[0];
-            int qtd_e = (int) result[1];
+            float qtd_e = (float) result[1];
             float valor = (float) result[2];
-            int qtd_m = (int) result[3];
+            float qtd_m = (float) result[3];
             String fornecedor = (String) result[4];
 
             model.addRow(new Object[]{nome, qtd_e, valor, qtd_m, fornecedor});  // Adicione outras colunas conforme necessário

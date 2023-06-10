@@ -11,7 +11,7 @@
         <property name="peDescricao" type="string">
             <column name="pe_descricao" length="45" not-null="true" />
         </property>
-        <property name="peQuantMin" type="int">
+        <property name="peQuantMin" type="float">
             <column name="pe_quant_min" not-null="true" />
         </property>
         <property name="peQuantRepos" type="int">

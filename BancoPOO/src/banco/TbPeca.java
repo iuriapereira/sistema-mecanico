@@ -13,7 +13,7 @@ public class TbPeca  implements java.io.Serializable {
 
      private Integer peId;
      private String peDescricao;
-     private int peQuantMin;
+     private float peQuantMin;
      private int peQuantRepos;
      private Set tbFornecedorHasPecas = new HashSet(0);
 
@@ -21,12 +21,12 @@ public class TbPeca  implements java.io.Serializable {
     }
 
 	
-    public TbPeca(String peDescricao, int peQuantMin, int peQuantRepos) {
+    public TbPeca(String peDescricao, float peQuantMin, int peQuantRepos) {
         this.peDescricao = peDescricao;
         this.peQuantMin = peQuantMin;
         this.peQuantRepos = peQuantRepos;
     }
-    public TbPeca(String peDescricao, int peQuantMin, int peQuantRepos, Set tbFornecedorHasPecas) {
+    public TbPeca(String peDescricao, float peQuantMin, int peQuantRepos, Set tbFornecedorHasPecas) {
        this.peDescricao = peDescricao;
        this.peQuantMin = peQuantMin;
        this.peQuantRepos = peQuantRepos;
@@ -47,11 +47,11 @@ public class TbPeca  implements java.io.Serializable {
     public void setPeDescricao(String peDescricao) {
         this.peDescricao = peDescricao;
     }
-    public int getPeQuantMin() {
+    public float getPeQuantMin() {
         return this.peQuantMin;
     }
     
-    public void setPeQuantMin(int peQuantMin) {
+    public void setPeQuantMin(float peQuantMin) {
         this.peQuantMin = peQuantMin;
     }
     public int getPeQuantRepos() {

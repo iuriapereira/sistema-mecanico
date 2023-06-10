@@ -12,6 +12,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.text.NumberFormatter;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -44,7 +45,7 @@ class InterfaceInsereEstoque extends JDialog {
         prod.addElement("PC");
         prod.addElement("MT");
         listUnidade.setModel(prod);
-        
+
         // CONEXÃO COM O BANCO TB_FORNECEDOR
         Criteria estd = session.createCriteria(TbFornecedor.class);
         ArrayList<TbFornecedor> fornecedor = (ArrayList<TbFornecedor>) estd.list();
@@ -52,7 +53,7 @@ class InterfaceInsereEstoque extends JDialog {
         JComboBox<String> listFornecedor = new JComboBox<>();
         DefaultComboBoxModel<String> forn = new DefaultComboBoxModel<>();
         forn.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
-        listFornecedor.setModel(forn); 
+        listFornecedor.setModel(forn);
         for (TbFornecedor descricao : fornecedor) {
             listFornecedor.addItem(descricao.getTbEntidade().getEntNome());
         }
@@ -114,9 +115,32 @@ class InterfaceInsereEstoque extends JDialog {
 
                 Transaction transaction = session.beginTransaction();
                 try {
+                    String hql = "SELECT f.forId FROM TbFornecedor f WHERE f.tbEntidade.entNome = '" + listFornecedor.getSelectedItem() + "'";
+                    Query query = session.createQuery(hql);
+
+                    int fornId = (int) query.uniqueResult();
+
+                    banco.TbPeca tbpeca = new banco.TbPeca();
+                    tbpeca.setPeDescricao(descricaoField.getText());
+                    tbpeca.setPeQuantMin(Float.parseFloat(finalField.getText().replace(",", ".")));
+                    session.save(tbpeca);
+
+                    Object forne = session.load(TbFornecedor.class, fornId);
+                    banco.TbFornecedorHasPeca tbfornecedor = new banco.TbFornecedorHasPeca();
+                    tbfornecedor.setTbFornecedor((TbFornecedor) forne);
+                    tbfornecedor.setTbPeca(tbpeca);
+                    session.save(tbfornecedor);
+
+                    banco.TbEstoque tbestoque = new banco.TbEstoque();
+                    tbestoque.setTbFornecedorHasPeca(tbfornecedor);
+                    tbestoque.setEstoMedida((String) listUnidade.getSelectedItem());
+                    tbestoque.setEstoMargeLucro(Float.parseFloat(lucroField.getText().replace(",", ".")));
+                    tbestoque.setEstoQuantidade(Float.parseFloat(finalField.getText().replace(",", ".")));
+                    tbestoque.setEstoValorUni(Float.parseFloat(finalField.getText().replace(",", ".")));
+                    session.save(tbestoque);
 
                     transaction.commit();
-                    JOptionPane.showMessageDialog(null, "Cleinte Inserido com Sucesso!");
+                    JOptionPane.showMessageDialog(null, "Peça Inserida no Estoque com Sucesso!");
                     dispose();
 
                 } catch (HibernateException ex) {
@@ -174,7 +198,7 @@ class InterfaceInsereEstoque extends JDialog {
         y += yGap;
         finalLabel.setBounds(x, y, labelWidth, 20);
         finalField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        
+
         y += yGap;
         fornecedorLabel.setBounds(x, y, labelWidth, 20);
         listFornecedor.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
@@ -215,7 +239,7 @@ class InterfaceInsereEstoque extends JDialog {
         // botão para limpar
         mainPanel.add(cadastrar);
         mainPanel.add(limparCampos);
-        
+
         mainPanel.add(fornecedorLabel);
         mainPanel.add(listFornecedor);
 

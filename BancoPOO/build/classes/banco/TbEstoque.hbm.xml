@@ -11,7 +11,7 @@
         <many-to-one name="tbFornecedorHasPeca" class="banco.TbFornecedorHasPeca" fetch="select">
             <column name="esto_fp_id" not-null="true" />
         </many-to-one>
-        <property name="estoQuantidade" type="int">
+        <property name="estoQuantidade" type="float">
             <column name="esto_quantidade" not-null="true" />
         </property>
         <property name="estoValorUni" type="float">
