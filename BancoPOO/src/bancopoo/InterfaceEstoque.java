@@ -85,21 +85,21 @@ class InterfaceEstoque extends InterfaceAbstrata {
                             selectedPeca = (String) table.getValueAt(selectedRow, 0);
                             Transaction transaction = session.beginTransaction();
                             try {
-                                String hql = "DELETE FROM TbEstoque e WHERE e.tbFornecedorHasPeca.tbPeca.peDescricao = :Nome Produto";
-                                Query deleteQuery = session.createQuery(hql);
-                                deleteQuery.setParameter("Nome Produto", selectedPeca);
-                                deleteQuery.executeUpdate();
+                                String hqlDeleteEstoque = "DELETE FROM TbEstoque e WHERE e.tbFornecedorHasPeca IN (SELECT fhp FROM TbFornecedorHasPeca fhp WHERE fhp.tbPeca IN (SELECT p FROM TbPeca p WHERE p.peDescricao = :descricao))";
+                                Query deleteQueryEstoque = session.createQuery(hqlDeleteEstoque);
+                                deleteQueryEstoque.setParameter("descricao", selectedPeca);
+                                deleteQueryEstoque.executeUpdate();
+
+                                String hqlDeleteFornecedorHasPeca = "DELETE FROM TbFornecedorHasPeca fhp WHERE fhp.tbPeca IN (SELECT p FROM TbPeca p WHERE p.peDescricao = :descricao)";
+                                Query deleteQueryFornecedorHasPeca = session.createQuery(hqlDeleteFornecedorHasPeca);
+                                deleteQueryFornecedorHasPeca.setParameter("descricao", selectedPeca);
+                                deleteQueryFornecedorHasPeca.executeUpdate();
+
+                                String hqlDeletePeca = "DELETE FROM TbPeca p WHERE p.peDescricao = :descricao";
+                                Query deleteQueryPeca = session.createQuery(hqlDeletePeca);
+                                deleteQueryPeca.setParameter("descricao", selectedPeca);
+                                deleteQueryPeca.executeUpdate();
                                 
-                                String hql2 = "DELETE FROM TbFornecedorHasPeca t WHERE t.tbPeca.peDescricao = :Nome Produto";
-                                Query deleteQuery2 = session.createQuery(hql2);
-                                deleteQuery2.setParameter("Nome Produto", selectedPeca);
-                                deleteQuery2.executeUpdate();
-
-                                String hql3 = "DELETE FROM TbPeca p WHERE p.peDescricao = :Nome Produto";
-                                Query deleteQuery3 = session.createQuery(hql3);
-                                deleteQuery3.setParameter("Nome Produto", selectedPeca);
-                                deleteQuery3.executeUpdate();
-
                                 transaction.commit();
                                 JOptionPane.showMessageDialog(null, "Produto Removido");
                                 updateTableData(model);
