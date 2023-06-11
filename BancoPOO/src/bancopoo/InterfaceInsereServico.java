@@ -1,0 +1,146 @@
+package bancopoo;
+
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.text.DecimalFormat;
+import javax.swing.*;
+import javax.swing.text.NumberFormatter;
+import org.hibernate.Session;
+
+class InterfaceInsereServico extends JFrame {
+    protected static boolean isSmallWindowOpen = false;
+    private final JFrame smallFrame;
+    private final JFrame mainFrame;
+    private final JFormattedTextField valorServicoField;
+    private final JTextField modeloField;
+    private final JTextField marcaField;
+    private final JTextField placaField;
+    private Session session;
+    
+    public InterfaceInsereServico(JFrame mainFrame, Session session) {
+        this.smallFrame = new JFrame("Inserindo Serviço"); // TELA ATUAL
+        this.mainFrame = mainFrame; // TELA ANTERIOR
+        this.session = session;
+        
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) (screenSize.width * 0.2);
+        int height = (int) (screenSize.height * 0.5);
+        smallFrame.setSize(width, height);
+        smallFrame.setResizable(false);
+        smallFrame.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        
+        // Verifica se a janela menor está aberta
+        isSmallWindowOpen = false;
+        
+        // Painel da janela menor
+        JPanel smallPanel = new JPanel();
+        smallPanel.setLayout(new BoxLayout(smallPanel, BoxLayout.Y_AXIS));
+        
+        // Define o formato para números de ponto flutuante
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+        decimalFormat.setParseBigDecimal(true);
+        
+        // Cria um NumberFormatter com o formato definido
+        NumberFormatter formatter = new NumberFormatter(decimalFormat);
+        formatter.setValueClass(Float.class);
+        formatter.setAllowsInvalid(false);
+        formatter.setCommitsOnValidEdit(true);
+        
+        // Adiciona os componentes acima da tabela
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        Font fonte = new Font("Comic Sans MS", Font.BOLD, 14);
+        JLabel valorServicoLabel = new JLabel("Valor do Item");
+        valorServicoLabel.setFont(fonte);
+        valorServicoField = new JFormattedTextField(formatter);
+        valorServicoField.setValue(0.00f);
+        valorServicoField.setFont(fonte);
+        valorServicoField.setPreferredSize(new Dimension(100, 30));
+        
+        JLabel descricaoLabel = new JLabel("Descrição Serviço:");
+        descricaoLabel.setFont(fonte);
+        smallPanel.add(descricaoLabel, BorderLayout.SOUTH);
+        JTextArea descricaoArea = new JTextArea();
+        descricaoArea.setFont(fonte);
+        descricaoArea.setLineWrap(true); // Permite que o texto pule de linha automaticamente 
+        descricaoArea.setWrapStyleWord(true); // Quebra a linha no espaço em branco mais próximo
+        descricaoArea.setPreferredSize(new Dimension(360, 70));
+        
+        JLabel modeloLabel = new JLabel("Modelo:");
+        modeloLabel.setFont(fonte);
+        modeloField = new JTextField();
+        modeloField.setFont(fonte);
+        modeloField.setPreferredSize(new Dimension(200, 30));
+        
+        JLabel marcaLabel = new JLabel("Marca:");
+        marcaLabel.setFont(fonte);
+        marcaField = new JTextField();
+        marcaField.setFont(fonte);
+        marcaField.setPreferredSize(new Dimension(200, 30));
+        
+        JLabel placaLabel = new JLabel("Placa:");
+        placaLabel.setFont(fonte);
+        placaField = new JTextField();
+        placaField.setFont(fonte);
+        placaField.setPreferredSize(new Dimension(100, 30));
+        
+        topPanel.add(valorServicoLabel);
+        topPanel.add(valorServicoField);
+        topPanel.add(descricaoLabel);
+        topPanel.add(descricaoArea);
+        topPanel.add(modeloLabel);
+        topPanel.add(modeloField);
+        topPanel.add(marcaLabel);
+        topPanel.add(marcaField);
+        topPanel.add(placaLabel);
+        topPanel.add(placaField);
+        
+        smallPanel.add(topPanel);
+        
+        // BOTÃO SALVAR
+        JButton salvar = new JButton();
+        ImageIcon slv = new ImageIcon("src/resources/images/salvar.png");
+        Image scaledSlv = slv.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        salvar.setIcon(new ImageIcon(scaledSlv));
+        salvar.setBounds(70, 540, 100, 40);
+        
+        // BOTÃO LIMPAR
+        JButton limpar = new JButton();
+        ImageIcon lip = new ImageIcon("src/resources/images/limpar.png");
+        Image scaledLip = lip.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        limpar.setIcon(new ImageIcon(scaledLip));
+        limpar.setBounds(70, 540, 100, 40);
+        
+        // Adiciona o painel da janela menor na janela menor
+        smallFrame.getContentPane().add(smallPanel);
+
+        // Centraliza a janela menor em relação à janela principal
+        int x = mainFrame.getX() + (mainFrame.getWidth() - smallFrame.getWidth()) / 2;
+        int y = mainFrame.getY() + (mainFrame.getHeight() - smallFrame.getHeight()) / 2;
+        smallFrame.setLocation(x, y);
+
+        // Configura um listener para quando a janela menor for fechada
+        smallFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                isSmallWindowOpen = false;
+                // Habilita a janela principal
+                mainFrame.setEnabled(true);
+                mainFrame.requestFocus();
+            }
+        });
+        
+        topPanel.add(salvar);
+        topPanel.add(limpar);
+    }
+    
+    public void showInterface() {
+        // Desabilita a janela anterior (mainFrame)
+        mainFrame.setEnabled(false);
+        // Exibe a janela atual (smallFrame)
+        smallFrame.setVisible(true);
+    }
+}
+

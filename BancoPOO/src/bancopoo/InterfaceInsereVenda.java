@@ -1,14 +1,20 @@
 package bancopoo;
 
+import banco.TbCliente;
+import banco.TbTipoPagamento;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.NumberFormatter;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -20,8 +26,9 @@ class InterfaceInsereVenda extends JFrame {
     private final JFormattedTextField descontoField;
     private final JFormattedTextField totalVendaField;
     private Session session;
-    protected String[] buttonLabels = {"Inserir Produto", "Alterar Produto", "Inserir Serviço", "Alterar Serviço"};
-    protected String[] buttonIcons = {"src/resources/images/inserirproduto.png", "src/resources/images/alterarproduto.png", "src/resources/images/inserirservico.png","src/resources/images/alterarservico.png"};
+    protected String[] buttonLabels = {"Inserir Produto", "Alterar Produto", "Inserir Serviço", "Alterar Serviço", "Concluir Venda"};
+    protected String[] buttonIcons = {"src/resources/images/inserirproduto.png", "src/resources/images/alterarproduto.png", "src/resources/images/inserirservico.png",
+        "src/resources/images/alterarservico.png", "src/resources/images/finalizar.png"};
     protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     
     public InterfaceInsereVenda(JFrame mainFrame, Session session) {
@@ -75,8 +82,8 @@ class InterfaceInsereVenda extends JFrame {
         totalVendaField = new JFormattedTextField(formatter);
         totalVendaField.setValue(0.00f);
         totalVendaField.setFont(fonte2);
+        totalVendaField.setEditable(false);
         totalVendaField.setPreferredSize(new Dimension(200, 50));
-        
         
         topPanel.add(valorItemLabel);
         topPanel.add(valorItemField);
@@ -85,7 +92,48 @@ class InterfaceInsereVenda extends JFrame {
         topPanel.add(totalVendaLabel);
         topPanel.add(totalVendaField);
         
-        smallPanel.add(topPanel, BorderLayout.WEST);
+        smallPanel.add(topPanel);
+        
+        valorItemField.addPropertyChangeListener("value", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                atualizarValorTotal();
+            }
+        });
+
+        // Define um ouvinte de eventos para o campo "lucroField"
+        descontoField.addPropertyChangeListener("value", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                atualizarValorTotal();
+            }
+        });
+        
+        // CONEXÃO COM O BANCO TB_CLIENTE
+        Criteria cli = session.createCriteria(TbCliente.class);
+        ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();
+        // COMBOBOX DO CLIENTE
+        JComboBox<String> listCliente = new JComboBox<>();
+        DefaultComboBoxModel<String> clie = new DefaultComboBoxModel<>();
+        clie.addElement("Inserir Cliente...");
+        listCliente.setModel(clie);
+        for (TbCliente descricao : cliente) {
+            listCliente.addItem(descricao.getTbEntidade().getEntNome());
+        }
+        topPanel.add(listCliente);
+        
+        // CONEXÃO COM O BANCO TB_TIPOPAGAMENTO
+        Criteria pgm = session.createCriteria(TbTipoPagamento.class);
+        ArrayList<TbTipoPagamento> pagamento = (ArrayList<TbTipoPagamento>) pgm.list();
+        // COMBOBOX DO PAGAMENTO
+        JComboBox<String> listPagamento = new JComboBox<>();
+        DefaultComboBoxModel<String> pagm = new DefaultComboBoxModel<>();
+        pagm.addElement("Tipo de Pagamento...");
+        listPagamento.setModel(pagm);
+        for (TbTipoPagamento desc : pagamento) {
+            listPagamento.addItem(desc.getTpDescricao());
+        }
+        topPanel.add(listPagamento);
         
         // Parte inferior com a tabela
         JTable table = createTable(session);
@@ -120,6 +168,24 @@ class InterfaceInsereVenda extends JFrame {
         mainFrame.setEnabled(false);
         // Exibe a janela atual (smallFrame)
         smallFrame.setVisible(true);
+    }
+    
+    // FAZ O CALCULO DO VALOR TOTAL
+    private void atualizarValorTotal() {
+        Float custo = null;
+        if (valorItemField.getValue() != null) {
+            custo = (Float) valorItemField.getValue();
+        }
+
+        Float desconto = null;
+        if (descontoField.getValue() != null) {
+            desconto = (Float) descontoField.getValue();
+        }
+
+        if (custo != null && desconto != null) {
+            Float valorTotal = custo - desconto;
+            totalVendaField.setValue(valorTotal);
+        }
     }
     
     // TABELA PARA INSERIR OS DADOS DA VENDA
@@ -169,49 +235,36 @@ class InterfaceInsereVenda extends JFrame {
             JButton button = createSmallButton(buttonIcons[i]);
             String label = buttonLabels[i];
 
-            if (label.equals("Inserir")) {
+            if (label.equals("Inserir Produto")) {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame, session);
+                        
+                    }
+                });
+            } else if (label.equals("Alterar Produto")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        
+                    }
+                });
+            } else if (label.equals("Inserir Serviço")) {
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        InterfaceInsereServico inserir = new InterfaceInsereServico(mainFrame, session);
                         inserir.showInterface();
                     }
                 });
-            } else if (label.equals("Alterar")) {
+            } else if(label.equals("Alterar Serviço")){
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // Implemente a lógica para a ação de alteração
-                        // ...
+                        //updateTableData(model); 
                     }
                 });
-            } else if (label.equals("Remover")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
-
-                        // Verifica se uma linha está selecionada
-                        /*if (selectedRow != -1) {
-                            // Obtém o CPF da linha selecionada
-                            selectedCPF = (String) table.getValueAt(selectedRow, 2);
-                            Transaction transaction = session.beginTransaction();
-                            try {
-                                String hql = "DELETE FROM TbCliente c WHERE c.tbEntidade.entCpfCnpj = :cpf";
-                                Query deleteQuery = session.createQuery(hql);
-                                deleteQuery.setParameter("cpf", selectedCPF);
-                                deleteQuery.executeUpdate();
-                                transaction.commit();
-                                JOptionPane.showMessageDialog(null, "Cliente Removido");
-                                updateTableData(model);
-                            } catch (HibernateException ex) {
-                                transaction.rollback();
-                                JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                            }
-                        }*/
-                    }
-                });
-            } else if(label.equals("Atualizar")){
+            } else if(label.equals("Concluir Venda")){
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
