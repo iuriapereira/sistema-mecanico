@@ -131,29 +131,15 @@ class InterfaceInsereVenda extends JFrame {
         Query query = session.createQuery(hql);
         java.util.List<String> clientes = (java.util.List<String>) query.list();
         
-        /*Criteria cli = session.createCriteria(TbCliente.class);
-        ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();*/
-        
-        
         // COMBOBOX DO CLIENTE
-        JComboBox<String> listCliente = new JComboBox<>();
+        listCliente = new JComboBox<>();
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-        model.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        model.addElement("Cliente..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
         for (String cliente : clientes) {
             model.addElement(cliente);
         }
-        //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-                
+        listCliente.setFont(box);    
         listCliente.setModel(model);
-        
-        /*
-        DefaultComboBoxModel<String> clie = new DefaultComboBoxModel<>();
-        clie.addElement("Inserir Cliente...");
-        listCliente.setModel(clie);
-        for (TbCliente descricao : cliente) {
-            listCliente.addItem(decricao.getTbEntidade().getEntNome());
-        }
-        listCliente.setFont(box);*/
         comboBox.add(listCliente);
 
         // CONEXÃO COM O BANCO TB_TIPOPAGAMENTO
@@ -169,8 +155,6 @@ class InterfaceInsereVenda extends JFrame {
         }
         listPagamento.setFont(box);
         comboBox.add(listPagamento);
-        
-        
         // ------------------------------------------------------------------------
 
         // TABELA -----------------------------------------------------------------
