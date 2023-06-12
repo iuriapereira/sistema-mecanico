@@ -136,19 +136,20 @@ class InterfaceInsereServico extends JFrame {
         veiculo.add(placaField);
         
         // BOTÕES -----------------------------------------------------------------------
-        // BOTÃO SALVAR
+        
+        // BOTÃO SALVAR ---------------------------------------
         ImageIcon slv = new ImageIcon("src/resources/images/salvar.png");
         Image scaledSlv = slv.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         salvar.setIcon(new ImageIcon(scaledSlv));
         salvar.setBounds(70, 540, 100, 40);
-
-        // BOTÃO LIMPAR
+        // ----------------------------------------------------
+        // BOTÃO LIMPAR ---------------------------------------
         JButton limpar = new JButton();
         ImageIcon lip = new ImageIcon("src/resources/images/limpar.png");
         Image scaledLip = lip.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         limpar.setIcon(new ImageIcon(scaledLip));
         limpar.setBounds(70, 540, 100, 40);
-        
+        // ----------------------------------------------------
         JPanel botao = new JPanel(new FlowLayout(FlowLayout.CENTER));
         botao.add(salvar);
         botao.add(limpar);
