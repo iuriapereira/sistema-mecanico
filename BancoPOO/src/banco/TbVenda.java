@@ -23,9 +23,7 @@ public class TbVenda  implements java.io.Serializable {
     }
 
 	
-    public TbVenda(TbCliente tbCliente, TbTipoPagamento tbTipoPagamento, Date venData) {
-        this.tbCliente = tbCliente;
-        this.tbTipoPagamento = tbTipoPagamento;
+    public TbVenda(Date venData) {
         this.venData = venData;
     }
     public TbVenda(TbCliente tbCliente, TbTipoPagamento tbTipoPagamento, Date venData, Set tbVendaSers, Set tbVenPecas) {

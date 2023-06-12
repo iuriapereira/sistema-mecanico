@@ -1,24 +1,34 @@
 package bancopoo;
 
 import banco.TbCliente;
+import banco.TbEstoque;
 import banco.TbTipoPagamento;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.NumberFormatter;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 class InterfaceInsereVenda extends JFrame {
+
     protected static boolean isSmallWindowOpen = false;
     private final JFrame smallFrame;
     private final JFrame mainFrame;
@@ -26,57 +36,62 @@ class InterfaceInsereVenda extends JFrame {
     private final JFormattedTextField descontoField;
     private final JFormattedTextField totalVendaField;
     private Session session;
-    protected String[] buttonLabels = {"Inserir Produto", "Alterar Produto", "Inserir Serviço", "Alterar Serviço", "Concluir Venda"};
-    protected String[] buttonIcons = {"src/resources/images/inserirproduto.png", "src/resources/images/alterarproduto.png", "src/resources/images/inserirservico.png",
-        "src/resources/images/alterarservico.png", "src/resources/images/finalizar.png"};
+    protected String[] buttonLabels = {"Inserir Produto", "Inserir Serviço", "Excluir", "Concluir Venda"};
+    protected String[] buttonIcons = {"src/resources/images/inserirproduto.png", "src/resources/images/inserirservico.png",
+        "src/resources/images/excluir.png", "src/resources/images/finalizar.png"};
     protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    
+    private banco.TbVenda tbvenda;
+    private ArrayList<Object[]> vendaItems = new ArrayList<>();
+    private DefaultTableModel model;
+    private JComboBox<String> listCliente;
+    private JComboBox<String> listPagamento;
+
     public InterfaceInsereVenda(JFrame mainFrame, Session session) {
         this.smallFrame = new JFrame("Inserindo Vendas"); // TELA ATUAL
         this.mainFrame = mainFrame; // TELA ANTERIOR
         this.session = session;
-        
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int) (screenSize.width * 0.6);
+        int width = (int) (screenSize.width * 0.7);
         int height = (int) (screenSize.height * 0.6);
         smallFrame.setSize(width, height);
         smallFrame.setResizable(false);
         smallFrame.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
-        
+
         // Verifica se a janela menor está aberta
         isSmallWindowOpen = false;
-        
+
         // Painel da janela menor
         JPanel smallPanel = new JPanel();
         smallPanel.setLayout(new BoxLayout(smallPanel, BoxLayout.Y_AXIS));
-        
+
         // Define o formato para números de ponto flutuante
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
         decimalFormat.setParseBigDecimal(true);
-        
+
         // Cria um NumberFormatter com o formato definido
         NumberFormatter formatter = new NumberFormatter(decimalFormat);
         formatter.setValueClass(Float.class);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
-        
+
         // Adiciona os componentes acima da tabela
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        
+
         Font fonte = new Font("Comic Sans MS", Font.BOLD, 14);
         JLabel valorItemLabel = new JLabel("Valor do Item");
         valorItemField = new JFormattedTextField(formatter);
         valorItemField.setValue(0.00f);
         valorItemField.setFont(fonte);
         valorItemField.setPreferredSize(new Dimension(100, 30));
-        
+
         Font fonte1 = new Font("Comic Sans MS", Font.BOLD, 14);
         JLabel descontoLabel = new JLabel("Desconto");
         descontoField = new JFormattedTextField(formatter);
         descontoField.setValue(0.00f);
         descontoField.setFont(fonte1);
         descontoField.setPreferredSize(new Dimension(100, 30));
-        
+
         Font fonte2 = new Font("Comic Sans MS", Font.BOLD, 18);
         JLabel totalVendaLabel = new JLabel("TOTAL R$");
         totalVendaField = new JFormattedTextField(formatter);
@@ -84,16 +99,16 @@ class InterfaceInsereVenda extends JFrame {
         totalVendaField.setFont(fonte2);
         totalVendaField.setEditable(false);
         totalVendaField.setPreferredSize(new Dimension(200, 50));
-        
+
         topPanel.add(valorItemLabel);
         topPanel.add(valorItemField);
         topPanel.add(descontoLabel);
         topPanel.add(descontoField);
         topPanel.add(totalVendaLabel);
         topPanel.add(totalVendaField);
-        
+
         smallPanel.add(topPanel);
-        
+
         valorItemField.addPropertyChangeListener("value", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -108,12 +123,12 @@ class InterfaceInsereVenda extends JFrame {
                 atualizarValorTotal();
             }
         });
-        
+
         // CONEXÃO COM O BANCO TB_CLIENTE
         Criteria cli = session.createCriteria(TbCliente.class);
         ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();
         // COMBOBOX DO CLIENTE
-        JComboBox<String> listCliente = new JComboBox<>();
+        listCliente = new JComboBox<>();
         DefaultComboBoxModel<String> clie = new DefaultComboBoxModel<>();
         clie.addElement("Inserir Cliente...");
         listCliente.setModel(clie);
@@ -121,12 +136,12 @@ class InterfaceInsereVenda extends JFrame {
             listCliente.addItem(descricao.getTbEntidade().getEntNome());
         }
         topPanel.add(listCliente);
-        
+
         // CONEXÃO COM O BANCO TB_TIPOPAGAMENTO
         Criteria pgm = session.createCriteria(TbTipoPagamento.class);
         ArrayList<TbTipoPagamento> pagamento = (ArrayList<TbTipoPagamento>) pgm.list();
         // COMBOBOX DO PAGAMENTO
-        JComboBox<String> listPagamento = new JComboBox<>();
+        listPagamento = new JComboBox<>();
         DefaultComboBoxModel<String> pagm = new DefaultComboBoxModel<>();
         pagm.addElement("Tipo de Pagamento...");
         listPagamento.setModel(pagm);
@@ -134,15 +149,15 @@ class InterfaceInsereVenda extends JFrame {
             listPagamento.addItem(desc.getTpDescricao());
         }
         topPanel.add(listPagamento);
-        
+
         // Parte inferior com a tabela
-        JTable table = createTable(session);
+        JTable table = createTable(session, tbvenda);
         table.setEnabled(true); // Torna a tabela não editável
-        
+
         // Adiciona os painéis no painel da janela menor
         smallPanel.add(buttonPanel);
         smallPanel.add(new JScrollPane(table), BorderLayout.NORTH);
-        
+
         // Adiciona o painel da janela menor na janela menor
         smallFrame.getContentPane().add(smallPanel);
 
@@ -162,14 +177,14 @@ class InterfaceInsereVenda extends JFrame {
             }
         });
     }
-    
+
     public void showInterface() {
         // Desabilita a janela anterior (mainFrame)
         mainFrame.setEnabled(false);
         // Exibe a janela atual (smallFrame)
         smallFrame.setVisible(true);
     }
-    
+
     // FAZ O CALCULO DO VALOR TOTAL
     private void atualizarValorTotal() {
         Float custo = null;
@@ -187,7 +202,7 @@ class InterfaceInsereVenda extends JFrame {
             totalVendaField.setValue(valorTotal);
         }
     }
-    
+
     // TABELA PARA INSERIR OS DADOS DA VENDA
     protected JButton createSmallButton(String iconPath) {
         JButton button = new JButton();
@@ -198,38 +213,39 @@ class InterfaceInsereVenda extends JFrame {
         button.setFocusPainted(false);
         return button;
     }
-    
-    protected JTable createTable(Session session) {
-        // Código para buscar os dados do banco de dados usando Hibernate
-        String hql = "SELECT cli.cliId, cli.tbEntidade.entNome, cli.tbEntidade.entCpfCnpj, cli.tbEntidade.entFone, cli.tbEntidade.entSexo, cli.tbEntidade.entEmail, cli.tbEntidade.entTipo FROM TbCliente cli";
-        Query query = session.createQuery(hql);
 
-        String[] columnNames = {"ID", "Nome", "Cpf/Cnpj", "Fone", "Sexo", "Email", "Tipo"};
-
-        // Modelo da tabela não editável
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+    protected JTable createTable(Session session, banco.TbVenda tbvenda) {
+        // Criação da tabela e modelo
+        String[] columnNames = {"Tipo", "Descrição", "Valor Serviço/Peça", "Quantidade",};
+        model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0 || column == 1 || column == 2) { // Impede a edição das colunas "Descrição" e "Valor"
+                    return false;
+                }
+                return true; // Permite a edição das outras colunas
+            }
+        };
+        String[] columnNames2 = {"Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Quantidade Mínima", "Fornecedor"};
+        DefaultTableModel model2 = new DefaultTableModel(columnNames2, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-
-        java.util.List<Object[]> results = query.list();
-        for (Object[] result : results) {
-            int id = (int) result[0];
-            String nome = (String) result[1];
-            String cpf = (String) result[2];
-            String fone = (String) result[3];
-            String sexo = (String) result[4];
-            String email = (String) result[5];
-            String tipo = (String) result[6];
-
-            model.addRow(new Object[]{id, nome, cpf, fone, sexo, email, tipo}); // Adicione outras colunas conforme necessário
-        }
-
         // Cria a tabela
         JTable table = new JTable(model);
         table.setFillsViewportHeight(true);
+        table.getModel().addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+                if (row >= 0 && column >= 0) {
+                    Object novoValor = model.getValueAt(row, column);
+                    vendaItems.get(row)[column] = novoValor;
+                }
+            }
+        });
         // Parte superior com os botões flutuantes
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
@@ -239,36 +255,80 @@ class InterfaceInsereVenda extends JFrame {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        
-                    }
-                });
-            } else if (label.equals("Alterar Produto")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        
+                        try {
+                            // Criação da janela com a tabela
+                            JDialog dialog = new JDialog(mainFrame, "Selecione um produto");
+                            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                            dialog.setSize(600, 400);
+
+                            InterfaceEstoque tabela = new InterfaceEstoque(mainFrame, session);
+                            tabela.updateTableData(model2);
+                            // Criação da tabela dentro do dialog
+                            JTable dialogTable = new JTable(model2);
+                            JScrollPane dialogScrollPane = new JScrollPane(dialogTable);
+                            dialog.add(dialogScrollPane);
+
+                            // Adiciona o MouseListener para capturar o clique duplo na tabela
+                            dialogTable.addMouseListener(new MouseInputAdapter() {
+                                public void mouseClicked(MouseEvent e) {
+                                    if (e.getClickCount() == 2) { // Verifica se foi um clique duplo
+                                        int selectedRow = dialogTable.getSelectedRow();
+                                        if (selectedRow != -1) {
+                                            String selectedProduct = (String) dialogTable.getValueAt(selectedRow, 0);
+                                            Float selectedProduct_valor = (Float) dialogTable.getValueAt(selectedRow, 3);
+                                            Object[] vendaItem = {"Produto", selectedProduct, selectedProduct_valor, 0};
+                                            vendaItems.add(vendaItem);
+                                            atualizarTabela();
+
+                                            // Feche a janela de seleção do produto
+                                            dialog.dispose();
+                                        }
+                                    }
+                                }
+                            });
+
+                            dialog.setVisible(true);
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 });
             } else if (label.equals("Inserir Serviço")) {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereServico inserir = new InterfaceInsereServico(mainFrame, session);
+                        JButton salvar = new JButton();
+                        InterfaceInsereServico inserir = new InterfaceInsereServico(mainFrame, session, salvar);
                         inserir.showInterface();
+                        salvar.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                vendaItems.add(inserir.getServicoInputs());
+                                atualizarTabela();
+                            }
+                        });
                     }
                 });
-            } else if(label.equals("Alterar Serviço")){
+            } else if (label.equals("Excluir")) {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        //updateTableData(model); 
+                        int indiceSelecionado = table.getSelectedRow();
+                        if (indiceSelecionado >= 0) {
+                            vendaItems.remove(indiceSelecionado);
+                            atualizarTabela();
+                        }
                     }
                 });
-            } else if(label.equals("Concluir Venda")){
+            } else if (label.equals("Concluir Venda")) {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        //updateTableData(model); 
+                        if (listCliente.getSelectedItem() == "Inserir Cliente..." || listPagamento.getSelectedItem() == "Tipo de Pagamento...") {
+                            JOptionPane.showMessageDialog(null, "Informe um Cliente/Pagamento");
+                        } else {
+
+                        }
                     }
                 });
             }
@@ -276,5 +336,18 @@ class InterfaceInsereVenda extends JFrame {
         }
 
         return table;
+    }
+
+    public void atualizarTabela() {
+        model.setRowCount(0); // Limpa o modelo da tabela
+
+        for (Object[] item : vendaItems) {
+            model.addRow(item); // Adiciona cada item ao modelo da tabela
+        }
+    }
+
+    public void adicionarServico(Object[] servicoInputs) {
+        vendaItems.add(servicoInputs);
+        atualizarTabela();
     }
 }

@@ -9,10 +9,10 @@
             <generator class="identity" />
         </id>
         <many-to-one name="tbCliente" class="banco.TbCliente" fetch="select">
-            <column name="ven_cli_id" not-null="true" />
+            <column name="ven_cli_id" not-null="false" />
         </many-to-one>
         <many-to-one name="tbTipoPagamento" class="banco.TbTipoPagamento" fetch="select">
-            <column name="ven_tp_id" not-null="true" />
+            <column name="ven_tp_id" not-null="false" />
         </many-to-one>
         <property name="venData" type="timestamp">
             <column name="ven_data" length="19" not-null="true" />
