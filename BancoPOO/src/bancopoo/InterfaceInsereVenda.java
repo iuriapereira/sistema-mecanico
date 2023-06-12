@@ -1,6 +1,7 @@
 package bancopoo;
 
 import banco.TbCliente;
+import banco.TbEstado;
 import banco.TbEstoque;
 import banco.TbTipoPagamento;
 import java.awt.*;
@@ -126,17 +127,33 @@ class InterfaceInsereVenda extends JFrame {
         Font box = new Font("Times New Roman", Font.BOLD, 18);
         JPanel comboBox = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // CONEXÃO COM O BANCO TB_CLIENTE
-        Criteria cli = session.createCriteria(TbCliente.class);
-        ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();
+        String hql = "SELECT cli.tbEntidade.entNome FROM TbCliente cli";
+        Query query = session.createQuery(hql);
+        java.util.List<String> clientes = (java.util.List<String>) query.list();
+        
+        /*Criteria cli = session.createCriteria(TbCliente.class);
+        ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();*/
+        
+        
         // COMBOBOX DO CLIENTE
-        listCliente = new JComboBox<>();
+        JComboBox<String> listCliente = new JComboBox<>();
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        model.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        for (String cliente : clientes) {
+            model.addElement(cliente);
+        }
+        //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
+                
+        listCliente.setModel(model);
+        
+        /*
         DefaultComboBoxModel<String> clie = new DefaultComboBoxModel<>();
         clie.addElement("Inserir Cliente...");
         listCliente.setModel(clie);
         for (TbCliente descricao : cliente) {
-            listCliente.addItem(descricao.getTbEntidade().getEntNome());
+            listCliente.addItem(decricao.getTbEntidade().getEntNome());
         }
-        listCliente.setFont(box);
+        listCliente.setFont(box);*/
         comboBox.add(listCliente);
 
         // CONEXÃO COM O BANCO TB_TIPOPAGAMENTO

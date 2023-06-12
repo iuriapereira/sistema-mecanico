@@ -70,10 +70,6 @@ class InterfaceInsereCliente extends JDialog {
         for (TbEstado descricao : estado) {
             listEstado.addItem(descricao.getEstSigla());
         }
-          
-        // CONEXÃO COM O BANCO TB_CIDEST
-        Criteria cid = session.createCriteria(TbCidEst.class);
-        ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
         
         // COMBOBOX DA CIDADE
         JComboBox<String> listCidade = new JComboBox<>();
@@ -93,7 +89,7 @@ class InterfaceInsereCliente extends JDialog {
                 for (String cidade : cidades) {
                     model.addElement(cidade);
                 }
-                ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
+                //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
                 
                 listCidade.setModel(model);
                 
@@ -105,17 +101,19 @@ class InterfaceInsereCliente extends JDialog {
         });
         
         // CONEXÃO COM O BANCO TB_LOGRADOURO
-        Criteria log = session.createCriteria(TbLogradouro.class);
-        ArrayList<TbLogradouro> logradouro = (ArrayList<TbLogradouro>) log.list();
+        String hql = "SELECT log.logDescricao FROM TbLogradouro log";
+        Query query = session.createQuery(hql);
+        java.util.List<String> logradouros = (java.util.List<String>) query.list();
         
         // COMBOBOX DO LOGRADOURO
         JComboBox<String> listLogradouro = new JComboBox<>();
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
         listLogradouro.setModel(logr); 
-        for (TbLogradouro descricao : logradouro) {
-            listLogradouro.addItem(descricao.getLogDescricao());
+        for (String logradouro : logradouros) {
+            logr.addElement(logradouro);
         }
+        listLogradouro.setModel(logr);
         
         // Painel da janela menor
         JPanel mainPanel = new JPanel(null); // Define o layout como null
