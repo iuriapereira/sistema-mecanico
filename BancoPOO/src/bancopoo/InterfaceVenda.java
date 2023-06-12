@@ -16,15 +16,13 @@ class InterfaceVenda extends InterfaceAbstrata {
     public InterfaceVenda(JFrame mainFrame, Session session) {
         super(mainFrame, session);
         this.session = session;
-        
+
     }
-    
+
     @Override
     protected JTable createTable(Session session) {
 
-        String hql = "SELECT v.venId, v.tbCliente.tbEntidade.entNome, v.venData, v.tbTipoPagamento.tpDescricao, "
-                + "(SELECT SUM(s.vsValorServico) FROM TbVendaSer s WHERE s.tbVenda = v), "
-                + "(SELECT SUM(p.vpQuantidade * p.tbEstoque.estoValorUni) FROM TbVenPeca p WHERE p.tbVenda = v) "
+        String hql = "SELECT v.venId, v.tbCliente.tbEntidade.entNome, v.venData, v.venTotal, v.tbTipoPagamento.tpDescricao "
                 + "FROM TbVenda v";
         Query query = session.createQuery(hql);
         String[] columnNames = {"ID", "Nome Cliente", "Valor Total", "Data", "Tipo Pagamento"};
@@ -42,19 +40,8 @@ class InterfaceVenda extends InterfaceAbstrata {
             int id = (int) result[0];
             String nome = (String) result[1];
             java.sql.Timestamp timestamp = (java.sql.Timestamp) result[2];
-            String pagamento = (String) result[3];
-            Double totalSer = ((Number) result[4]).doubleValue();
-            Double totalPec = ((Number) result[5]).doubleValue();
-            // Verificar se totalSer é null e atribuir zero como valor padrão
-            if (totalSer == null) {
-                totalSer = 0.0;
-            }
-
-            // Verificar se totalPec é null e atribuir zero como valor padrão
-            if (totalPec == null) {
-                totalPec = 0.0;
-            }
-            Double valorTotal = totalSer + totalPec;
+            Float valorTotal = (Float) result[3];
+            String pagamento = (String) result[4];
 
             model.addRow(new Object[]{id, nome, valorTotal, timestamp, pagamento});
         }
@@ -94,10 +81,8 @@ class InterfaceVenda extends InterfaceAbstrata {
     }
 
     private void updateTableData(DefaultTableModel model) {
-        String hql = "SELECT v.venId, v.tbCliente.tbEntidade.entNome, v.venData, v.tbTipoPagamento.tpDescricao, "
-                + "(SELECT SUM(s.vsValorServico) FROM TbVendaSer s WHERE s.tbVenda = v), "
-                + "(SELECT SUM(p.vpQuantidade * p.tbEstoque.estoValorUni) FROM TbVenPeca p WHERE p.tbVenda = v) "
-                + "FROM TbVenda v";
+        String hql = "SELECT v.venId, v.tbCliente.tbEntidade.entNome, v.venData, v.venTotal, v.tbTipoPagamento.tpDescricao"
+                + " FROM TbVenda v";
         Query query = session.createQuery(hql);
 
         List<Object[]> results = query.list();
@@ -106,21 +91,10 @@ class InterfaceVenda extends InterfaceAbstrata {
             int id = (int) result[0];
             String nome = (String) result[1];
             java.sql.Timestamp timestamp = (java.sql.Timestamp) result[2];
-            String pagamento = (String) result[3];
-            Double totalSer = ((Number) result[4]).doubleValue();
-            Double totalPec = ((Number) result[5]).doubleValue();
-            // Verificar se totalSer é null e atribuir zero como valor padrão
-            if (totalSer == null) {
-                totalSer = 0.0;
-            }
+            Float valortotal = (Float) result[3];
+            String pagamento = (String) result[4];
 
-            // Verificar se totalPec é null e atribuir zero como valor padrão
-            if (totalPec == null) {
-                totalPec = 0.0;
-            }
-            Double valorTotal = totalSer + totalPec;
-
-            model.addRow(new Object[]{id, nome, valorTotal, timestamp, pagamento});
+            model.addRow(new Object[]{id, nome, timestamp, valortotal, pagamento});
         }
     }
 }

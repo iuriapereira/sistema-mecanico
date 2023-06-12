@@ -17,6 +17,9 @@
         <property name="venData" type="timestamp">
             <column name="ven_data" length="19" not-null="true" />
         </property>
+        <property name="venTotal" type="float">
+            <column name="ven_valor_final" not-null="true" />
+        </property>
         <set name="tbVendaSers" table="tb_venda_ser" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="vs_ven_id" not-null="true" />

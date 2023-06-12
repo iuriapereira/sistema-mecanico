@@ -16,8 +16,17 @@ public class TbVenda  implements java.io.Serializable {
      private TbCliente tbCliente;
      private TbTipoPagamento tbTipoPagamento;
      private Date venData;
+     private Float venTotal;
      private Set tbVendaSers = new HashSet(0);
      private Set tbVenPecas = new HashSet(0);
+
+    public Float getVenTotal() {
+        return venTotal;
+    }
+
+    public void setVenTotal(Float venTotal) {
+        this.venTotal = venTotal;
+    }
 
     public TbVenda() {
     }
@@ -26,12 +35,13 @@ public class TbVenda  implements java.io.Serializable {
     public TbVenda(Date venData) {
         this.venData = venData;
     }
-    public TbVenda(TbCliente tbCliente, TbTipoPagamento tbTipoPagamento, Date venData, Set tbVendaSers, Set tbVenPecas) {
+    public TbVenda(TbCliente tbCliente, TbTipoPagamento tbTipoPagamento, Date venData, Set tbVendaSers, Set tbVenPecas, Float venTotal) {
        this.tbCliente = tbCliente;
        this.tbTipoPagamento = tbTipoPagamento;
        this.venData = venData;
        this.tbVendaSers = tbVendaSers;
        this.tbVenPecas = tbVenPecas;
+       this.venTotal = venTotal;
     }
    
     public Integer getVenId() {

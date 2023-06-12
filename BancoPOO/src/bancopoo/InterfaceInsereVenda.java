@@ -122,7 +122,7 @@ class InterfaceInsereVenda extends JFrame {
                 atualizarValorTotal();
             }
         });
-        
+
         // DEFINOÇÕES PARA O COMBOBOX ---------------------------------------------
         Font box = new Font("Times New Roman", Font.BOLD, 18);
         JPanel comboBox = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -130,30 +130,28 @@ class InterfaceInsereVenda extends JFrame {
         String hql = "SELECT cli.tbEntidade.entNome FROM TbCliente cli";
         Query query = session.createQuery(hql);
         java.util.List<String> clientes = (java.util.List<String>) query.list();
-        
+
         /*Criteria cli = session.createCriteria(TbCliente.class);
-        ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();*/
-        
-        
+         ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();*/
         // COMBOBOX DO CLIENTE
-        JComboBox<String> listCliente = new JComboBox<>();
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-        model.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        listCliente = new JComboBox<>();
+        DefaultComboBoxModel<String> model2 = new DefaultComboBoxModel<>();
+        model2.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
         for (String cliente : clientes) {
-            model.addElement(cliente);
+            model2.addElement(cliente);
         }
         //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-                
-        listCliente.setModel(model);
-        
+
+        listCliente.setModel(model2);
+
         /*
-        DefaultComboBoxModel<String> clie = new DefaultComboBoxModel<>();
-        clie.addElement("Inserir Cliente...");
-        listCliente.setModel(clie);
-        for (TbCliente descricao : cliente) {
-            listCliente.addItem(decricao.getTbEntidade().getEntNome());
-        }
-        listCliente.setFont(box);*/
+         DefaultComboBoxModel<String> clie = new DefaultComboBoxModel<>();
+         clie.addElement("Inserir Cliente...");
+         listCliente.setModel(clie);
+         for (TbCliente descricao : cliente) {
+         listCliente.addItem(decricao.getTbEntidade().getEntNome());
+         }
+         listCliente.setFont(box);*/
         comboBox.add(listCliente);
 
         // CONEXÃO COM O BANCO TB_TIPOPAGAMENTO
@@ -169,16 +167,13 @@ class InterfaceInsereVenda extends JFrame {
         }
         listPagamento.setFont(box);
         comboBox.add(listPagamento);
-        
-        
-        // ------------------------------------------------------------------------
 
+        // ------------------------------------------------------------------------
         // TABELA -----------------------------------------------------------------
         JTable table = createTable(session, tbvenda);
         table.setEnabled(true); // Torna a tabela não editável
         // -----------------------------------------------------------------------
-        
-        
+
         // Adiciona os painéis no painel da janela menor
         smallPanel.add(comboBox);
         smallPanel.add(buttonPanel);
@@ -354,7 +349,7 @@ class InterfaceInsereVenda extends JFrame {
                         if (listCliente.getSelectedItem() == "Inserir Cliente..." || listPagamento.getSelectedItem() == "Tipo de Pagamento...") {
                             JOptionPane.showMessageDialog(null, "Informe um Cliente/Pagamento");
                         } else {
-
+                            InsereBanco();
                         }
                     }
                 });
@@ -376,5 +371,53 @@ class InterfaceInsereVenda extends JFrame {
     public void adicionarServico(Object[] servicoInputs) {
         vendaItems.add(servicoInputs);
         atualizarTabela();
+    }
+
+    private void InsereBanco() {
+        Transaction transaction = session.beginTransaction();
+        String hql2 = "SELECT c.cliId FROM TbCliente c WHERE c.tbEntidade.entNome = '" + listCliente.getSelectedItem() + "'";
+        Query query2 = session.createQuery(hql2);
+        int CliId = (int) query2.uniqueResult();
+
+        String hql3 = "SELECT p.tpId FROM TbTipoPagamento p WHERE p.tpDescricao = '" + listPagamento.getSelectedItem() + "'";
+        Query query3 = session.createQuery(hql3);
+        int PagId = (int) query3.uniqueResult();
+
+        banco.TbVenda tbven = new banco.TbVenda();
+        Object cliente = session.load(TbCliente.class, CliId);
+        tbven.setTbCliente((TbCliente) cliente);
+        Object pagamento = session.load(TbTipoPagamento.class, PagId);
+        tbven.setTbTipoPagamento((TbTipoPagamento) pagamento);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        tbven.setVenData(timestamp);
+        session.save(tbven);
+        for (Object[] item : vendaItems) {
+            if (item[0] == "Produto") {
+                try {
+                    String hql = "SELECT e.estoId FROM TbEstoque e WHERE e.tbFornecedorHasPeca.tbPeca.peDescricao = '" + item[1] + "'";
+                    Query query = session.createQuery(hql);
+                    int EstoqueId = (int) query.uniqueResult();
+
+                    banco.TbVenPeca tbvenpeca = new banco.TbVenPeca();
+                    Object estoque = session.load(TbEstoque.class, EstoqueId);
+                    tbvenpeca.setTbEstoque((TbEstoque) estoque);
+                    tbvenpeca.setTbVenda(tbven);
+                    tbvenpeca.setVpQuantidade((Integer) item[3]);
+                    session.save(tbvenpeca);
+
+                } catch (HibernateException ex) {
+                    transaction.rollback();
+                    JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                try {
+
+                } catch (HibernateException ex) {
+                    transaction.rollback();
+                    JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+        transaction.commit();
     }
 }
