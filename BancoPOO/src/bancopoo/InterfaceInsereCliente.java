@@ -57,6 +57,8 @@ class InterfaceInsereCliente extends JDialog {
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo dados do cliente");
         
+        Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14);
+        
         // CONEXÃO COM O BANCO TB_ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
         ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
@@ -115,14 +117,17 @@ class InterfaceInsereCliente extends JDialog {
             listLogradouro.addItem(descricao.getLogDescricao());
         }
         
-        
         // Painel da janela menor
         JPanel mainPanel = new JPanel(null); // Define o layout como null
 
-        JLabel nomeLabel = new JLabel("Nome:");
+        JLabel nomeLabel = new JLabel("Nome:"); 
+        nomeLabel.setFont(fonte);
         nomeField = new JTextField(20);
+        nomeField.setFont(fonte);
         JLabel sexoLabel = new JLabel("Sexo:");
+        sexoLabel.setFont(fonte);
         JLabel documentoLabel = new JLabel();
+        documentoLabel.setFont(fonte);
         JLabel dataNascimentoLabel = new JLabel("Data de Nascimento:");
         JLabel fantasiaLabel = new JLabel("Nome Fantasia:");
         fantasiaField = new JTextField(20);

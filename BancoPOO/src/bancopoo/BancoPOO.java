@@ -60,7 +60,7 @@ class BancoPOO {
         JLabel logo = new JLabel();
         JLabel usuarioLabel = new JLabel("Usuario:");
         JTextField usuarioTextField = new JTextField();
-        Font fonte = new Font("Comic Sans MS", Font.BOLD, 16);
+        Font fonte = new Font("Times New Roman", Font.BOLD, 16);
         usuarioTextField.setFont(fonte);
         JLabel senhaLabel = new JLabel("Senha:");
         JPasswordField senhaTextField = new JPasswordField();

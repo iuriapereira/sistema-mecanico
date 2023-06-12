@@ -35,7 +35,9 @@ class InterfaceInsereEstoque extends JDialog {
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo Produto");
         setResizable(false);
-
+        
+        Font fonte = new Font("Times New Roman", Font.BOLD, 16);
+        
         // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO
         JComboBox<String> listUnidade = new JComboBox<>();
         DefaultComboBoxModel<String> prod = new DefaultComboBoxModel<>();
@@ -44,6 +46,7 @@ class InterfaceInsereEstoque extends JDialog {
         prod.addElement("KG");
         prod.addElement("PC");
         prod.addElement("MT");
+        listUnidade.setFont(fonte);
         listUnidade.setModel(prod);
 
         // CONEXÃO COM O BANCO TB_FORNECEDOR
@@ -57,6 +60,7 @@ class InterfaceInsereEstoque extends JDialog {
         for (TbFornecedor descricao : fornecedor) {
             listFornecedor.addItem(descricao.getTbEntidade().getEntNome());
         }
+        listFornecedor.setFont(fonte);
 
         // Define o formato para números de ponto flutuante
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
@@ -70,23 +74,37 @@ class InterfaceInsereEstoque extends JDialog {
 
         // Cria os campos de entrada formatados
         minimoField = new JFormattedTextField(formatter);
+        minimoField.setFont(fonte);
         maximoField = new JFormattedTextField(formatter);
+        maximoField.setFont(fonte);
         custoField = new JFormattedTextField(formatter);
+        custoField.setFont(fonte);
         lucroField = new JFormattedTextField(formatter);
+        lucroField.setFont(fonte);
         finalField = new JFormattedTextField(formatter);
+        finalField.setFont(fonte);
         JLabel fornecedorLabel = new JLabel("Fornecedor");
+        fornecedorLabel.setFont(fonte);
 
         // PAINEL DA JANELA MENOR
         JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
 
         JLabel unidadeLabel = new JLabel("Unidade");
+        unidadeLabel.setFont(fonte);
         JLabel descricaoLabel = new JLabel("Descrição do Produto");
+        descricaoLabel.setFont(fonte);
         descricaoField = new JTextField(20);
+        descricaoField.setFont(fonte);
         JLabel minimoLabel = new JLabel("Estoque Mínimo"); // float
+        minimoLabel.setFont(fonte);
         JLabel maximoLabel = new JLabel("Estoque Atual"); // float
+        maximoLabel.setFont(fonte);
         JLabel custoLabel = new JLabel("Valor Custo"); // float
+        custoLabel.setFont(fonte);
         JLabel lucroLabel = new JLabel("Margem Lucro(%)"); // float 
+        lucroLabel.setFont(fonte);
         JLabel finalLabel = new JLabel("VALOR FINAL:"); // float
+        finalLabel.setFont(fonte);
 
         custoField.addPropertyChangeListener("value", new PropertyChangeListener() {
             @Override

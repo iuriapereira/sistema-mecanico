@@ -39,7 +39,7 @@ class InterfaceInsereVenda extends JFrame {
     protected String[] buttonLabels = {"Inserir Produto", "Inserir Serviço", "Excluir", "Concluir Venda"};
     protected String[] buttonIcons = {"src/resources/images/inserirproduto.png", "src/resources/images/inserirservico.png",
         "src/resources/images/excluir.png", "src/resources/images/finalizar.png"};
-    protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     private banco.TbVenda tbvenda;
     private ArrayList<Object[]> vendaItems = new ArrayList<>();
     private DefaultTableModel model;
@@ -52,7 +52,7 @@ class InterfaceInsereVenda extends JFrame {
         this.session = session;
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int) (screenSize.width * 0.7);
+        int width = (int) (screenSize.width * 0.6);
         int height = (int) (screenSize.height * 0.6);
         smallFrame.setSize(width, height);
         smallFrame.setResizable(false);
@@ -76,23 +76,23 @@ class InterfaceInsereVenda extends JFrame {
         formatter.setCommitsOnValidEdit(true);
 
         // Adiciona os componentes acima da tabela
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel valores = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        Font fonte = new Font("Comic Sans MS", Font.BOLD, 14);
+        Font fonte = new Font("Times New Roman", Font.BOLD, 14);
         JLabel valorItemLabel = new JLabel("Valor do Item");
         valorItemField = new JFormattedTextField(formatter);
         valorItemField.setValue(0.00f);
         valorItemField.setFont(fonte);
         valorItemField.setPreferredSize(new Dimension(100, 30));
 
-        Font fonte1 = new Font("Comic Sans MS", Font.BOLD, 14);
+        Font fonte1 = new Font("Times New Roman", Font.BOLD, 14);
         JLabel descontoLabel = new JLabel("Desconto");
         descontoField = new JFormattedTextField(formatter);
         descontoField.setValue(0.00f);
         descontoField.setFont(fonte1);
         descontoField.setPreferredSize(new Dimension(100, 30));
 
-        Font fonte2 = new Font("Comic Sans MS", Font.BOLD, 18);
+        Font fonte2 = new Font("Times New Roman", Font.BOLD, 18);
         JLabel totalVendaLabel = new JLabel("TOTAL R$");
         totalVendaField = new JFormattedTextField(formatter);
         totalVendaField.setValue(0.00f);
@@ -100,14 +100,12 @@ class InterfaceInsereVenda extends JFrame {
         totalVendaField.setEditable(false);
         totalVendaField.setPreferredSize(new Dimension(200, 50));
 
-        topPanel.add(valorItemLabel);
-        topPanel.add(valorItemField);
-        topPanel.add(descontoLabel);
-        topPanel.add(descontoField);
-        topPanel.add(totalVendaLabel);
-        topPanel.add(totalVendaField);
-
-        smallPanel.add(topPanel);
+        valores.add(valorItemLabel);
+        valores.add(valorItemField);
+        valores.add(descontoLabel);
+        valores.add(descontoField);
+        valores.add(totalVendaLabel);
+        valores.add(totalVendaField);
 
         valorItemField.addPropertyChangeListener("value", new PropertyChangeListener() {
             @Override
@@ -123,7 +121,10 @@ class InterfaceInsereVenda extends JFrame {
                 atualizarValorTotal();
             }
         });
-
+        
+        // DEFINOÇÕES PARA O COMBOBOX ---------------------------------------------
+        Font box = new Font("Times New Roman", Font.BOLD, 18);
+        JPanel comboBox = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // CONEXÃO COM O BANCO TB_CLIENTE
         Criteria cli = session.createCriteria(TbCliente.class);
         ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();
@@ -135,7 +136,8 @@ class InterfaceInsereVenda extends JFrame {
         for (TbCliente descricao : cliente) {
             listCliente.addItem(descricao.getTbEntidade().getEntNome());
         }
-        topPanel.add(listCliente);
+        listCliente.setFont(box);
+        comboBox.add(listCliente);
 
         // CONEXÃO COM O BANCO TB_TIPOPAGAMENTO
         Criteria pgm = session.createCriteria(TbTipoPagamento.class);
@@ -148,15 +150,23 @@ class InterfaceInsereVenda extends JFrame {
         for (TbTipoPagamento desc : pagamento) {
             listPagamento.addItem(desc.getTpDescricao());
         }
-        topPanel.add(listPagamento);
+        listPagamento.setFont(box);
+        comboBox.add(listPagamento);
+        
+        
+        // ------------------------------------------------------------------------
 
-        // Parte inferior com a tabela
+        // TABELA -----------------------------------------------------------------
         JTable table = createTable(session, tbvenda);
         table.setEnabled(true); // Torna a tabela não editável
-
+        // -----------------------------------------------------------------------
+        
+        
         // Adiciona os painéis no painel da janela menor
+        smallPanel.add(comboBox);
         smallPanel.add(buttonPanel);
         smallPanel.add(new JScrollPane(table), BorderLayout.NORTH);
+        smallPanel.add(valores);
 
         // Adiciona o painel da janela menor na janela menor
         smallFrame.getContentPane().add(smallPanel);

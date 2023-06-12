@@ -1,6 +1,7 @@
 package bancopoo;
 
 import banco.TbFornecedor;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -107,6 +108,8 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
 
             buttonPanel.add(button);
         }
+        Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14);
+        table.setFont(fonte);
         return table;
     }
          private void updateTableData(DefaultTableModel model) {

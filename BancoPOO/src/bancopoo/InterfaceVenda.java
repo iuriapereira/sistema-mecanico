@@ -1,17 +1,13 @@
 package bancopoo;
 
-import banco.TbVenPeca;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
 import java.util.List;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 class InterfaceVenda extends InterfaceAbstrata {
 
@@ -20,8 +16,9 @@ class InterfaceVenda extends InterfaceAbstrata {
     public InterfaceVenda(JFrame mainFrame, Session session) {
         super(mainFrame, session);
         this.session = session;
+        
     }
-
+    
     @Override
     protected JTable createTable(Session session) {
 
@@ -91,7 +88,8 @@ class InterfaceVenda extends InterfaceAbstrata {
 
         buttonPanel.add(button);
         buttonPanel.add(button2);
-
+        Font fonte = new Font("Times New Roman", Font.BOLD, 14);
+        table.setFont(fonte);
         return table;
     }
 

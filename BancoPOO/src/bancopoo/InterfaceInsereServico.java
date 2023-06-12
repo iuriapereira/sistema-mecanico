@@ -21,22 +21,27 @@ class InterfaceInsereServico extends JFrame {
     private final JTextField modeloField;
     private final JTextField marcaField;
     private final JTextField placaField;
+    private final JFormattedTextField kmPercorridoField;
+    private final JFormattedTextField valorKMField;
     private final JTextArea descricaoArea;
     private Session session;
     private JButton salvar;
+    
 
     public InterfaceInsereServico(JFrame mainFrame, Session session,JButton salvar) {
         this.smallFrame = new JFrame("Inserindo Serviço"); // TELA ATUAL
         this.mainFrame = mainFrame; // TELA ANTERIOR
         this.session = session;
         this.salvar = salvar;
-
+        
+        // DEFININDO A DIMENSÃO DA JANELA ---------------------------------------------
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.width * 0.2);
         int height = (int) (screenSize.height * 0.5);
         smallFrame.setSize(width, height);
         smallFrame.setResizable(false);
         smallFrame.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        // ----------------------------------------------------------------------------
 
         // Verifica se a janela menor está aberta
         isSmallWindowOpen = false;
@@ -54,11 +59,12 @@ class InterfaceInsereServico extends JFrame {
         formatter.setValueClass(Float.class);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
-
-        // Adiciona os componentes acima da tabela
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        Font fonte = new Font("Comic Sans MS", Font.BOLD, 14);
+        
+        Font fonte = new Font("Times New Roman", Font.BOLD, 14);
+        
+        // PAINEL DE DESCRIÇÃO E VALOR DO SERVIÇO --------------------
+        JPanel valor = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        valor.setSize(new Dimension(10, 1));
         JLabel valorServicoLabel = new JLabel("Valor do Item");
         valorServicoLabel.setFont(fonte);
         valorServicoField = new JFormattedTextField(formatter);
@@ -68,13 +74,15 @@ class InterfaceInsereServico extends JFrame {
 
         JLabel descricaoLabel = new JLabel("Descrição Serviço:");
         descricaoLabel.setFont(fonte);
-        smallPanel.add(descricaoLabel, BorderLayout.SOUTH);
         descricaoArea = new JTextArea();
         descricaoArea.setFont(fonte);
         descricaoArea.setLineWrap(true); // Permite que o texto pule de linha automaticamente 
         descricaoArea.setWrapStyleWord(true); // Quebra a linha no espaço em branco mais próximo
-        descricaoArea.setPreferredSize(new Dimension(360, 70));
-
+        descricaoArea.setPreferredSize(new Dimension(358, 70));
+        // ----------------------------------------------------------
+        
+        // PAINEL DE VEICULO -----------------------------------------
+        JPanel veiculo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel modeloLabel = new JLabel("Modelo:");
         modeloLabel.setFont(fonte);
         modeloField = new JTextField();
@@ -92,20 +100,42 @@ class InterfaceInsereServico extends JFrame {
         placaField = new JTextField();
         placaField.setFont(fonte);
         placaField.setPreferredSize(new Dimension(100, 30));
+        // ----------------------------------------------------------
+        
+        // PAINEL DE KM ---------------------------------------------
+        JPanel km = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel kmPercorridoLabel = new JLabel("KM Percorrido:");
+        kmPercorridoLabel.setFont(fonte);
+        kmPercorridoField = new JFormattedTextField(formatter);
+        kmPercorridoField.setValue(0.00f);
+        kmPercorridoField.setFont(fonte);
+        kmPercorridoField.setPreferredSize(new Dimension(100, 30));
+        
+        JLabel valorKMLabel = new JLabel("Valor por KM:");
+        valorKMLabel.setFont(fonte);
+        valorKMField = new JFormattedTextField(formatter);
+        valorKMField.setValue(0.00f);
+        valorKMField.setFont(fonte);
+        valorKMField.setPreferredSize(new Dimension(100, 30));
+        
+        km.add(kmPercorridoLabel);
+        km.add(kmPercorridoField);
+        km.add(valorKMLabel);
+        km.add(valorKMField);
+        // ----------------------------------------------------------
 
-        topPanel.add(valorServicoLabel);
-        topPanel.add(valorServicoField);
-        topPanel.add(descricaoLabel);
-        topPanel.add(descricaoArea);
-        topPanel.add(modeloLabel);
-        topPanel.add(modeloField);
-        topPanel.add(marcaLabel);
-        topPanel.add(marcaField);
-        topPanel.add(placaLabel);
-        topPanel.add(placaField);
-
-        smallPanel.add(topPanel);
-
+        valor.add(valorServicoLabel);
+        valor.add(valorServicoField);
+        veiculo.add(descricaoLabel);
+        veiculo.add(descricaoArea);
+        veiculo.add(modeloLabel);
+        veiculo.add(modeloField);
+        veiculo.add(marcaLabel);
+        veiculo.add(marcaField);
+        veiculo.add(placaLabel);
+        veiculo.add(placaField);
+        
+        // BOTÕES -----------------------------------------------------------------------
         // BOTÃO SALVAR
         ImageIcon slv = new ImageIcon("src/resources/images/salvar.png");
         Image scaledSlv = slv.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
@@ -118,6 +148,11 @@ class InterfaceInsereServico extends JFrame {
         Image scaledLip = lip.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         limpar.setIcon(new ImageIcon(scaledLip));
         limpar.setBounds(70, 540, 100, 40);
+        
+        JPanel botao = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        botao.add(salvar);
+        botao.add(limpar);
+        // --------------------------------------------------------------------------------
 
         // Adiciona o painel da janela menor na janela menor
         smallFrame.getContentPane().add(smallPanel);
@@ -137,9 +172,12 @@ class InterfaceInsereServico extends JFrame {
                 mainFrame.requestFocus();
             }
         });
-
-        topPanel.add(salvar);
-        topPanel.add(limpar);
+        
+        
+        smallPanel.add(valor);
+        smallPanel.add(veiculo);
+        smallPanel.add(km);
+        smallPanel.add(botao);
     }
 
     public void showInterface() {
