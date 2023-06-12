@@ -1,8 +1,6 @@
 package bancopoo;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
@@ -51,7 +49,7 @@ class InterfaceInsereServico extends JFrame {
         smallPanel.setLayout(new BoxLayout(smallPanel, BoxLayout.Y_AXIS));
 
         // Define o formato para números de ponto flutuante
-        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Locale.US));
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
         decimalFormat.setParseBigDecimal(true);
 
         // Cria um NumberFormatter com o formato definido
@@ -71,7 +69,8 @@ class InterfaceInsereServico extends JFrame {
         valorServicoField.setValue(0.00f);
         valorServicoField.setFont(fonte);
         valorServicoField.setPreferredSize(new Dimension(100, 30));
-
+        
+        JPanel descricao = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel descricaoLabel = new JLabel("Descrição Serviço:");
         descricaoLabel.setFont(fonte);
         descricaoArea = new JTextArea();
@@ -79,6 +78,11 @@ class InterfaceInsereServico extends JFrame {
         descricaoArea.setLineWrap(true); // Permite que o texto pule de linha automaticamente 
         descricaoArea.setWrapStyleWord(true); // Quebra a linha no espaço em branco mais próximo
         descricaoArea.setPreferredSize(new Dimension(358, 70));
+        
+        descricao.add(descricaoLabel);
+        descricao.add(descricaoArea);
+        valor.add(valorServicoLabel);
+        valor.add(valorServicoField);
         // ----------------------------------------------------------
         
         // PAINEL DE VEICULO -----------------------------------------
@@ -100,6 +104,13 @@ class InterfaceInsereServico extends JFrame {
         placaField = new JTextField();
         placaField.setFont(fonte);
         placaField.setPreferredSize(new Dimension(100, 30));
+        
+        veiculo.add(modeloLabel);
+        veiculo.add(modeloField);
+        veiculo.add(marcaLabel);
+        veiculo.add(marcaField);
+        veiculo.add(placaLabel);
+        veiculo.add(placaField);
         // ----------------------------------------------------------
         
         // PAINEL DE KM ---------------------------------------------
@@ -124,16 +135,7 @@ class InterfaceInsereServico extends JFrame {
         km.add(valorKMField);
         // ----------------------------------------------------------
 
-        valor.add(valorServicoLabel);
-        valor.add(valorServicoField);
-        veiculo.add(descricaoLabel);
-        veiculo.add(descricaoArea);
-        veiculo.add(modeloLabel);
-        veiculo.add(modeloField);
-        veiculo.add(marcaLabel);
-        veiculo.add(marcaField);
-        veiculo.add(placaLabel);
-        veiculo.add(placaField);
+        
         
         // BOTÕES -----------------------------------------------------------------------
         
@@ -176,6 +178,7 @@ class InterfaceInsereServico extends JFrame {
         
         
         smallPanel.add(valor);
+        smallPanel.add(descricao);
         smallPanel.add(veiculo);
         smallPanel.add(km);
         smallPanel.add(botao);
