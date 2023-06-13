@@ -1,7 +1,6 @@
 package bancopoo;
 
 import banco.TbCliente;
-import banco.TbEstado;
 import banco.TbEstoque;
 import banco.TbTipoPagamento;
 import java.awt.*;
@@ -11,11 +10,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
