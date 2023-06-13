@@ -7,6 +7,7 @@ import banco.TbTipoPagamento;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -76,7 +77,7 @@ class InterfaceInsereVenda extends JFrame {
         formatter.setValueClass(Float.class);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
-        
+
         // PAINEL DE VALORES ----------------------------------------------------
         // Adiciona os componentes acima da tabela
         JPanel valores = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -88,6 +89,7 @@ class InterfaceInsereVenda extends JFrame {
         valorItemField.setValue(0.00f);
         valorItemField.setFont(fonte);
         valorItemField.setPreferredSize(new Dimension(100, 30));
+        valorItemField.setEditable(false);
 
         JLabel descontoLabel = new JLabel("Desconto");
         descontoLabel.setFont(fonte);
@@ -98,7 +100,7 @@ class InterfaceInsereVenda extends JFrame {
 
         Font fonte2 = new Font("Times New Roman", Font.BOLD, 22);
         JLabel totalVendaLabel = new JLabel("TOTAL R$");
-        totalVendaLabel.setFont(fonte); 
+        totalVendaLabel.setFont(fonte);
         totalVendaField = new JFormattedTextField(formatter);
         totalVendaField.setValue(0.00f);
         totalVendaField.setFont(fonte2);
@@ -111,23 +113,8 @@ class InterfaceInsereVenda extends JFrame {
         valores.add(descontoField);
         valores.add(totalVendaLabel);
         valores.add(totalVendaField);
-
-        valorItemField.addPropertyChangeListener("value", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                atualizarValorTotal();
-            }
-        });
-
-        // Define um ouvinte de eventos para o campo "lucroField"
-        descontoField.addPropertyChangeListener("value", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                atualizarValorTotal();
-            }
-        });
         // ------------------------------------------------------------------------
-        
+
         // DEFINOÇÕES PARA O COMBOBOX ---------------------------------------------
         Font box = new Font("Times New Roman", Font.BOLD, 18);
         JPanel comboBox = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -135,11 +122,11 @@ class InterfaceInsereVenda extends JFrame {
         String hql = "SELECT cli.tbEntidade.entNome FROM TbCliente cli";
         Query query = session.createQuery(hql);
         java.util.List<String> clientes = (java.util.List<String>) query.list();
-        
+
         // COMBOBOX DO CLIENTE
         listCliente = new JComboBox<>();
         DefaultComboBoxModel<String> model2 = new DefaultComboBoxModel<>();
-        model2.addElement("Cliente..."); 
+        model2.addElement("Cliente...");
         for (String cliente : clientes) {
             model2.addElement(cliente);
         }
@@ -161,7 +148,7 @@ class InterfaceInsereVenda extends JFrame {
         listPagamento.setFont(box);
         comboBox.add(listPagamento);
         // ------------------------------------------------------------------------
-        
+
         // TABELA -----------------------------------------------------------------
         JTable table = createTable(session, tbvenda);
         table.setEnabled(true); // Torna a tabela não editável
@@ -198,24 +185,6 @@ class InterfaceInsereVenda extends JFrame {
         mainFrame.setEnabled(false);
         // Exibe a janela atual (smallFrame)
         smallFrame.setVisible(true);
-    }
-
-    // FAZ O CALCULO DO VALOR TOTAL
-    private void atualizarValorTotal() {
-        Float custo = null;
-        if (valorItemField.getValue() != null) {
-            custo = (Float) valorItemField.getValue();
-        }
-
-        Float desconto = null;
-        if (descontoField.getValue() != null) {
-            desconto = (Float) descontoField.getValue();
-        }
-
-        if (custo != null && desconto != null) {
-            Float valorTotal = custo - desconto;
-            totalVendaField.setValue(valorTotal);
-        }
     }
 
     // TABELA PARA INSERIR OS DADOS DA VENDA
@@ -262,6 +231,59 @@ class InterfaceInsereVenda extends JFrame {
                 }
             }
         });
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.getSelectedRow();
+                int column3 = 2; // Índice da coluna 3
+                int column4 = 3; // Índice da coluna 4
+
+                if (row >= 0 && column3 >= 0 && column4 >= 0) {
+                    // Obtém os valores das colunas 3 e 4
+                    String valorColuna3 = table.getValueAt(row, column3).toString();
+                    String valorColuna4 = table.getValueAt(row, column4).toString();
+
+                    try {
+                        // Converte os valores para float
+                        float valor3 = Float.parseFloat(valorColuna3);
+                        float valor4 = Float.parseFloat(valorColuna4);
+                        float valorMultiplicado = valor3 * valor4;
+
+                        // Define o valor no campo valorItemField
+                        valorItemField.setValue(valorMultiplicado);
+                    } catch (NumberFormatException ex) {
+                        // Tratar caso os valores não sejam números válidos
+                        valorItemField.setValue(0.0f);
+                    }
+                }
+            }
+        });
+        table.getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.INSERT || e.getType() == TableModelEvent.UPDATE) {
+                    float totalVenda = 0.0f;
+
+                    for (int row = 0; row < table.getRowCount(); row++) {
+                        String valorColuna3 = table.getValueAt(row, 2).toString();
+                        String valorColuna4 = table.getValueAt(row, 3).toString();
+
+                        try {
+                            float valor3 = Float.parseFloat(valorColuna3);
+                            float valor4 = Float.parseFloat(valorColuna4);
+                            float valorMultiplicado = valor3 * valor4;
+
+                            totalVenda += valorMultiplicado;
+                        } catch (NumberFormatException ex) {
+                            // Tratar caso os valores não sejam números válidos
+                        }
+                    }
+
+                    totalVendaField.setValue(totalVenda);
+                }
+            }
+        });
+
         // Parte superior com os botões flutuantes
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSmallButton(buttonIcons[i]);
@@ -413,7 +435,7 @@ class InterfaceInsereVenda extends JFrame {
                     tbveiculo.setVeiModelo((String) item[4]);
                     tbveiculo.setVeiPlaca((String) item[6]);
                     session.save(tbveiculo);
-                    
+
                     banco.TbVendaSer tbvens = new banco.TbVendaSer();
                     tbvens.setTbVenda(tbven);
                     tbvens.setVsSerDescricao((String) item[1]);
@@ -422,14 +444,14 @@ class InterfaceInsereVenda extends JFrame {
                     tbvens.setVsKmPercorrido((float) item[7]);
                     tbvens.setVsValorServico((float) item[2]);
                     session.save(tbvens);
-                    
+
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
-        tbven.setVenTotal(ValorTotal);
+        tbven.setVenTotal(ValorTotal - Float.parseFloat(descontoField.getText()));
         session.save(tbven);
         transaction.commit();
         smallFrame.dispose();
