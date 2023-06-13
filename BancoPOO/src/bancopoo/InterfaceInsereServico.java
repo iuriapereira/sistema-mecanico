@@ -36,8 +36,8 @@ class InterfaceInsereServico extends JFrame {
         
         // DEFININDO A DIMENSÃO DA JANELA ---------------------------------------------
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int) (screenSize.width * 0.2);
-        int height = (int) (screenSize.height * 0.5);
+        int width = (int) (screenSize.width * 0.4);
+        int height = (int) (screenSize.height * 0.6);
         smallFrame.setSize(width, height);
         smallFrame.setResizable(false);
         smallFrame.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
@@ -195,9 +195,11 @@ class InterfaceInsereServico extends JFrame {
         String modelo = modeloField.getText();
         String marca = marcaField.getText();
         String placa = placaField.getText();
+        float KmRodado = Float.parseFloat(kmPercorridoField.getText());
+        float KmValor = Float.parseFloat(valorKMField.getText());
 
         // Crie um array com os valores
-        Object[] servicoInputs = {"Serviço", descricaoServico, valorServico, 1, modelo, marca, placa};
+        Object[] servicoInputs = {"Serviço", descricaoServico, valorServico, 1, modelo, marca, placa, KmRodado, KmValor};
         return servicoInputs;
     }
 }

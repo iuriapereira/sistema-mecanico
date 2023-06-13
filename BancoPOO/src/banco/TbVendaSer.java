@@ -14,7 +14,7 @@ public class TbVendaSer  implements java.io.Serializable {
      private TbVenda tbVenda;
      private TbVeiculo tbVeiculo;
      private float vsValorServico;
-     private Integer vsKmPercorrido;
+     private float vsKmPercorrido;
      private Float vsValorKm;
 
     public TbVendaSer() {
@@ -27,7 +27,7 @@ public class TbVendaSer  implements java.io.Serializable {
         this.tbVeiculo = tbVeiculo;
         this.vsValorServico = vsValorServico;
     }
-    public TbVendaSer(String vsSerDescricao, TbVenda tbVenda, TbVeiculo tbVeiculo, float vsValorServico, Integer vsKmPercorrido, Float vsValorKm) {
+    public TbVendaSer(String vsSerDescricao, TbVenda tbVenda, TbVeiculo tbVeiculo, float vsValorServico, float vsKmPercorrido, Float vsValorKm) {
        this.vsSerDescricao = vsSerDescricao;
        this.tbVenda = tbVenda;
        this.tbVeiculo = tbVeiculo;
@@ -65,11 +65,11 @@ public class TbVendaSer  implements java.io.Serializable {
     public void setVsValorServico(float vsValorServico) {
         this.vsValorServico = vsValorServico;
     }
-    public Integer getVsKmPercorrido() {
+    public float getVsKmPercorrido() {
         return this.vsKmPercorrido;
     }
     
-    public void setVsKmPercorrido(Integer vsKmPercorrido) {
+    public void setVsKmPercorrido(float vsKmPercorrido) {
         this.vsKmPercorrido = vsKmPercorrido;
     }
     public Float getVsValorKm() {

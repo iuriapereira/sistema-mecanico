@@ -20,7 +20,7 @@
         <property name="vsSerDescricao" type="string">
             <column name="vs_ser_descricao" length="300" not-null="true" />
         </property>
-        <property name="vsKmPercorrido" type="java.lang.Integer">
+        <property name="vsKmPercorrido" type="java.lang.Float">
             <column name="vs_km_percorrido" />
         </property>
         <property name="vsValorKm" type="java.lang.Float">

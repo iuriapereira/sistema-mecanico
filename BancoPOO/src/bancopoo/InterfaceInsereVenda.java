@@ -46,6 +46,7 @@ class InterfaceInsereVenda extends JFrame {
     private DefaultTableModel model;
     private JComboBox<String> listCliente;
     private JComboBox<String> listPagamento;
+    private Float ValorTotal = 0.0f;
 
     public InterfaceInsereVenda(JFrame mainFrame, Session session) {
         this.smallFrame = new JFrame("Inserindo Vendas"); // TELA ATUAL
@@ -264,7 +265,8 @@ class InterfaceInsereVenda extends JFrame {
                 int column = e.getColumn();
                 if (row >= 0 && column >= 0) {
                     Object novoValor = model.getValueAt(row, column);
-                    vendaItems.get(row)[column] = novoValor;
+                    int novoValorInt = Integer.parseInt((String) novoValor);
+                    vendaItems.get(row)[column] = novoValorInt;
                 }
             }
         });
@@ -390,10 +392,12 @@ class InterfaceInsereVenda extends JFrame {
         tbven.setTbTipoPagamento((TbTipoPagamento) pagamento);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         tbven.setVenData(timestamp);
+        tbven.setVenTotal(ValorTotal);
         session.save(tbven);
         for (Object[] item : vendaItems) {
-            if (item[0] == "Produto") {
+            if ("Produto".equals(item[0])) {
                 try {
+                    ValorTotal = ValorTotal + ((int) item[3] * (float) item[2]);
                     String hql = "SELECT e.estoId FROM TbEstoque e WHERE e.tbFornecedorHasPeca.tbPeca.peDescricao = '" + item[1] + "'";
                     Query query = session.createQuery(hql);
                     int EstoqueId = (int) query.uniqueResult();
@@ -411,13 +415,31 @@ class InterfaceInsereVenda extends JFrame {
                 }
             } else {
                 try {
-
+                    ValorTotal = ValorTotal + (float) item[2] + ((float) item[8] * (float) item[7]);
+                    banco.TbVeiculo tbveiculo = new banco.TbVeiculo();
+                    tbveiculo.setVeiMarca((String) item[5]);
+                    tbveiculo.setVeiModelo((String) item[4]);
+                    tbveiculo.setVeiPlaca((String) item[6]);
+                    session.save(tbveiculo);
+                    
+                    banco.TbVendaSer tbvens = new banco.TbVendaSer();
+                    tbvens.setTbVenda(tbven);
+                    tbvens.setVsSerDescricao((String) item[1]);
+                    tbvens.setTbVeiculo(tbveiculo);
+                    tbvens.setVsValorKm((float) item[8]);
+                    tbvens.setVsKmPercorrido((float) item[7]);
+                    tbvens.setVsValorServico((float) item[2]);
+                    session.save(tbvens);
+                    
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
+        tbven.setVenTotal(ValorTotal);
+        session.save(tbven);
         transaction.commit();
+        smallFrame.dispose();
     }
 }
