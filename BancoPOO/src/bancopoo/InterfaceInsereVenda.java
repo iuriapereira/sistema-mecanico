@@ -76,26 +76,29 @@ class InterfaceInsereVenda extends JFrame {
         formatter.setValueClass(Float.class);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
-
+        
+        // PAINEL DE VALORES ----------------------------------------------------
         // Adiciona os componentes acima da tabela
         JPanel valores = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        Font fonte = new Font("Times New Roman", Font.BOLD, 14);
+        Font fonte = new Font("Times New Roman", Font.BOLD, 18);
         JLabel valorItemLabel = new JLabel("Valor do Item");
+        valorItemLabel.setFont(fonte);
         valorItemField = new JFormattedTextField(formatter);
         valorItemField.setValue(0.00f);
         valorItemField.setFont(fonte);
         valorItemField.setPreferredSize(new Dimension(100, 30));
 
-        Font fonte1 = new Font("Times New Roman", Font.BOLD, 14);
         JLabel descontoLabel = new JLabel("Desconto");
+        descontoLabel.setFont(fonte);
         descontoField = new JFormattedTextField(formatter);
         descontoField.setValue(0.00f);
-        descontoField.setFont(fonte1);
+        descontoField.setFont(fonte);
         descontoField.setPreferredSize(new Dimension(100, 30));
 
-        Font fonte2 = new Font("Times New Roman", Font.BOLD, 18);
+        Font fonte2 = new Font("Times New Roman", Font.BOLD, 22);
         JLabel totalVendaLabel = new JLabel("TOTAL R$");
+        totalVendaLabel.setFont(fonte); 
         totalVendaField = new JFormattedTextField(formatter);
         totalVendaField.setValue(0.00f);
         totalVendaField.setFont(fonte2);
@@ -123,7 +126,8 @@ class InterfaceInsereVenda extends JFrame {
                 atualizarValorTotal();
             }
         });
-
+        // ------------------------------------------------------------------------
+        
         // DEFINOÇÕES PARA O COMBOBOX ---------------------------------------------
         Font box = new Font("Times New Roman", Font.BOLD, 18);
         JPanel comboBox = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -131,28 +135,16 @@ class InterfaceInsereVenda extends JFrame {
         String hql = "SELECT cli.tbEntidade.entNome FROM TbCliente cli";
         Query query = session.createQuery(hql);
         java.util.List<String> clientes = (java.util.List<String>) query.list();
-
-        /*Criteria cli = session.createCriteria(TbCliente.class);
-         ArrayList<TbCliente> cliente = (ArrayList<TbCliente>) cli.list();*/
+        
         // COMBOBOX DO CLIENTE
         listCliente = new JComboBox<>();
         DefaultComboBoxModel<String> model2 = new DefaultComboBoxModel<>();
-        model2.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        model2.addElement("Cliente..."); 
         for (String cliente : clientes) {
             model2.addElement(cliente);
         }
-        //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-
         listCliente.setModel(model2);
-
-        /*
-         DefaultComboBoxModel<String> clie = new DefaultComboBoxModel<>();
-         clie.addElement("Inserir Cliente...");
-         listCliente.setModel(clie);
-         for (TbCliente descricao : cliente) {
-         listCliente.addItem(decricao.getTbEntidade().getEntNome());
-         }
-         listCliente.setFont(box);*/
+        listCliente.setFont(box);
         comboBox.add(listCliente);
 
         // CONEXÃO COM O BANCO TB_TIPOPAGAMENTO
@@ -168,8 +160,8 @@ class InterfaceInsereVenda extends JFrame {
         }
         listPagamento.setFont(box);
         comboBox.add(listPagamento);
-
         // ------------------------------------------------------------------------
+        
         // TABELA -----------------------------------------------------------------
         JTable table = createTable(session, tbvenda);
         table.setEnabled(true); // Torna a tabela não editável
