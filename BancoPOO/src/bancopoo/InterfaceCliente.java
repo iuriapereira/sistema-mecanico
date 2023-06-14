@@ -1,14 +1,11 @@
 package bancopoo;
 
-import banco.TbCliente;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
 import java.util.List;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -31,6 +28,7 @@ class InterfaceCliente extends InterfaceAbstrata {
         Query query = session.createQuery(hql);
 
         String[] columnNames = {"ID", "Nome", "Cpf/Cnpj", "Fone", "Sexo", "Email", "Tipo"};
+        
 
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
@@ -39,7 +37,7 @@ class InterfaceCliente extends InterfaceAbstrata {
                 return false;
             }
         };
-
+        
         List<Object[]> results = query.list();
         for (Object[] result : results) {
             int id = (int) result[0];

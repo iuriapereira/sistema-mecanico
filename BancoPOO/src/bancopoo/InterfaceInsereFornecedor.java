@@ -146,12 +146,10 @@ class InterfaceInsereFornecedor extends JDialog {
                 String hql2 = "SELECT l.logId FROM TbLogradouro l WHERE l.logDescricao = '" + listLogradouro.getSelectedItem() + "'";
                 Query query2 = session.createQuery(hql2);
 
-                int logId = (int) query2.uniqueResult();
-                int cidId = (int) query.uniqueResult();
-
                 Transaction transaction = session.beginTransaction();
                 try {
-
+                    int logId = (int) query2.uniqueResult();
+                    int cidId = (int) query.uniqueResult();
                     banco.TbBairro tbBairro = new banco.TbBairro();
                     tbBairro.setBaiDescricao(bairroField.getText());
                     session.save(tbBairro);
@@ -194,6 +192,10 @@ class InterfaceInsereFornecedor extends JDialog {
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    session.clear();
+                } catch (NullPointerException ex) {
+                    // Bloco de código executado quando ocorrer a exceção
+                    JOptionPane.showMessageDialog(null, "Preencha todos os campos!");
                 }
             }
         });

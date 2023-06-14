@@ -60,6 +60,7 @@ class BancoPOO {
         usuarioTextField.setFont(fonte);
         JLabel senhaLabel = new JLabel("Senha:");
         JPasswordField senhaTextField = new JPasswordField();
+        senhaTextField.setFont(fonte);
         loginButton = new JButton();
         JLabel checkPasswordLabel = new JLabel("Mostrar senha");
         JCheckBox passwordCheckBox = new JCheckBox();
@@ -184,7 +185,7 @@ class BancoPOO {
 
     private static void createAndShowGUI() {
         // Configuração da janela principal
-        mainFrame = new JFrame("Interface Gráfica");
+        mainFrame = new JFrame("Mecãnica");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override

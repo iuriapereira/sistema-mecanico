@@ -12,12 +12,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.text.NumberFormatter;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -43,7 +48,8 @@ class InterfaceInsereVenda extends JFrame {
     private DefaultTableModel model;
     private JComboBox<String> listCliente;
     private JComboBox<String> listPagamento;
-    private Float ValorTotal = 0.0f;
+    private Float ValorTotal = 0.00f;
+    private float totalValor = 0.00f;
 
     public InterfaceInsereVenda(JFrame mainFrame, Session session) {
         this.smallFrame = new JFrame("Inserindo Vendas"); // TELA ATUAL
@@ -78,7 +84,7 @@ class InterfaceInsereVenda extends JFrame {
         // Adiciona os componentes acima da tabela
         JPanel valores = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        Font fonte = new Font("Times New Roman", Font.BOLD, 18);
+        Font fonte = new Font("Times New Roman", Font.BOLD, 20);
         JLabel valorItemLabel = new JLabel("Valor do Item");
         valorItemLabel.setFont(fonte);
         valorItemField = new JFormattedTextField(formatter);
@@ -94,7 +100,7 @@ class InterfaceInsereVenda extends JFrame {
         descontoField.setFont(fonte);
         descontoField.setPreferredSize(new Dimension(100, 30));
 
-        Font fonte2 = new Font("Times New Roman", Font.BOLD, 22);
+        Font fonte2 = new Font("Times New Roman", Font.BOLD, 26);
         JLabel totalVendaLabel = new JLabel("TOTAL R$");
         totalVendaLabel.setFont(fonte);
         totalVendaField = new JFormattedTextField(formatter);
@@ -196,7 +202,7 @@ class InterfaceInsereVenda extends JFrame {
 
     protected JTable createTable(Session session, banco.TbVenda tbvenda) {
         // Criação da tabela e modelo
-        String[] columnNames = {"Tipo", "Descrição", "Valor Serviço/Peça", "Quantidade",};
+        String[] columnNames = {"Tipo", "Descrição", "Valor Serviço/Peça", "Quantidade", "KM Percorrido", "Valor/KM"};
         model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -263,19 +269,49 @@ class InterfaceInsereVenda extends JFrame {
                     for (int row = 0; row < table.getRowCount(); row++) {
                         String valorColuna3 = table.getValueAt(row, 2).toString();
                         String valorColuna4 = table.getValueAt(row, 3).toString();
-
+                        String valorColuna5 = table.getValueAt(row, 4).toString();
+                        String valorColuna6 = table.getValueAt(row, 5).toString();
                         try {
                             float valor3 = Float.parseFloat(valorColuna3);
                             float valor4 = Float.parseFloat(valorColuna4);
-                            float valorMultiplicado = valor3 * valor4;
+                            float valor5 = Float.parseFloat(valorColuna5);
+                            float valor6 = Float.parseFloat(valorColuna6);
+                            float valorMultiplicado = valor3 * valor4 + (valor5 * valor6);
 
                             totalVenda += valorMultiplicado;
                         } catch (NumberFormatException ex) {
                             // Tratar caso os valores não sejam números válidos
                         }
                     }
-
+                    totalValor = totalVenda;
                     totalVendaField.setValue(totalVenda);
+                }
+            }
+        });
+
+        descontoField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                atualizarTotalVenda();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                atualizarTotalVenda();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                atualizarTotalVenda();
+            }
+
+            private void atualizarTotalVenda() {
+                try {
+                    float novoDesconto = Float.parseFloat(descontoField.getText().replace(",", "."));
+                    totalVendaField.setValue(totalValor - novoDesconto);
+                } catch (NumberFormatException ex) {
+                    // Tratar exceção se o valor inserido não for um número válido
+                    totalVendaField.setValue(totalValor);
                 }
             }
         });
@@ -310,7 +346,7 @@ class InterfaceInsereVenda extends JFrame {
                                         if (selectedRow != -1) {
                                             String selectedProduct = (String) dialogTable.getValueAt(selectedRow, 0);
                                             Float selectedProduct_valor = (Float) dialogTable.getValueAt(selectedRow, 3);
-                                            Object[] vendaItem = {"Produto", selectedProduct, selectedProduct_valor, 0};
+                                            Object[] vendaItem = {"Produto", selectedProduct, selectedProduct_valor, 0, 0, 0};
                                             vendaItems.add(vendaItem);
                                             atualizarTabela();
 
@@ -389,24 +425,25 @@ class InterfaceInsereVenda extends JFrame {
         Transaction transaction = session.beginTransaction();
         String hql2 = "SELECT c.cliId FROM TbCliente c WHERE c.tbEntidade.entNome = '" + listCliente.getSelectedItem() + "'";
         Query query2 = session.createQuery(hql2);
-        int CliId = (int) query2.uniqueResult();
 
         String hql3 = "SELECT p.tpId FROM TbTipoPagamento p WHERE p.tpDescricao = '" + listPagamento.getSelectedItem() + "'";
         Query query3 = session.createQuery(hql3);
-        int PagId = (int) query3.uniqueResult();
+        try {
+            int PagId = (int) query3.uniqueResult();
+            int CliId = (int) query2.uniqueResult();
 
-        banco.TbVenda tbven = new banco.TbVenda();
-        Object cliente = session.load(TbCliente.class, CliId);
-        tbven.setTbCliente((TbCliente) cliente);
-        Object pagamento = session.load(TbTipoPagamento.class, PagId);
-        tbven.setTbTipoPagamento((TbTipoPagamento) pagamento);
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        tbven.setVenData(timestamp);
-        tbven.setVenTotal(ValorTotal);
-        session.save(tbven);
-        for (Object[] item : vendaItems) {
-            if ("Produto".equals(item[0])) {
-                try {
+            banco.TbVenda tbven = new banco.TbVenda();
+            Object cliente = session.load(TbCliente.class, CliId);
+            tbven.setTbCliente((TbCliente) cliente);
+            Object pagamento = session.load(TbTipoPagamento.class, PagId);
+            tbven.setTbTipoPagamento((TbTipoPagamento) pagamento);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            tbven.setVenData(timestamp);
+            tbven.setVenTotal(ValorTotal);
+            session.save(tbven);
+
+            for (Object[] item : vendaItems) {
+                if ("Produto".equals(item[0])) {
                     ValorTotal = ValorTotal + ((int) item[3] * (float) item[2]);
                     String hql = "SELECT e.estoId FROM TbEstoque e WHERE e.tbFornecedorHasPeca.tbPeca.peDescricao = '" + item[1] + "'";
                     Query query = session.createQuery(hql);
@@ -418,38 +455,36 @@ class InterfaceInsereVenda extends JFrame {
                     tbvenpeca.setTbVenda(tbven);
                     tbvenpeca.setVpQuantidade((Integer) item[3]);
                     session.save(tbvenpeca);
-
-                } catch (HibernateException ex) {
-                    transaction.rollback();
-                    JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                try {
-                    ValorTotal = ValorTotal + (float) item[2] + ((float) item[8] * (float) item[7]);
+                } else {
+                    ValorTotal = ValorTotal + (float) item[2] + ((float) item[4] * (float) item[5]);
                     banco.TbVeiculo tbveiculo = new banco.TbVeiculo();
-                    tbveiculo.setVeiMarca((String) item[5]);
-                    tbveiculo.setVeiModelo((String) item[4]);
-                    tbveiculo.setVeiPlaca((String) item[6]);
+                    tbveiculo.setVeiMarca((String) item[7]);
+                    tbveiculo.setVeiModelo((String) item[6]);
+                    tbveiculo.setVeiPlaca((String) item[8]);
                     session.save(tbveiculo);
 
                     banco.TbVendaSer tbvens = new banco.TbVendaSer();
                     tbvens.setTbVenda(tbven);
                     tbvens.setVsSerDescricao((String) item[1]);
                     tbvens.setTbVeiculo(tbveiculo);
-                    tbvens.setVsValorKm((float) item[8]);
-                    tbvens.setVsKmPercorrido((float) item[7]);
+                    tbvens.setVsValorKm((float) item[5]);
+                    tbvens.setVsKmPercorrido((float) item[4]);
                     tbvens.setVsValorServico((float) item[2]);
                     session.save(tbvens);
-
-                } catch (HibernateException ex) {
-                    transaction.rollback();
-                    JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
+
+            tbven.setVenTotal(ValorTotal - Float.parseFloat(descontoField.getText().replace(",", ".")));
+            session.save(tbven);
+            transaction.commit();
+            smallFrame.dispose();
+        } catch (HibernateException ex) {
+            transaction.rollback();
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            session.clear();
+        } catch (NullPointerException ex) {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos!");
         }
-        tbven.setVenTotal(ValorTotal - Float.parseFloat(descontoField.getText()));
-        session.save(tbven);
-        transaction.commit();
-        smallFrame.dispose();
+
     }
 }

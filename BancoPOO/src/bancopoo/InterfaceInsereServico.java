@@ -33,7 +33,7 @@ class InterfaceInsereServico extends JFrame {
         mainPanel.setPreferredSize(new Dimension(380, 350));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
-        setTitle("Inserindo dados do cliente");
+        setTitle("Inserindo Serviço");
         setResizable(false);
         // ----------------------------------------------------------------------------
 
@@ -211,7 +211,7 @@ class InterfaceInsereServico extends JFrame {
 
     public Object[] getServicoInputs() {
         // Obtenha os valores dos inputs
-        float valorServico = Float.parseFloat(valorServicoField.getText().replace(",", "."));
+        float valorServico = Float.parseFloat(valorServicoField.getText().replace(".", "").replace(",", "."));
         String descricaoServico = descricaoArea.getText();
         String modelo = modeloField.getText();
         String marca = marcaField.getText();
@@ -220,7 +220,7 @@ class InterfaceInsereServico extends JFrame {
         float KmValor = Float.parseFloat(valorKMField.getText().replace(",", "."));
 
         // Crie um array com os valores
-        Object[] servicoInputs = {"Serviço", descricaoServico, valorServico, 1, modelo, marca, placa, KmRodado, KmValor};
+        Object[] servicoInputs = {"Serviço", descricaoServico, valorServico, 1, KmRodado, KmValor, modelo, marca, placa};
         return servicoInputs;
     }
 }

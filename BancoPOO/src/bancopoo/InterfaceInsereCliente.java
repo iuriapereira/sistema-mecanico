@@ -23,6 +23,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 class InterfaceInsereCliente extends JDialog {
+
     private final JFrame mainFrame;
     private JTextField nomeField;
     private JFormattedTextField documentoField = new JFormattedTextField();
@@ -45,20 +46,19 @@ class InterfaceInsereCliente extends JDialog {
     private JRadioButton sexoFeminino;
     private JRadioButton sexoOutros;
     private Session session;
-    
+
     private String tipo;
-    
 
     public InterfaceInsereCliente(JFrame mainFrame, Session session) {
         this.mainFrame = mainFrame;
         this.session = session;
-        
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo dados do cliente");
-        
+
         Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14);
-        
+
         // CONEXÃO COM O BANCO TB_ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
         ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
@@ -66,14 +66,14 @@ class InterfaceInsereCliente extends JDialog {
         JComboBox<String> listEstado = new JComboBox<>();
         DefaultComboBoxModel<String> est = new DefaultComboBoxModel<>();
         est.addElement("Selecione...");
-        listEstado.setModel(est); 
+        listEstado.setModel(est);
         for (TbEstado descricao : estado) {
             listEstado.addItem(descricao.getEstSigla());
         }
-        
+
         // COMBOBOX DA CIDADE
         JComboBox<String> listCidade = new JComboBox<>();
-        
+
         listEstado.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -90,35 +90,34 @@ class InterfaceInsereCliente extends JDialog {
                     model.addElement(cidade);
                 }
                 //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-                
+
                 listCidade.setModel(model);
-                
 
                 // Atualizar a interface
                 revalidate();
                 repaint();
             }
         });
-        
+
         // CONEXÃO COM O BANCO TB_LOGRADOURO
         String hql = "SELECT log.logDescricao FROM TbLogradouro log";
         Query query = session.createQuery(hql);
         java.util.List<String> logradouros = (java.util.List<String>) query.list();
-        
+
         // COMBOBOX DO LOGRADOURO
         JComboBox<String> listLogradouro = new JComboBox<>();
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
-        listLogradouro.setModel(logr); 
+        listLogradouro.setModel(logr);
         for (String logradouro : logradouros) {
             logr.addElement(logradouro);
         }
         listLogradouro.setModel(logr);
-        
+
         // Painel da janela menor
         JPanel mainPanel = new JPanel(null); // Define o layout como null
 
-        JLabel nomeLabel = new JLabel("Nome:"); 
+        JLabel nomeLabel = new JLabel("Nome:");
         nomeLabel.setFont(fonte);
         nomeField = new JTextField(20);
         nomeField.setFont(fonte);
@@ -152,21 +151,21 @@ class InterfaceInsereCliente extends JDialog {
 
         pessoaJuridicaRadioButton = new JRadioButton("Pessoa Jurídica");
         pessoaJuridicaRadioButton.setBounds(170, 10, 150, 20);
-        
+
         ButtonGroup tipoClienteGroup = new ButtonGroup();
         tipoClienteGroup.add(pessoaFisicaRadioButton);
         tipoClienteGroup.add(pessoaJuridicaRadioButton);
-        
+
         sexoMasculino = new JRadioButton("Masculino");
         sexoMasculino.setBounds(80, 70, 90, 20);
         sexoMasculino.setSelected(true);
 
         sexoFeminino = new JRadioButton("Feminino");
         sexoFeminino.setBounds(170, 70, 80, 20);
-        
+
         sexoOutros = new JRadioButton("Outro");
         sexoOutros.setBounds(250, 70, 60, 20);
-        
+
         ButtonGroup tipoSexoGroup = new ButtonGroup();
         tipoSexoGroup.add(sexoMasculino);
         tipoSexoGroup.add(sexoFeminino);
@@ -186,12 +185,10 @@ class InterfaceInsereCliente extends JDialog {
                 String hql2 = "SELECT l.logId FROM TbLogradouro l WHERE l.logDescricao = '" + listLogradouro.getSelectedItem() + "'";
                 Query query2 = session.createQuery(hql2);
 
-                int logId = (int) query2.uniqueResult();
-                int cidId = (int) query.uniqueResult();
-
                 Transaction transaction = session.beginTransaction();
                 try {
-
+                    int logId = (int) query2.uniqueResult();
+                    int cidId = (int) query.uniqueResult();
                     banco.TbBairro tbBairro = new banco.TbBairro();
                     tbBairro.setBaiDescricao(bairroField.getText());
                     session.save(tbBairro);
@@ -256,12 +253,16 @@ class InterfaceInsereCliente extends JDialog {
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    session.clear();
                 } catch (ParseException ex) {
                     Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (NullPointerException ex) {
+                    // Bloco de código executado quando ocorrer a exceção
+                    JOptionPane.showMessageDialog(null, "Preencha todos os campos!");
                 }
             }
         });
-        
+
         // BOTÃO LIMPAR
         JButton limparCampos = new JButton();
         limparCampos = new JButton();
@@ -319,16 +320,14 @@ class InterfaceInsereCliente extends JDialog {
                 sexoOutros.setEnabled(true);
             }
         });
-        
-        
-        
+
         // Adicione os componentes ao painel principal
         mainPanel.add(pessoaFisicaRadioButton);
         mainPanel.add(pessoaJuridicaRadioButton);
 
         mainPanel.add(nomeLabel);
         mainPanel.add(nomeField);
-        
+
         mainPanel.add(documentoLabel);
 
         mainPanel.add(sexoLabel);
@@ -381,7 +380,7 @@ class InterfaceInsereCliente extends JDialog {
             Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
         }
         mainPanel.add(dataNascimentoField);
-        
+
         // TELEFONE NA TELA
         mainPanel.add(foneLabel);
         try {
@@ -407,7 +406,7 @@ class InterfaceInsereCliente extends JDialog {
 
         mainPanel.add(logradouroLabel);
         mainPanel.add(listLogradouro);
-        
+
         mainPanel.add(enderecoLabel);
         mainPanel.add(enderecoField);
 
@@ -419,14 +418,14 @@ class InterfaceInsereCliente extends JDialog {
 
         mainPanel.add(bairroLabel);
         mainPanel.add(bairroField);
-        
+
         // Adiciona o JComboBox ao JFrame
         mainPanel.add(estadoLabel);
         mainPanel.add(listEstado);
-        
+
         mainPanel.add(cidadeLabel);
         mainPanel.add(listCidade);
-        
+
         // botão para limpar
         mainPanel.add(cadastrarButton);
         mainPanel.add(limparCampos);
@@ -440,18 +439,18 @@ class InterfaceInsereCliente extends JDialog {
 
         nomeLabel.setBounds(x, y, labelWidth, 20);
         nomeField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        
+
         y += yGap;
         sexoLabel.setBounds(x, y, labelWidth, 20);
-        
+
         y += yGap;
         documentoLabel.setBounds(x, y, labelWidth, 20);
         documentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        
+
         y += yGap;
         dataNascimentoLabel.setBounds(x, y, labelWidth, 20);
         dataNascimentoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        
+
         y += yGap;
         fantasiaLabel.setBounds(x, y, labelWidth, 20);
         fantasiaField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
@@ -495,15 +494,12 @@ class InterfaceInsereCliente extends JDialog {
         y += yGap;
         estadoLabel.setBounds(x, y, labelWidth, 20);
         listEstado.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        
+
         y += yGap;
         cidadeLabel.setBounds(x, y, labelWidth, 20);
         listCidade.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
         pessoaFisicaRadioButton.doClick();
 
-        
-        
-        
         // Defina o tamanho do painel principal
         mainPanel.setPreferredSize(new Dimension(380, 580));
 
@@ -527,7 +523,7 @@ class InterfaceInsereCliente extends JDialog {
         bairroField.setText("");
         dataNascimentoField.setText("");
     }
-    
+
     public void showInterface() {
         // Exibe a janela menor
         setVisible(true);

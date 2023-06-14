@@ -16,9 +16,8 @@ class InterfaceVenda extends InterfaceAbstrata {
     public InterfaceVenda(JFrame mainFrame, Session session) {
         super(mainFrame, session);
         this.session = session;
-
     }
-
+    
     @Override
     protected JTable createTable(Session session) {
 
@@ -75,7 +74,7 @@ class InterfaceVenda extends InterfaceAbstrata {
 
         buttonPanel.add(button);
         buttonPanel.add(button2);
-        Font fonte = new Font("Times New Roman", Font.BOLD, 14);
+        Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14);
         table.setFont(fonte);
         return table;
     }

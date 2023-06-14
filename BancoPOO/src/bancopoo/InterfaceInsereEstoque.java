@@ -164,6 +164,7 @@ class InterfaceInsereEstoque extends JDialog {
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    session.clear();
                 }
             }
         });
