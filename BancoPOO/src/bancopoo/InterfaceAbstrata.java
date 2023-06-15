@@ -9,7 +9,7 @@ import javax.swing.table.TableRowSorter;
 import org.hibernate.Session;
 
 public abstract class InterfaceAbstrata {
-    private final JFrame smallFrame;
+    protected final JFrame smallFrame;
     protected final JFrame mainFrame;
     protected static boolean isSmallWindowOpen = false;
     private Session session;

@@ -18,19 +18,22 @@ class InterfaceEstoque extends InterfaceAbstrata {
 
     private final Session session;
     private String selectedPeca; // Variável para armazenar o CPF selecionado
+    protected final JFrame mainFrame;
+    private InterfaceAbstrata panelFrame = this;
 
     public InterfaceEstoque(JFrame mainFrame, Session session) {
         super(mainFrame, session);
         this.session = session;
+        this.mainFrame = mainFrame;
     }
 
     @Override
     protected JTable createTable(Session session) {
         // Código para buscar os dados do banco de dados usando Hibernate
-        String hql = "SELECT e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
+        String hql = "SELECT e.tbFornecedorHasPeca.fpId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
         Query query = session.createQuery(hql);
 
-        String[] columnNames = {"Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Quantidade Mínima", "Fornecedor"};
+        String[] columnNames = {"Vínculo ID", "Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Quantidade Mínima", "Fornecedor"};
 
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
@@ -42,13 +45,14 @@ class InterfaceEstoque extends InterfaceAbstrata {
 
         List<Object[]> results = query.list();
         for (Object[] result : results) {
-            String nome = (String) result[0];
-            float qtd_e = (float) result[1];
-            Float valor = (Float) result[2];
-            float qtd_m = (float) result[3];
-            String fornecedor = (String) result[4];
+            int estoId = (int) result[0];
+            String nome = (String) result[1];
+            float qtd_e = (float) result[2];
+            Float valor = (Float) result[3];
+            float qtd_m = (float) result[4];
+            String fornecedor = (String) result[5];
 
-            model.addRow(new Object[]{nome, qtd_e, valor, qtd_m, fornecedor}); // Adicione outras colunas conforme necessário
+            model.addRow(new Object[]{estoId, nome, qtd_e, valor, qtd_m, fornecedor}); // Adicione outras colunas conforme necessário
         }
         // Cria a tabela
         JTable table = new JTable(model);
@@ -70,8 +74,11 @@ class InterfaceEstoque extends InterfaceAbstrata {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // Implemente a lógica para a ação de alteração
-                        // ...
+                        InterfaceAlterarEstoque alterar;
+                        int selectedRow = table.getSelectedRow();
+                        int selectedEstoque = (int) table.getValueAt(selectedRow, 0);
+                        alterar = new InterfaceAlterarEstoque(panelFrame, session, selectedEstoque);
+                        alterar.showInterface();
                     }
                 });
             } else if (label.equals("Remover")) {
@@ -128,19 +135,20 @@ class InterfaceEstoque extends InterfaceAbstrata {
     }
 
     public void updateTableData(DefaultTableModel model) {
-        String hql = "SELECT e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
+        String hql = "SELECT e.tbFornecedorHasPeca.fpId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
         Query query = session.createQuery(hql);
 
-        List<Object[]> results = query.list();
         model.setRowCount(0); // Limpa os dados da tabela antes de atualizar
+        List<Object[]> results = query.list();
         for (Object[] result : results) {
-            String nome = (String) result[0];
-            float qtd_e = (float) result[1];
-            float valor = (float) result[2];
-            float qtd_m = (float) result[3];
-            String fornecedor = (String) result[4];
+            int estoId = (int) result[0];
+            String nome = (String) result[1];
+            float qtd_e = (float) result[2];
+            Float valor = (Float) result[3];
+            float qtd_m = (float) result[4];
+            String fornecedor = (String) result[5];
 
-            model.addRow(new Object[]{nome, qtd_e, valor, qtd_m, fornecedor});  // Adicione outras colunas conforme necessário
+            model.addRow(new Object[]{estoId, nome, qtd_e, valor, qtd_m, fornecedor}); // Adicione outras colunas conforme necessário
         }
     }
 }

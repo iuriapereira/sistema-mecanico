@@ -137,7 +137,6 @@ class BancoPOO {
 
                 //Retornando erro de login para o dianóstico
                 if (result == null) {
-                    System.out.println("nulo");
                     diagnosticLabel.setForeground(Color.red);
                     diagnosticLabel.setText("Credenciais inválidas!");
                 } else {
