@@ -47,23 +47,31 @@ class InterfaceInsereFuncionario extends JDialog {
     private final JTextField usuarioField;
     private final JPasswordField senhaField;
     private Object passwordCheckBox;
+    private final MaskFormatter cpf;
+    private final MaskFormatter rgie;
+    private final MaskFormatter fone;
+    private final MaskFormatter cep;
+    private final MaskFormatter dataNascimento;
 
-    public InterfaceInsereFuncionario(JFrame mainFrame, Session session) {
+    public InterfaceInsereFuncionario(JFrame mainFrame, Session session) throws ParseException {
         this.mainFrame = mainFrame;
         this.session = session;
-
+        
+        // DEFINIÇÃO DO LAYOUT -------------------------------------------------
+        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo dados do funcionário");
         setResizable(false);
+        mainPanel.setPreferredSize(new Dimension(380, 660));
+        // ---------------------------------------------------------------------
+        Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14); // FONTE DA PÁGINA
 
-        Font fonte = new Font("Times New Roman", Font.BOLD, 14);
-
-        // CONEXÃO COM O BANCO TB_ESTADO
+        // CONEXÃO COM O BANCO NA TABELA ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
         ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
 
-        // COMBOBOX DO ESTADO
+        // COMBOBOX DO ESTADO --------------------------------------------------
         JComboBox<String> listEstado = new JComboBox<>();
         DefaultComboBoxModel<String> est = new DefaultComboBoxModel<>();
         est.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
@@ -72,12 +80,12 @@ class InterfaceInsereFuncionario extends JDialog {
         for (TbEstado descricao : estado) {
             listEstado.addItem(descricao.getEstSigla());
         }
-
-        // CONEXÃO COM O BANCO TB_CIDEST
+        // ---------------------------------------------------------------------
+        // CONEXÃO COM O BANCO NA TABELA CIDEST
         Criteria cid = session.createCriteria(TbCidEst.class);
         ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
 
-        // COMBOBOX DA CIDADE
+        // COMBOBOX DA CIDADE --------------------------------------------------
         JComboBox<String> listCidade = new JComboBox<>();
         listCidade.setFont(fonte);
 
@@ -105,25 +113,28 @@ class InterfaceInsereFuncionario extends JDialog {
                 repaint();
             }
         });
+        // ---------------------------------------------------------------------
+        // CONEXÃO COM O BANCO NA TABELA LOGRADOURO ----------------------------
+        String hql = "SELECT log.logDescricao FROM TbLogradouro log";
+        Query query = session.createQuery(hql);
+        java.util.List<String> logradouros = (java.util.List<String>) query.list();
+        // ---------------------------------------------------------------------
 
-        // CONEXÃO COM O BANCO TB_LOGRADOURO
-        Criteria log = session.createCriteria(TbLogradouro.class);
-        ArrayList<TbLogradouro> logradouro = (ArrayList<TbLogradouro>) log.list();
-
-        // COMBOBOX DO LOGRADOURO
+        // COMBOBOX DO LOGRADOURO ----------------------------------------------
         JComboBox<String> listLogradouro = new JComboBox<>();
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
         listLogradouro.setModel(logr);
-        listLogradouro.setFont(fonte);
-        for (TbLogradouro descricao : logradouro) {
-            listLogradouro.addItem(descricao.getLogDescricao());
+        for (String logradouro : logradouros) {
+            logr.addElement(logradouro);
         }
+        listLogradouro.setModel(logr);
+        // ---------------------------------------------------------------------
 
-        // CONEXÃO COM O BANCO TB_CARGO
+        // CONEXÃO COM O BANCO NA TABELA CARGO
         Criteria cag = session.createCriteria(TbCargo.class);
         ArrayList<TbCargo> cargo = (ArrayList<TbCargo>) cag.list();
-        // COMBOBOX DO CARGO
+        // COMBOBOX DO CARGO ---------------------------------------------------
         JComboBox<String> listCargo = new JComboBox<>();
         DefaultComboBoxModel<String> carg = new DefaultComboBoxModel<>();
         carg.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS CARGOS
@@ -132,16 +143,13 @@ class InterfaceInsereFuncionario extends JDialog {
         for (TbCargo descricao : cargo) {
             listCargo.addItem(descricao.getCarDescricao());
         }
-
-        // PAINEL DA JANELA MENOR
-        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
-
+        // ---------------------------------------------------------------------
+        
+        // CRIANDO OS COMPONENTES LABEL DA TELA --------------------------------
         JLabel cargoLabel = new JLabel("Cargo:");
         cargoLabel.setFont(fonte);
         JLabel nomeLabel = new JLabel("Nome:");
         nomeLabel.setFont(fonte);
-        nomeField = new JTextField(20);
-        nomeField.setFont(fonte);
         JLabel sexoLabel = new JLabel("Sexo:");
         sexoLabel.setFont(fonte);
         JLabel documentoLabel = new JLabel("CPF:");
@@ -150,50 +158,75 @@ class InterfaceInsereFuncionario extends JDialog {
         dataNascimentoLabel.setFont(fonte);
         JLabel fantasiaLabel = new JLabel("Nome Fantasia:");
         fantasiaLabel.setFont(fonte);
-        fantasiaField = new JTextField(20);
-        fantasiaField.setFont(fonte);
         JLabel rgieLabel = new JLabel("RG:");
         rgieLabel.setFont(fonte);
         JLabel foneLabel = new JLabel("Fone:");
         foneLabel.setFont(fonte);
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setFont(fonte);
-        emailField = new JTextField(20);
-        emailField.setFont(fonte);
         JLabel cepLabel = new JLabel("CEP:");
         cepLabel.setFont(fonte);
         JLabel logradouroLabel = new JLabel("Logradouro:");
         logradouroLabel.setFont(fonte);
         JLabel enderecoLabel = new JLabel("Endereço:");
         enderecoLabel.setFont(fonte);
-        enderecoField = new JTextField(20);
-        enderecoField.setFont(fonte);
         JLabel numeroLabel = new JLabel("Número:");
         numeroLabel.setFont(fonte);
-        numeroField = new JTextField(20);
-        numeroField.setFont(fonte);
         JLabel complementoLabel = new JLabel("Complemento:");
         complementoLabel.setFont(fonte);
-        complementoField = new JTextField(20);
-        complementoField.setFont(fonte);
         JLabel bairroLabel = new JLabel("Bairro:");
         bairroLabel.setFont(fonte);
-        bairroField = new JTextField(20);
-        bairroField.setFont(fonte);
         JLabel estadoLabel = new JLabel("Estado:");
         estadoLabel.setFont(fonte);
         JLabel cidadeLabel = new JLabel("Cidade:");
         cidadeLabel.setFont(fonte);
-        // DADOS DE LOGIN DO FUNCIONÁRIO
         JLabel usuarioLabel = new JLabel("Usuário:");
         usuarioLabel.setFont(fonte);
-        usuarioField = new JTextField(20);
-        usuarioField.setFont(fonte);
         JLabel senhaLabel = new JLabel("Senha:");
         senhaLabel.setFont(fonte);
+        // ---------------------------------------------------------------------
+        // CRIANDO AS CAIXAS DE DIALOGO ----------------------------------------
+        nomeField = new JTextField(20);
+        fantasiaField = new JTextField(20);
+        emailField = new JTextField(20);
+        enderecoField = new JTextField(20);
+        numeroField = new JTextField(20);
+        complementoField = new JTextField(20);
+        bairroField = new JTextField(20);
+        usuarioField = new JTextField(20);
         senhaField = new JPasswordField(8);
+        // ---------------------------------------------------------------------
+        // FORMATAÇÕES ---------------------------------------------------------
+        cpf = new MaskFormatter("###.###.###-##");
+        rgie = new MaskFormatter("##############");
+        fone = new MaskFormatter("(##) #####-####");
+        cep = new MaskFormatter("#####-###");
+        dataNascimento = new MaskFormatter("##/##/####");
+        // ---------------------------------------------------------------------
+        // INSTANCIANDO OS OBJETOS GLOBAIS -------------------------------------
+        documentoField = new JFormattedTextField();
+        rgieField = new JFormattedTextField();
+        foneField = new JFormattedTextField();
+        cepField = new JFormattedTextField();
+        dataNascimentoField = new JFormattedTextField();
+        // ---------------------------------------------------------------------
+        // SETANDO AS FONTES PARA CADA CAIXA DE DIALOGO ------------------------
+        documentoField.setFont(fonte);
+        rgieField.setFont(fonte);
+        foneField.setFont(fonte);
+        cepField.setFont(fonte);
+        dataNascimentoField.setFont(fonte);
+        nomeField.setFont(fonte);
+        fantasiaField.setFont(fonte);
+        emailField.setFont(fonte);
+        enderecoField.setFont(fonte);
+        numeroField.setFont(fonte);
+        complementoField.setFont(fonte);
+        bairroField.setFont(fonte);
+        usuarioField.setFont(fonte);
         senhaField.setFont(fonte);
-
+        // ---------------------------------------------------------------------
+        
         JCheckBox mostrarSenha = new JCheckBox("Mostrar senha");
         mostrarSenha.addActionListener(new ActionListener() {
             @Override
@@ -311,7 +344,7 @@ class InterfaceInsereFuncionario extends JDialog {
             }
         });
 
-        // BOTÃO LIMPAR
+        // BOTÃO LIMPAR --------------------------------------------------------
         JButton limparCampos = new JButton();
         limparCampos = new JButton();
         ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
@@ -328,139 +361,78 @@ class InterfaceInsereFuncionario extends JDialog {
                 listCargo.setSelectedIndex(0);
             }
         });
-
-        // Adicione os componentes ao painel principal
+        // ---------------------------------------------------------------------
+        
+        // ADICIONA OS COMPONENTES NO PAINEL PRINCIPAL -------------------------
+        // Cargo
         mainPanel.add(cargoLabel);
         mainPanel.add(listCargo);
-
+        // Nome 
         mainPanel.add(nomeLabel);
         mainPanel.add(nomeField);
-
+        // Documento
+        mainPanel.add(documentoLabel);
+        mainPanel.add(documentoField);
+        // Sexo
         mainPanel.add(sexoLabel);
         mainPanel.add(sexoMasculino);
         mainPanel.add(sexoFeminino);
         mainPanel.add(sexoOutros);
-
-        // CPF NA TELA
-        mainPanel.add(documentoLabel);
-        try {
-            MaskFormatter mf = new MaskFormatter("###.###.###-##");
-            documentoField = new JFormattedTextField(mf);
-        } catch (ParseException ex) {
-            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        documentoField.setFont(fonte);
-        mainPanel.add(documentoField);
-
-        // DATA DE NASCIMENTO NA TELA 
-        mainPanel.add(dataNascimentoLabel);
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            MaskFormatter maskFormatter = new MaskFormatter("##/##/####");
-            maskFormatter.setPlaceholderCharacter('_');
-            JFormattedTextField.AbstractFormatter formatter = new JFormattedTextField.AbstractFormatter() {
-                @Override
-                public Object stringToValue(String text) throws ParseException {
-                    return dateFormat.parseObject(text);
-                }
-
-                @Override
-                public String valueToString(Object value) throws ParseException {
-                    if (value instanceof java.util.Date) {
-                        return dateFormat.format(value);
-                    }
-                    return "";
-                }
-            };
-            dataNascimentoField = new JFormattedTextField(formatter);
-            dataNascimentoField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(maskFormatter));
-        } catch (ParseException ex) {
-            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        dataNascimentoField.setFont(fonte);
-        mainPanel.add(dataNascimentoField);
-
+        // Nome fantasia
         mainPanel.add(fantasiaLabel);
         mainPanel.add(fantasiaField);
-
-        // RG/IE NA TELA
+        // RG/IE e formata só para aceitar numero
         mainPanel.add(rgieLabel);
-        // MaskFormatter para permitir apenas números
-        MaskFormatter maskFormatter = null;
-        try {
-            maskFormatter = new MaskFormatter("##############");
-            maskFormatter.setValidCharacters("0123456789"); // Permite apenas números
-            maskFormatter.setPlaceholderCharacter('_'); // Define um caractere de espaço reservado
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        // JFormattedTextField usando o MaskFormatter
-        rgieField = new JFormattedTextField(maskFormatter);
-        rgieField.setFont(fonte);
         mainPanel.add(rgieField);
-
-        // TELEFONE NA TELA
+        rgie.install(rgieField);
+        // Data Nascimento e formata em forma de data
+        mainPanel.add(dataNascimentoLabel);
+        mainPanel.add(dataNascimentoField);
+        dataNascimento.install(dataNascimentoField);
+        // Telefone e formata na forma de telefone
         mainPanel.add(foneLabel);
-        try {
-            MaskFormatter mf = new MaskFormatter("(##) #####-####");
-            foneField = new JFormattedTextField(mf);
-        } catch (ParseException ex) {
-            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        foneField.setFont(fonte);
         mainPanel.add(foneField);
-
+        fone.install(foneField);
+        // Email
         mainPanel.add(emailLabel);
         mainPanel.add(emailField);
-
-        // CEP NA TELA
+        // CEP e formata na forma de cep
         mainPanel.add(cepLabel);
-        try {
-            MaskFormatter mf = new MaskFormatter("#####-###");
-            cepField = new JFormattedTextField(mf);
-        } catch (ParseException ex) {
-            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        cepField.setFont(fonte);
         mainPanel.add(cepField);
-
+        cep.install(cepField);
+        // Logradouro
         mainPanel.add(logradouroLabel);
         mainPanel.add(listLogradouro);
-
+        // Endereco
         mainPanel.add(enderecoLabel);
         mainPanel.add(enderecoField);
-
+        // Numero
         mainPanel.add(numeroLabel);
         mainPanel.add(numeroField);
-
+        // Complemento
         mainPanel.add(complementoLabel);
         mainPanel.add(complementoField);
-
+        // Bairro
         mainPanel.add(bairroLabel);
         mainPanel.add(bairroField);
-
-        // Adiciona o JComboBox ao JFrame
+        // Estado
         mainPanel.add(estadoLabel);
         mainPanel.add(listEstado);
-
+        // Cidade
         mainPanel.add(cidadeLabel);
         mainPanel.add(listCidade);
-
-        // DADOS DE LOGIN
+        // Usuário
         mainPanel.add(usuarioLabel);
         mainPanel.add(usuarioField);
-
+        // Senha
         mainPanel.add(senhaLabel);
         mainPanel.add(senhaField);
         mainPanel.add(mostrarSenha);
-
-        // botão para limpar
+        // Botões
         mainPanel.add(cadastrarButton);
         mainPanel.add(limparCampos);
 
-        // Define as coordenadas de posicionamento dos componentes
+        // Define as coordenadas de posicionamento dos componentes -------------
         int x = 10;
         int y = 20;
         int yGap = 30;
@@ -543,11 +515,8 @@ class InterfaceInsereFuncionario extends JDialog {
 
         y += yGap;
         mostrarSenha.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        // ---------------------------------------------------------------------
 
-        // Defina o tamanho do painel principal
-        mainPanel.setPreferredSize(new Dimension(380, 660));
-
-        // Adicione o painel principal à janela de diálogo
         getContentPane().add(mainPanel);
         pack();
         setLocationRelativeTo(mainFrame);

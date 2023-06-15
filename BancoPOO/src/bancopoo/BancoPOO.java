@@ -64,7 +64,7 @@ class BancoPOO {
         loginButton = new JButton();
         JLabel checkPasswordLabel = new JLabel("Mostrar senha");
         JCheckBox passwordCheckBox = new JCheckBox();
-
+        
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Definindo a operação padrão ao finalizar o programa
         mainFrame.setLayout(null); // Definindo o layout
 

@@ -3,9 +3,12 @@ package bancopoo;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -63,8 +66,13 @@ class InterfaceCliente extends InterfaceAbstrata {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereCliente inserir = new InterfaceInsereCliente(mainFrame, session);
-                        inserir.showInterface();
+                        InterfaceInsereCliente inserir;
+                        try {
+                            inserir = new InterfaceInsereCliente(mainFrame, session);
+                            inserir.showInterface();
+                        } catch (ParseException ex) {
+                            Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
             } else if (label.equals("Alterar")) {

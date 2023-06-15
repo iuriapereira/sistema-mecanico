@@ -30,15 +30,18 @@ class InterfaceInsereEstoque extends JDialog {
     public InterfaceInsereEstoque(JFrame mainFrame, Session session) {
         this.mainFrame = mainFrame;
         this.session = session;
-
+        
+        // DEFINIÇÃO DO LAYOUT -------------------------------------------------
+        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo Produto");
         setResizable(false);
-        
+        mainPanel.setPreferredSize(new Dimension(380, 320));
+        // ---------------------------------------------------------------------
         Font fonte = new Font("Times New Roman", Font.BOLD, 16);
         
-        // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO
+        // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO ------------------------------
         JComboBox<String> listUnidade = new JComboBox<>();
         DefaultComboBoxModel<String> prod = new DefaultComboBoxModel<>();
         prod.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
@@ -48,31 +51,32 @@ class InterfaceInsereEstoque extends JDialog {
         prod.addElement("MT");
         listUnidade.setFont(fonte);
         listUnidade.setModel(prod);
-
-        // CONEXÃO COM O BANCO TB_FORNECEDOR
+        // ---------------------------------------------------------------------
+        
+        // CONEXÃO COM O BANCO NA TABELA FORNECEDOR
         Criteria estd = session.createCriteria(TbFornecedor.class);
         ArrayList<TbFornecedor> fornecedor = (ArrayList<TbFornecedor>) estd.list();
-        // COMBOBOX DO FORNECEDOR
+        // COMBOBOX DO FORNECEDOR ----------------------------------------------
         JComboBox<String> listFornecedor = new JComboBox<>();
         DefaultComboBoxModel<String> forn = new DefaultComboBoxModel<>();
         forn.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
         listFornecedor.setModel(forn);
+        listFornecedor.setFont(fonte);
         for (TbFornecedor descricao : fornecedor) {
             listFornecedor.addItem(descricao.getTbEntidade().getEntNome());
         }
-        listFornecedor.setFont(fonte);
+        // ---------------------------------------------------------------------
 
-        // Define o formato para números de ponto flutuante
+        // Define o formato para números de ponto flutuante --------------------
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
         decimalFormat.setParseBigDecimal(true);
-
         // Cria um NumberFormatter com o formato definido
         NumberFormatter formatter = new NumberFormatter(decimalFormat);
         formatter.setValueClass(Float.class);
         formatter.setAllowsInvalid(false);
         formatter.setCommitsOnValidEdit(true);
-
-        // Cria os campos de entrada formatados
+        // ---------------------------------------------------------------------
+        // Cria os campos de entrada formatados --------------------------------
         minimoField = new JFormattedTextField(formatter);
         minimoField.setFont(fonte);
         maximoField = new JFormattedTextField(formatter);
@@ -85,16 +89,13 @@ class InterfaceInsereEstoque extends JDialog {
         finalField.setFont(fonte);
         JLabel fornecedorLabel = new JLabel("Fornecedor");
         fornecedorLabel.setFont(fonte);
-
-        // PAINEL DA JANELA MENOR
-        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
-
+        // ---------------------------------------------------------------------
+        
+        // CRIANDO OS COMPONENTES LABEL DA TELA --------------------------------
         JLabel unidadeLabel = new JLabel("Unidade");
         unidadeLabel.setFont(fonte);
         JLabel descricaoLabel = new JLabel("Descrição do Produto");
         descricaoLabel.setFont(fonte);
-        descricaoField = new JTextField(20);
-        descricaoField.setFont(fonte);
         JLabel minimoLabel = new JLabel("Estoque Mínimo"); // float
         minimoLabel.setFont(fonte);
         JLabel maximoLabel = new JLabel("Estoque Atual"); // float
@@ -105,23 +106,32 @@ class InterfaceInsereEstoque extends JDialog {
         lucroLabel.setFont(fonte);
         JLabel finalLabel = new JLabel("VALOR FINAL:"); // float
         finalLabel.setFont(fonte);
-
+        // ---------------------------------------------------------------------
+        // CRIANDO AS CAIXAS DE DIALOGO ----------------------------------------
+        descricaoField = new JTextField(20);
+        // ---------------------------------------------------------------------
+        // SETANDO AS FONTES PARA CADA CAIXA DE DIALOGO ------------------------
+        descricaoField.setFont(fonte);
+        // ---------------------------------------------------------------------
+        
+        // AÇÃO QUE ATUALIZA O VALOR TOTAL QUANDO INSERIDO O VALOR NO CUSTO ----
         custoField.addPropertyChangeListener("value", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 atualizarValorTotal();
             }
         });
-
-        // Define um ouvinte de eventos para o campo "lucroField"
+        // ---------------------------------------------------------------------
+        // AÇÃO QUE ATUALIZA O VALOR TOTAL QUANDO INSERIDO O VALOR NO CUSTO ----
         lucroField.addPropertyChangeListener("value", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 atualizarValorTotal();
             }
         });
-
-        // BOTÃO CADASTRAR
+        // ---------------------------------------------------------------------
+        
+        // BOTÃO CADASTRAR -----------------------------------------------------
         JButton cadastrar = new JButton();
         ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
@@ -168,8 +178,8 @@ class InterfaceInsereEstoque extends JDialog {
                 }
             }
         });
-
-        // BOTÃO LIMPAR
+        // ---------------------------------------------------------------------
+        // BOTÃO LIMPAR --------------------------------------------------------
         JButton limparCampos = new JButton();
         limparCampos = new JButton();
         ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
@@ -179,12 +189,54 @@ class InterfaceInsereEstoque extends JDialog {
         limparCampos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                session.clear();
                 limparCampos();
                 listUnidade.setSelectedIndex(0);
             }
         });
-
-        // Define as coordenadas de posicionamento dos componentes
+        // ---------------------------------------------------------------------
+        
+        // ADICIONA OS COMPONENTES NO PAINEL PRINCIPAL -------------------------
+        // Unidade
+        mainPanel.add(unidadeLabel);
+        mainPanel.add(listUnidade);
+        // Descrição
+        mainPanel.add(descricaoLabel);
+        mainPanel.add(descricaoField);
+        // Quantidade Minima
+        mainPanel.add(minimoLabel);
+        mainPanel.add(minimoField);
+        minimoField.setValue(0.00f);
+        minimoField.setSize(70, 21);
+        // Quantidade Maxima
+        mainPanel.add(maximoLabel);
+        mainPanel.add(maximoField);
+        maximoField.setValue(0.00f);
+        maximoField.setSize(70, 21);
+        // Valor Custo
+        mainPanel.add(custoLabel);
+        mainPanel.add(custoField);
+        custoField.setValue(0.00f);
+        custoField.setSize(70, 21);
+        // Margem de Lucro
+        mainPanel.add(lucroLabel);
+        mainPanel.add(lucroField);
+        lucroField.setValue(0.00f);
+        lucroField.setSize(70, 21);
+        // Valor Final
+        mainPanel.add(finalLabel);
+        mainPanel.add(finalField);
+        finalField.setEditable(false);
+        finalField.setValue(0.00f);
+        finalField.setSize(70, 21);
+        // Botão de cadastrar e limpar
+        mainPanel.add(cadastrar);
+        mainPanel.add(limparCampos);
+        // Fornecedor
+        mainPanel.add(fornecedorLabel);
+        mainPanel.add(listFornecedor);
+        // ---------------------------------------------------------------------
+        // Define as coordenadas de posicionamento dos componentes -------------
         int x = 10;
         int y = 20;
         int yGap = 30;
@@ -221,51 +273,7 @@ class InterfaceInsereEstoque extends JDialog {
         y += yGap;
         fornecedorLabel.setBounds(x, y, labelWidth, 20);
         listFornecedor.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-
-        // Adicione os componentes ao painel principal
-        mainPanel.add(unidadeLabel);
-        mainPanel.add(listUnidade);
-
-        mainPanel.add(descricaoLabel);
-        mainPanel.add(descricaoField);
-
-        mainPanel.add(minimoLabel);
-        mainPanel.add(minimoField);
-        minimoField.setValue(0.00f);
-        minimoField.setSize(70, 21);
-
-        mainPanel.add(maximoLabel);
-        mainPanel.add(maximoField);
-        maximoField.setValue(0.00f);
-        maximoField.setSize(70, 21);
-
-        mainPanel.add(custoLabel);
-        mainPanel.add(custoField);
-        custoField.setValue(0.00f);
-        custoField.setSize(70, 21);
-
-        mainPanel.add(lucroLabel);
-        mainPanel.add(lucroField);
-        lucroField.setValue(0.00f);
-        lucroField.setSize(70, 21);
-
-        mainPanel.add(finalLabel);
-        mainPanel.add(finalField);
-        finalField.setEditable(false);
-        finalField.setValue(0.00f);
-        finalField.setSize(70, 21);
-
-        // botão para limpar
-        mainPanel.add(cadastrar);
-        mainPanel.add(limparCampos);
-
-        mainPanel.add(fornecedorLabel);
-        mainPanel.add(listFornecedor);
-
-        // Defina o tamanho do painel principal
-        mainPanel.setPreferredSize(new Dimension(380, 320));
-
-        // Adicione o painel principal à janela de diálogo
+        // ---------------------------------------------------------------------
         getContentPane().add(mainPanel);
         pack();
         setLocationRelativeTo(mainFrame);

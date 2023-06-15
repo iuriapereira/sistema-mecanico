@@ -4,10 +4,13 @@ import banco.TbFornecedor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -59,8 +62,13 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereFornecedor inserir = new InterfaceInsereFornecedor(mainFrame, session);
-                        inserir.showInterface();
+                        InterfaceInsereFornecedor inserir;
+                        try {
+                            inserir = new InterfaceInsereFornecedor(mainFrame, session);
+                            inserir.showInterface();
+                        } catch (ParseException ex) {
+                            Logger.getLogger(InterfaceFornecedor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
             } else if (label.equals("Alterar")) {
