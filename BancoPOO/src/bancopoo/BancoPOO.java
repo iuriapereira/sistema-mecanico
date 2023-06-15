@@ -247,15 +247,13 @@ class BancoPOO {
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
 
         // Parte inferior com a foto da empresa
-        JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        imagePanel.setPreferredSize(new Dimension(600, 590));
-        JLabel companyLogo = new JLabel(new ImageIcon(""));
+        JLabel companyLogo = new JLabel(new ImageIcon("src/resources/images/fundo.png"));
         companyLogo.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Adiciona os painéis no painel principal
         mainPanel.add(buttonPanel, BorderLayout.NORTH);
         mainPanel.add(separator, BorderLayout.CENTER);
-        mainPanel.add(imagePanel, BorderLayout.SOUTH);
+        mainPanel.add(companyLogo, BorderLayout.SOUTH);
 
         // Adiciona o painel principal na janela principal
         mainFrame.getContentPane().add(mainPanel);

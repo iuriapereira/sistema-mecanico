@@ -57,7 +57,7 @@ class InterfaceInsereServico extends JFrame {
         Font fonte = new Font("Times New Roman", Font.BOLD, 14);
         
         // DESCRIÇÃO E VALOR DO SERVIÇO --------------------
-        JLabel valorServicoLabel = new JLabel("Valor do Item");
+        JLabel valorServicoLabel = new JLabel("Valor do Serviço");
         valorServicoLabel.setFont(fonte);
         valorServicoField = new JFormattedTextField(formatter);
         valorServicoField.setValue(0.00f);

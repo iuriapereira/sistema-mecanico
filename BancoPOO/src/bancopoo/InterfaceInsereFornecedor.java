@@ -59,7 +59,16 @@ class InterfaceInsereFornecedor extends JDialog {
         mainPanel.setPreferredSize(new Dimension(380, 550));
         // ---------------------------------------------------------------------
         Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14); // FONTE DA PÁGINA
-        
+        // VERIFICAÇÃO SE A TELA ATUAL ESTÁ ABERTA -----------------------------
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // Habilita panelFrame
+                panelFrame.setEnabled(true); // DEIXA A TELA ANTERIOR ABILITADA
+                panelFrame.requestFocus();
+            }
+        });  
+        // ---------------------------------------------------------------------
         // CONEXÃO COM O BANCO NA TABELA ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
         ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
@@ -124,8 +133,6 @@ class InterfaceInsereFornecedor extends JDialog {
         }
         listLogradouro.setModel(logr);
         // ---------------------------------------------------------------------
-        
-        
         // CRIANDO OS COMPONENTES LABEL DA TELA --------------------------------
         JLabel nomeLabel = new JLabel("Nome:");
         nomeLabel.setFont(fonte);

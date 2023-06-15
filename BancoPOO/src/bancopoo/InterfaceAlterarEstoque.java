@@ -240,23 +240,23 @@ class InterfaceAlterarEstoque extends JDialog {
 
         y += yGap;
         minimoLabel.setBounds(x, y, labelWidth, 20);
-        minimoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        minimoField.setBounds(x + labelWidth + 10, y, 100, 20);
 
         y += yGap;
         maximoLabel.setBounds(x, y, labelWidth, 20);
-        maximoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        maximoField.setBounds(x + labelWidth + 10, y, 100, 20);
 
         y += yGap;
         custoLabel.setBounds(x, y, labelWidth, 20);
-        custoField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        custoField.setBounds(x + labelWidth + 10, y, 100, 20);
 
         y += yGap;
         lucroLabel.setBounds(x, y, labelWidth, 20);
-        lucroField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        lucroField.setBounds(x + labelWidth + 10, y, 100, 20);
 
         y += yGap;
         finalLabel.setBounds(x, y, labelWidth, 20);
-        finalField.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
+        finalField.setBounds(x + labelWidth + 10, y, 100, 20);
 
         y += yGap;
         fornecedorLabel.setBounds(x, y, labelWidth, 20);
