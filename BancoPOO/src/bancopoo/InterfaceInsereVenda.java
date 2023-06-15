@@ -374,6 +374,7 @@ class InterfaceInsereVenda extends JFrame {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 vendaItems.add(inserir.getServicoInputs());
+                                inserir.dispose();
                                 atualizarTabela();
                             }
                         });

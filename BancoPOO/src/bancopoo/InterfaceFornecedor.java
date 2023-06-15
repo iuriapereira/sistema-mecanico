@@ -32,7 +32,7 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
         String hql = "SELECT f.tbEntidade.entCpfCnpj, f.tbEntidade.entNomeFantasia, f.tbEntidade.entFone, f.tbEntidade.entEmail FROM TbFornecedor f";
         Query query = session.createQuery(hql);
 
-        String[] columnNames = {"Cpf/Cnpj", "Nome Fantasia", "Fone", "Email"};
+        String[] columnNames = {"Nome Fantasia", "Cpf/Cnpj", "Fone", "Email"};
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -48,7 +48,7 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
             String fone = (String) result[2];
             String email = (String) result[3];         
             
-            model.addRow(new Object[]{cnpj, nome,fone,email}); // Adicione outras colunas conforme necessário
+            model.addRow(new Object[]{nome, cnpj, fone,email}); // Adicione outras colunas conforme necessário
         }
         // Cria a tabela
         JTable table = new JTable(model);
@@ -75,8 +75,15 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // Implemente a lógica para a ação de alteração
-                        // ...
+                        int selectedRow = table.getSelectedRow();
+                        selectedCPF = (String) table.getValueAt(selectedRow, 1);
+                        InterfaceAlterarEntidade alterar;
+                        try {
+                            alterar = new InterfaceAlterarEntidade(mainFrame, session, selectedCPF, "FORN");
+                            alterar.showInterface();
+                        } catch (ParseException ex) {
+                            Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
             } else if (label.equals("Remover")) {
@@ -131,7 +138,7 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
             String fone = (String) result[2];
             String email = (String) result[3];         
             
-            model.addRow(new Object[]{cnpj, nome,fone,email});// Adicione outras colunas conforme necessário
+            model.addRow(new Object[]{nome, cnpj, fone,email});// Adicione outras colunas conforme necessário
         }
     }
 }

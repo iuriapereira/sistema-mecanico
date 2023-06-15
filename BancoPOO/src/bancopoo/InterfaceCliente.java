@@ -79,8 +79,15 @@ class InterfaceCliente extends InterfaceAbstrata {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // Implemente a lógica para a ação de alteração
-                        // ...
+                        int selectedRow = table.getSelectedRow();
+                        selectedCPF = (String) table.getValueAt(selectedRow, 2);
+                        InterfaceAlterarEntidade alterar;
+                        try {
+                            alterar = new InterfaceAlterarEntidade(mainFrame, session, selectedCPF, "C");
+                            alterar.showInterface();
+                        } catch (ParseException ex) {
+                            Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 });
             } else if (label.equals("Remover")) {
