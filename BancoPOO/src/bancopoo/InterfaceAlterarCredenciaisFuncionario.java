@@ -1,12 +1,7 @@
 package bancopoo;
 
-import static bancopoo.InterfaceAbstrata.isSmallWindowOpen;
 import java.awt.Font;
-import java.text.ParseException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.control.PasswordField;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,13 +25,13 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
     private JTextField usuarioField;
     private JPasswordField senhaTextField;
     private JCheckBox passwordCheckBox;
-    private InterfaceAlterarEntidade OverlayFrame;
+    private JDialog OverlayFrame;
     private Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14);
     
-    public InterfaceAlterarCredenciaisFuncionario(InterfaceAlterarEntidade OverlayFrame, Session session, String cpf) {
+    public InterfaceAlterarCredenciaisFuncionario(JDialog OverlayFrame, Session session, String cpf) {
         this.OverlayFrame = OverlayFrame;
         setSize(320, 240); 
-        setTitle("Alterar crecendiais funcionário");
+        setTitle("Alterar credenciais funcionário");
         setResizable(false);
         setLocationRelativeTo(OverlayFrame);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); //Definindo a operação padrão ao finalizar o programa
@@ -57,7 +52,7 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
-            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita o overlay
                 OverlayFrame.setEnabled(true);
                 OverlayFrame.requestFocus();

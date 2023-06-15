@@ -7,7 +7,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.text.NumberFormatter;
@@ -25,10 +24,10 @@ class InterfaceAlterarEstoque extends JDialog {
     private final JFormattedTextField custoField;
     private final JFormattedTextField lucroField;
     private final JFormattedTextField finalField;
-    private InterfaceAbstrata panelFrame;
+    private InterfaceEstoque panelFrame;
     private Session session;
 
-    public InterfaceAlterarEstoque(InterfaceAbstrata panelFrame, Session session, int estoId) {
+    public InterfaceAlterarEstoque(InterfaceEstoque panelFrame, Session session, int estoId) {
         this.panelFrame = panelFrame;
         this.session = session;
         
@@ -176,15 +175,12 @@ class InterfaceAlterarEstoque extends JDialog {
         });
         // ---------------------------------------------------------------------
         
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
+        addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
-            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
-                panelFrame.mainFrame.setEnabled(true);
-                panelFrame.mainFrame.requestFocus();
-                panelFrame.mainFrame.setEnabled(false);
-                panelFrame.smallFrame.setEnabled(true);
-                panelFrame.smallFrame.requestFocus();
+                panelFrame.setEnabled(true);
+                panelFrame.requestFocus();
                 
             }
         });
@@ -291,13 +287,13 @@ class InterfaceAlterarEstoque extends JDialog {
         //getContentPane().add(mainPanel);
         add(mainPanel);
         pack();
-        setLocationRelativeTo(panelFrame.smallFrame);
+        setLocationRelativeTo(panelFrame);
     }
 
     public void showInterface() {
         // Exibe a janela menor
+        panelFrame.setEnabled(false);
         setVisible(true);
-        panelFrame.smallFrame.setEnabled(false);
     }
 
     private void atualizarValorTotal() {

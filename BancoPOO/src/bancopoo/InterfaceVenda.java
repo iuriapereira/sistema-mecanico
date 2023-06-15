@@ -14,7 +14,7 @@ class InterfaceVenda extends InterfaceAbstrata {
     private final Session session;
 
     public InterfaceVenda(JFrame mainFrame, Session session) {
-        super(mainFrame, session);
+        super(mainFrame, session, "Vendas");
         this.session = session;
     }
     

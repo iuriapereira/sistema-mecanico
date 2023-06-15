@@ -1,8 +1,6 @@
 package bancopoo;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.List;
 import java.util.logging.Level;
@@ -15,12 +13,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class InterfaceFuncionario extends InterfaceAbstrata {
-
     private final Session session;
     private String selectedCPF; // Variável para armazenar o CPF selecionado
 
     public InterfaceFuncionario(JFrame mainFrame, Session session) {
-        super(mainFrame, session);
+        super(mainFrame, session, "Funcionário");
         this.session = session;
     }
 
@@ -61,64 +58,53 @@ public class InterfaceFuncionario extends InterfaceAbstrata {
             String label = buttonLabels[i];
 
             if (label.equals("Inserir")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereFuncionario inserir;
+                button.addActionListener(e -> {
+                    InterfaceInsereFuncionario inserir;
+                    try {
+                        inserir = new InterfaceInsereFuncionario(this, session);
+                        inserir.showInterface();
+                    } catch (ParseException ex) {
+                        Logger.getLogger(InterfaceFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+            } else if (label.equals("Alterar")) {
+                button.addActionListener(e -> {
+                    int selectedRow = table.getSelectedRow();
+                    if(selectedRow != -1){
+                        InterfaceAlterarEntidade inserir;
+                        selectedCPF = (String) table.getValueAt(selectedRow, 1);
                         try {
-                            inserir = new InterfaceInsereFuncionario(mainFrame, session);
+                            inserir = new InterfaceAlterarEntidade(this, session, selectedCPF, "F");
                             inserir.showInterface();
                         } catch (ParseException ex) {
                             Logger.getLogger(InterfaceFuncionario.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 });
-            } else if (label.equals("Alterar")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
-                        selectedCPF = (String) table.getValueAt(selectedRow, 1);
-                        InterfaceAlterarEntidade alterar;
-                        try {
-                            alterar = new InterfaceAlterarEntidade(mainFrame, session, selectedCPF, "F");
-                            alterar.showInterface();
-                        } catch (ParseException ex) {
-                            Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                });
             } else if (label.equals("Remover")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
-
-                        // Verifica se uma linha está selecionada
-                        if (selectedRow != -1) {
-                            // Obtém o CPF da linha selecionada
-                            selectedCPF = (String) table.getValueAt(selectedRow, 0);
-                            Transaction transaction = session.beginTransaction();
-                            try {
-                                String hql = "DELETE FROM TbFuncionario f WHERE f.tbEntidade.entCpfCnpj = :cpf";
-                                Query deleteQuery = session.createQuery(hql);
-                                deleteQuery.setParameter("cpf", selectedCPF);
-                                deleteQuery.executeUpdate();
-                                transaction.commit();
-                                JOptionPane.showMessageDialog(null, "Funcionario Removido");
-                            } catch (HibernateException ex) {
-                                transaction.rollback();
-                                JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                            }
+                button.addActionListener(e -> {
+                    int selectedRow = table.getSelectedRow();
+                    // Verifica se uma linha está selecionada
+                    if (selectedRow != -1) {
+                        // Obtém o CPF da linha selecionada
+                        selectedCPF = (String) table.getValueAt(selectedRow, 1);
+                        Transaction transaction = session.beginTransaction();
+                        try {
+                            String hqlDelete = "DELETE FROM TbFuncionario f WHERE f.tbEntidade.entCpfCnpj = :cpf";
+                            Query deleteQuery = session.createQuery(hqlDelete);
+                            deleteQuery.setParameter("cpf", selectedCPF);
+                            deleteQuery.executeUpdate();
+                            transaction.commit();
+                            JOptionPane.showMessageDialog(null, "Funcionario Removido");
+                        } catch (HibernateException ex) {
+                            transaction.rollback();
+                            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 });
             }else if(label.equals("Atualizar")){
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateTableData(model); 
-                    }
+                button.addActionListener(e -> {
+                    updateTableData(model); 
                 });
             }
 

@@ -24,7 +24,7 @@ import org.hibernate.Transaction;
 
 class InterfaceInsereFuncionario extends JDialog {
 
-    private final JFrame mainFrame;
+    private InterfaceFuncionario panelFrame;
     private JTextField nomeField;
     private JFormattedTextField documentoField;
     private JTextField fantasiaField;
@@ -53,8 +53,8 @@ class InterfaceInsereFuncionario extends JDialog {
     private final MaskFormatter cep;
     private final MaskFormatter dataNascimento;
 
-    public InterfaceInsereFuncionario(JFrame mainFrame, Session session) throws ParseException {
-        this.mainFrame = mainFrame;
+    public InterfaceInsereFuncionario(InterfaceFuncionario panelFrame, Session session) throws ParseException {
+        this.panelFrame = panelFrame;
         this.session = session;
         
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
@@ -66,7 +66,17 @@ class InterfaceInsereFuncionario extends JDialog {
         mainPanel.setPreferredSize(new Dimension(380, 660));
         // ---------------------------------------------------------------------
         Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14); // FONTE DA PÁGINA
-
+        
+        // Desabilitando a PanelFrame
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // Habilita panelFrame
+                panelFrame.setEnabled(true);
+                panelFrame.requestFocus();
+                
+            }
+        });
         // CONEXÃO COM O BANCO NA TABELA ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
         ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
@@ -519,7 +529,7 @@ class InterfaceInsereFuncionario extends JDialog {
 
         getContentPane().add(mainPanel);
         pack();
-        setLocationRelativeTo(mainFrame);
+        setLocationRelativeTo(panelFrame);
     }
 
     private void limparCampos() {
@@ -541,6 +551,7 @@ class InterfaceInsereFuncionario extends JDialog {
 
     public void showInterface() {
         // Exibe a janela menor
+        panelFrame.setEnabled(false);
         setVisible(true);
     }
 }

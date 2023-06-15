@@ -1,6 +1,6 @@
 package bancopoo;
 
-import java.awt.Dialog;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -32,9 +32,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class InterfaceAlterarEntidade extends JDialog{
-    private final JFrame mainFrame;
-    private InterfaceAlterarEntidade PanelFrame = this;
+public class InterfaceAlterarEntidade<T> extends JDialog{
+    private JFrame panelFrame;
     private JTextField nomeField;
     private JFormattedTextField documentoField = new JFormattedTextField();
     private JTextField fantasiaField;
@@ -62,15 +61,24 @@ public class InterfaceAlterarEntidade extends JDialog{
     private String cpfCnpj;
     private SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
     
-    public InterfaceAlterarEntidade(JFrame mainFrame, Session session, String cpf, String tipo) throws ParseException{
-        this.mainFrame = mainFrame;
+    public InterfaceAlterarEntidade(JFrame panelFrame, Session session, String cpf, String tipo) throws ParseException{
+        this.panelFrame = panelFrame;
         this.session = session;
         
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
         setTitle("Alterando dados do cliente");
         
         Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // Habilita panelFrame
+                panelFrame.setEnabled(true);
+                panelFrame.toFront();
+                
+            }
+        });
         
         // CONEXÃO COM O BANCO TB_ESTADO
         
@@ -257,13 +265,10 @@ public class InterfaceAlterarEntidade extends JDialog{
         
         if(tipo.equals("F")){
             JButton alterarFuncionario = new JButton();
-            alterarFuncionario.addActionListener(new ActionListener() {
-                private InterfaceAlterarCredenciaisFuncionario alterar;
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    alterar = new InterfaceAlterarCredenciaisFuncionario(PanelFrame, session, cpf);
+            alterarFuncionario.addActionListener(e -> {
+                InterfaceAlterarCredenciaisFuncionario alterar;
+                    alterar = new InterfaceAlterarCredenciaisFuncionario(this, session, cpf);
                     alterar.showInterface();
-                }
             });
             
             alterarButton.setBounds(70, 540, 100, 30);
@@ -558,7 +563,7 @@ public class InterfaceAlterarEntidade extends JDialog{
         // Adicione o painel principal à janela de diálogo
         getContentPane().add(mainPanel);
         pack();
-        setLocationRelativeTo(mainFrame);
+        setLocationRelativeTo((Component) panelFrame);
     }
     
     private void updateEstado(JComboBox listEstado, JComboBox listCidade){
@@ -585,6 +590,7 @@ public class InterfaceAlterarEntidade extends JDialog{
     
     public void showInterface() {
         // Exibe a janela menor
+        panelFrame.setEnabled(false);
         setVisible(true);
     }
 }

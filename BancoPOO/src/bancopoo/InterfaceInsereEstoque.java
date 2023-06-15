@@ -18,28 +18,36 @@ import org.hibernate.Transaction;
 
 class InterfaceInsereEstoque extends JDialog {
 
-    private final JFrame mainFrame;
+    private InterfaceEstoque panelFrame;
     private final JTextField descricaoField;
     private final JFormattedTextField minimoField;
     private final JFormattedTextField maximoField;
     private final JFormattedTextField custoField;
     private final JFormattedTextField lucroField;
     private final JFormattedTextField finalField;
-    private Session session;
+    private final Session session;
 
-    public InterfaceInsereEstoque(JFrame mainFrame, Session session) {
-        this.mainFrame = mainFrame;
+    public InterfaceInsereEstoque(InterfaceEstoque panelFrame, Session session) {
+        this.panelFrame = panelFrame;
         this.session = session;
         
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
         JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Inserindo Produto");
         setResizable(false);
         mainPanel.setPreferredSize(new Dimension(380, 320));
         // ---------------------------------------------------------------------
         Font fonte = new Font("Times New Roman", Font.BOLD, 16);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // Habilita panelFrame
+                panelFrame.setEnabled(true);
+                panelFrame.requestFocus();
+                
+            }
+        });
         
         // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO ------------------------------
         JComboBox<String> listUnidade = new JComboBox<>();
@@ -276,7 +284,7 @@ class InterfaceInsereEstoque extends JDialog {
         // ---------------------------------------------------------------------
         getContentPane().add(mainPanel);
         pack();
-        setLocationRelativeTo(mainFrame);
+        setLocationRelativeTo(panelFrame);
     }
 
     private void limparCampos() {
@@ -290,6 +298,7 @@ class InterfaceInsereEstoque extends JDialog {
 
     public void showInterface() {
         // Exibe a janela menor
+        panelFrame.setEnabled(false);
         setVisible(true);
     }
 

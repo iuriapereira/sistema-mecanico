@@ -1,8 +1,6 @@
 package bancopoo;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.ParseException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,7 +18,7 @@ class InterfaceCliente extends InterfaceAbstrata {
     private String selectedCPF; // Variável para armazenar o CPF selecionado
 
     public InterfaceCliente(JFrame mainFrame, Session session) {
-        super(mainFrame, session);
+        super(mainFrame, session, "Cliente");
         this.session = session;
     }
 
@@ -63,27 +61,23 @@ class InterfaceCliente extends InterfaceAbstrata {
             String label = buttonLabels[i];
 
             if (label.equals("Inserir")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereCliente inserir;
-                        try {
-                            inserir = new InterfaceInsereCliente(mainFrame, session);
-                            inserir.showInterface();
-                        } catch (ParseException ex) {
-                            Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                button.addActionListener(e -> {
+                    InterfaceInsereCliente inserir;
+                    try {
+                        inserir = new InterfaceInsereCliente(this, session);
+                        inserir.showInterface();
+                    } catch (ParseException ex) {
+                        Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 });
             } else if (label.equals("Alterar")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
+                button.addActionListener(e -> {
+                    int selectedRow = table.getSelectedRow();
+                    if(selectedRow != -1){
                         selectedCPF = (String) table.getValueAt(selectedRow, 2);
                         InterfaceAlterarEntidade alterar;
                         try {
-                            alterar = new InterfaceAlterarEntidade(mainFrame, session, selectedCPF, "C");
+                            alterar = new InterfaceAlterarEntidade(this, session, selectedCPF, "C");
                             alterar.showInterface();
                         } catch (ParseException ex) {
                             Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,37 +85,30 @@ class InterfaceCliente extends InterfaceAbstrata {
                     }
                 });
             } else if (label.equals("Remover")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
-
-                        // Verifica se uma linha está selecionada
-                        if (selectedRow != -1) {
-                            // Obtém o CPF da linha selecionada
-                            selectedCPF = (String) table.getValueAt(selectedRow, 2);
-                            Transaction transaction = session.beginTransaction();
-                            try {
-                                String hql = "DELETE FROM TbCliente c WHERE c.tbEntidade.entCpfCnpj = :cpf";
-                                Query deleteQuery = session.createQuery(hql);
-                                deleteQuery.setParameter("cpf", selectedCPF);
-                                deleteQuery.executeUpdate();
-                                transaction.commit();
-                                JOptionPane.showMessageDialog(null, "Cliente Removido");
-                                updateTableData(model);
-                            } catch (HibernateException ex) {
-                                transaction.rollback();
-                                JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                            }
+                button.addActionListener(e -> {
+                    int selectedRow = table.getSelectedRow();
+                    // Verifica se uma linha está selecionada
+                    if (selectedRow != -1) {
+                        // Obtém o CPF da linha selecionada
+                        selectedCPF = (String) table.getValueAt(selectedRow, 2);
+                        Transaction transaction = session.beginTransaction();
+                        try {
+                            String hqlDelete = "DELETE FROM TbCliente c WHERE c.tbEntidade.entCpfCnpj = :cpf";
+                            Query deleteQuery = session.createQuery(hqlDelete);
+                            deleteQuery.setParameter("cpf", selectedCPF);
+                            deleteQuery.executeUpdate();
+                            transaction.commit();
+                            JOptionPane.showMessageDialog(null, "Cliente Removido");
+                            updateTableData(model);
+                        } catch (HibernateException ex) {
+                            transaction.rollback();
+                            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 });
             } else if(label.equals("Atualizar")){
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                button.addActionListener(e -> {
                         updateTableData(model); 
-                    }
                 });
             }
 

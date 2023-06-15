@@ -23,7 +23,7 @@ import org.hibernate.Transaction;
 
 class InterfaceInsereCliente extends JDialog {
 
-    private final JFrame mainFrame;
+    private InterfaceCliente panelFrame;
     private JTextField nomeField;
     private JFormattedTextField documentoField;
     private JTextField fantasiaField;
@@ -54,19 +54,29 @@ class InterfaceInsereCliente extends JDialog {
     private MaskFormatter cep;
     private MaskFormatter dataNascimento;
 
-    public InterfaceInsereCliente(JFrame mainFrame, Session session) throws ParseException {
-        this.mainFrame = mainFrame;
+    public InterfaceInsereCliente(InterfaceCliente panelFrame, Session session) throws ParseException {
+        this.panelFrame = panelFrame;
         this.session = session;
         
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
         JPanel mainPanel = new JPanel(null); // Define o layout como null
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo dados do cliente");
         setResizable(false);
         mainPanel.setPreferredSize(new Dimension(380, 580));
         // ---------------------------------------------------------------------
         Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14); // FONTE DA PÁGINA
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // Habilita panelFrame
+                panelFrame.setEnabled(true);
+                panelFrame.requestFocus();
+                
+            }
+        });
 
         // CONEXÃO COM O BANCO NA TABELA ESTADO
         Criteria estd = session.createCriteria(TbEstado.class);
@@ -504,7 +514,7 @@ class InterfaceInsereCliente extends JDialog {
         pessoaFisica.doClick(); // Já começa com o pessoa fisíca marcada
         getContentPane().add(mainPanel);
         pack();
-        setLocationRelativeTo(mainFrame);
+        setLocationRelativeTo(panelFrame);
     }
 
     // Função que é usada pelo botão limpar
@@ -525,7 +535,7 @@ class InterfaceInsereCliente extends JDialog {
 
     public void showInterface() {
         // Bloqueia a janela anterior
-        mainFrame.setEnabled(false);
+        panelFrame.setEnabled(false);
         // Exibe a janela menor
         setVisible(true);
     }

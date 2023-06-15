@@ -20,7 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 class InterfaceInsereFornecedor extends JDialog {
-    private final JFrame mainFrame;
+    private InterfaceFornecedor panelFrame;
     private JTextField nomeField;
     private JFormattedTextField documentoField;
     private JTextField fantasiaField;
@@ -47,8 +47,8 @@ class InterfaceInsereFornecedor extends JDialog {
     private final MaskFormatter dataNascimento;
     
 
-    public InterfaceInsereFornecedor(JFrame mainFrame, Session session) throws ParseException {
-        this.mainFrame = mainFrame;
+    public InterfaceInsereFornecedor(InterfaceFornecedor panelFrame, Session session) throws ParseException {
+        this.panelFrame = panelFrame;
         this.session = session;
         
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
@@ -412,7 +412,7 @@ class InterfaceInsereFornecedor extends JDialog {
         // Adicione o painel principal à janela de diálogo
         getContentPane().add(mainPanel);
         pack();
-        setLocationRelativeTo(mainFrame);
+        setLocationRelativeTo(panelFrame);
     }
 
     private void limparCampos() {
@@ -431,6 +431,7 @@ class InterfaceInsereFornecedor extends JDialog {
     
     public void showInterface() {
         // Exibe a janela menor
+        panelFrame.setEnabled(false);
         setVisible(true);
     }
 }

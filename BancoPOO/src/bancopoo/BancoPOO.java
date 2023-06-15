@@ -31,7 +31,6 @@ import org.hibernate.cfg.Configuration;
 class BancoPOO {
 
     protected static JFrame mainFrame; // Referência para a janela principal
-    private static final boolean isSmallWindowOpen = false; // Verifica se uma janela menor está aberta
     private static Configuration configuration;
     private static SessionFactory sessionFactory;
     private static Session session;
@@ -80,12 +79,10 @@ class BancoPOO {
 
         //Criando evendo para o botão de mostrar senha, alterando o Echo do TextField
         passwordCheckBox.addActionListener(e -> {
-            if (!isSmallWindowOpen) {
-                if (passwordCheckBox.isSelected()) {
-                    senhaTextField.setEchoChar('\0');
-                } else {
-                    senhaTextField.setEchoChar('*');
-                }
+            if (passwordCheckBox.isSelected()) {
+                senhaTextField.setEchoChar('\0');
+            } else {
+                senhaTextField.setEchoChar('*');
             }
         });
 
@@ -226,23 +223,21 @@ class BancoPOO {
             String label = buttonLabels[i];
             button.addActionListener(e -> {
                 // Verifica se uma janela menor já está aberta
-                if (!isSmallWindowOpen) {
-                    if (label.equals("Cliente")) {
-                        InterfaceCliente client = new InterfaceCliente(mainFrame, session);
-                        client.show();
-                    } else if (label.equals("Fornecedor")) {
-                        InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame, session);
-                        forne.show();
-                    } else if (label.equals("Funcionário")) {
-                        InterfaceFuncionario func = new InterfaceFuncionario(mainFrame, session);
-                        func.show();
-                    } else if (label.equals("Peça")) {
-                        InterfaceEstoque pec = new InterfaceEstoque(mainFrame, session);
-                        pec.show();
-                    } else if (label.equals("Venda")) {
-                        InterfaceVenda venda = new InterfaceVenda(mainFrame, session);
-                        venda.show();
-                    }
+                if (label.equals("Cliente")) {
+                    InterfaceCliente client = new InterfaceCliente(mainFrame, session);
+                    client.showInterface();
+                } else if (label.equals("Fornecedor")) {
+                    InterfaceFornecedor forne = new InterfaceFornecedor(mainFrame, session);
+                    forne.showInterface();
+                } else if (label.equals("Funcionário")) {
+                    InterfaceFuncionario func = new InterfaceFuncionario(mainFrame, session);
+                    func.showInterface();
+                } else if (label.equals("Peça")) {
+                    InterfaceEstoque pec = new InterfaceEstoque(mainFrame, session);
+                    pec.showInterface();
+                } else if (label.equals("Venda")) {
+                    InterfaceVenda venda = new InterfaceVenda(mainFrame, session);
+                    venda.showInterface();
                 }
             });
             buttonPanel.add(button);
@@ -264,7 +259,6 @@ class BancoPOO {
 
         // Adiciona o painel principal na janela principal
         mainFrame.getContentPane().add(mainPanel);
-
         // Exibe a janela principal
         mainFrame.setVisible(true);
     }

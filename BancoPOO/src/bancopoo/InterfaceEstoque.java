@@ -1,14 +1,9 @@
 package bancopoo;
 
-import banco.TbEstoque;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
 import java.util.List;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -18,13 +13,12 @@ class InterfaceEstoque extends InterfaceAbstrata {
 
     private final Session session;
     private String selectedPeca; // Variável para armazenar o CPF selecionado
-    protected final JFrame mainFrame;
-    private InterfaceAbstrata panelFrame = this;
+    //private InterfaceAbstrata panelFrame = this;
+    private InterfaceEstoque panelFrame = this;
 
     public InterfaceEstoque(JFrame mainFrame, Session session) {
-        super(mainFrame, session);
+        super(mainFrame, session, "Estoque");
         this.session = session;
-        this.mainFrame = mainFrame;
     }
 
     @Override
@@ -63,67 +57,57 @@ class InterfaceEstoque extends InterfaceAbstrata {
             String label = buttonLabels[i];
 
             if (label.equals("Inserir")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        InterfaceInsereEstoque inserir = new InterfaceInsereEstoque(mainFrame, session);
-                        inserir.showInterface();
-                    }
+                button.addActionListener(e -> {
+                    InterfaceInsereEstoque inserir = new InterfaceInsereEstoque(panelFrame, session);
+                    inserir.showInterface();
                 });
             } else if (label.equals("Alterar")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                button.addActionListener(e -> {
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow != -1){
                         InterfaceAlterarEstoque alterar;
-                        int selectedRow = table.getSelectedRow();
                         int selectedEstoque = (int) table.getValueAt(selectedRow, 0);
                         alterar = new InterfaceAlterarEstoque(panelFrame, session, selectedEstoque);
                         alterar.showInterface();
                     }
                 });
             } else if (label.equals("Remover")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int selectedRow = table.getSelectedRow();
+                button.addActionListener(e -> {
+                    int selectedRow = table.getSelectedRow();
 
-                        // Verifica se uma linha está selecionada
-                        if (selectedRow != -1) {
-                            // Obtém o CPF da linha selecionada
-                            selectedPeca = (String) table.getValueAt(selectedRow, 0);
-                            Transaction transaction = session.beginTransaction();
-                            try {
-                                String hqlDeleteEstoque = "DELETE FROM TbEstoque e WHERE e.tbFornecedorHasPeca IN (SELECT fhp FROM TbFornecedorHasPeca fhp WHERE fhp.tbPeca IN (SELECT p FROM TbPeca p WHERE p.peDescricao = :descricao))";
-                                Query deleteQueryEstoque = session.createQuery(hqlDeleteEstoque);
-                                deleteQueryEstoque.setParameter("descricao", selectedPeca);
-                                deleteQueryEstoque.executeUpdate();
+                    // Verifica se uma linha está selecionada
+                    if (selectedRow != -1) {
+                        // Obtém o CPF da linha selecionada
+                        int selectedPeca = (int) table.getValueAt(selectedRow, 0);
+                        Transaction transaction = session.beginTransaction();
+                        try {
+                            String hqlDeleteEstoque = "DELETE FROM TbEstoque e WHERE e.tbFornecedorHasPeca = '" + selectedPeca + "'";
+                            Query deleteQueryEstoque = session.createQuery(hqlDeleteEstoque);
+                            deleteQueryEstoque.executeUpdate();
+                            
+                            String hqlDeletePeca = "DELETE FROM TbPeca p WHERE peId in (SELECT fp.TbProduto.peId FROM TbFornecedorHasPeca fp WHERE fp.fpId = '" + selectedPeca + "')";
+                            Query deleteQueryPeca = session.createQuery(hqlDeletePeca);
+                            deleteQueryPeca.executeUpdate();
 
-                                String hqlDeleteFornecedorHasPeca = "DELETE FROM TbFornecedorHasPeca fhp WHERE fhp.tbPeca IN (SELECT p FROM TbPeca p WHERE p.peDescricao = :descricao)";
-                                Query deleteQueryFornecedorHasPeca = session.createQuery(hqlDeleteFornecedorHasPeca);
-                                deleteQueryFornecedorHasPeca.setParameter("descricao", selectedPeca);
-                                deleteQueryFornecedorHasPeca.executeUpdate();
-
-                                String hqlDeletePeca = "DELETE FROM TbPeca p WHERE p.peDescricao = :descricao";
-                                Query deleteQueryPeca = session.createQuery(hqlDeletePeca);
-                                deleteQueryPeca.setParameter("descricao", selectedPeca);
-                                deleteQueryPeca.executeUpdate();
+                            String hqlDeleteFornecedorHasPeca = "DELETE FROM TbFornecedorHasPeca fhp WHERE fhp.fpId = '" + selectedPeca + "'";
+                            Query deleteQueryFornecedorHasPeca = session.createQuery(hqlDeleteFornecedorHasPeca);
+                            deleteQueryFornecedorHasPeca.executeUpdate();
                                 
-                                transaction.commit();
-                                JOptionPane.showMessageDialog(null, "Produto Removido");
-                                updateTableData(model);
-                            } catch (HibernateException ex) {
-                                transaction.rollback();
-                                JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                            }
+                            transaction.commit();
+                            JOptionPane.showMessageDialog(null, "Produto Removido");
+                            updateTableData(model);
+                        }   catch (org.hibernate.exception.ConstraintViolationException chaveEstrangeira) {
+                            // Lidar com a exceção de violação de restrição de chave estrangeira
+                            JOptionPane.showMessageDialog(null, "Ocorreu um erro: Produdo está vinculado a vendas já realizadas", "Erro", JOptionPane.ERROR_MESSAGE);
+                        } catch (HibernateException ex) {
+                            transaction.rollback();
+                            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 });
             } else if (label.equals("Atualizar")) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        updateTableData(model);
-                    }
+                button.addActionListener(e -> {
+                    updateTableData(model);
                 });
             }
 
