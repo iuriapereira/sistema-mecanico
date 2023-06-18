@@ -109,7 +109,6 @@ class InterfaceInsereCliente extends JDialog {
                 for (String cidade : cidades) {
                     model.addElement(cidade);
                 }
-                //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
 
                 listCidade.setModel(model);
 

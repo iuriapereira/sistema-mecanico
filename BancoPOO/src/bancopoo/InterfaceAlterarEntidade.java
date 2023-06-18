@@ -330,8 +330,12 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
             });
             
             alterarButton.setBounds(70, 540, 100, 30);
+            
             alterarFuncionario.setBounds(200, 540, 100, 30);
-
+            ImageIcon cred = new ImageIcon("src/resources/images/alteraCredenciais.png");
+            Image scaledCred = cred.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+            alterarFuncionario.setIcon(new ImageIcon(scaledCred));
+            
             mainPanel.add(alterarFuncionario);
             mainPanel.add(alterarButton);
         } else {

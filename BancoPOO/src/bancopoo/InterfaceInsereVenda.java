@@ -38,7 +38,7 @@ class InterfaceInsereVenda extends JFrame {
     private Session session;
     protected String[] buttonLabels = {"Inserir Produto", "Inserir Serviço", "Excluir", "Concluir Venda"};
     protected String[] buttonIcons = {"src/resources/images/inserirproduto.png", "src/resources/images/inserirservico.png",
-        "src/resources/images/excluir.png", "src/resources/images/finalizar.png"};
+        "src/resources/images/excluir2.png", "src/resources/images/finalizar.png"};
     protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     private banco.TbVenda tbvenda;
     private ArrayList<Object[]> vendaItems = new ArrayList<>();

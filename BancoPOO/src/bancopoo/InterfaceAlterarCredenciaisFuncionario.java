@@ -1,8 +1,10 @@
 package bancopoo;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -68,8 +70,8 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         usuarioField = new JTextField();
         senhaTextField = new JPasswordField();
         checkPasswordLabel = new JLabel("Mostrar senha");
+        cargoLabel.setBounds(20, 20, 100, 20);
         passwordCheckBox = new JCheckBox();
-        salvarAlteracoes = new JButton();
         // ---------------------------------------------------------------------
         // MOSTRAR E NÃO MOSTRAR A SENHA ---------------------------------------
         passwordCheckBox.addActionListener(e -> {
@@ -81,6 +83,11 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         });
         // ---------------------------------------------------------------------
         // SALVA AS ALTERAÇÕES -------------------------------------------------
+        salvarAlteracoes = new JButton();
+        salvarAlteracoes.setBounds(110, 150, 100, 30);
+        ImageIcon salvar = new ImageIcon("src/resources/images/salvar.png");
+        Image scaledSalvar = salvar.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
+        salvarAlteracoes.setIcon(new ImageIcon(scaledSalvar));
         salvarAlteracoes.addActionListener(e -> {
             String hqlCargoId = "SELECT c.carId FROM TbCargo c WHERE c.carDescricao = '" + listCargo.getSelectedItem() + "'";
             Query queryGetCargoId = session.createQuery(hqlCargoId);
@@ -108,19 +115,20 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         });
         // ---------------------------------------------------------------------
         //Setando a posição de todos os elementos ------------------------------
-        cargoLabel.setBounds(20, 20, 100, 20);
         listCargo.setBounds(80, 20, 200, 20);
+        cargoLabel.setFont(fonte);
         usuarioLabel.setBounds(20, 50, 100, 20);
+        usuarioLabel.setFont(fonte);
         usuarioField.setBounds(80, 50, 200, 20);
         usuarioField.setFont(fonte);
         senhaLabel.setBounds(20, 80, 100, 20);
+        senhaLabel.setFont(fonte);
         senhaTextField.setBounds(80, 80, 200, 20);
         senhaTextField.setFont(fonte);
         passwordCheckBox.setBounds(76, 110, 20, 20);
         passwordCheckBox.setFont(fonte);
         checkPasswordLabel.setBounds(100, 110, 100, 20);
         checkPasswordLabel.setFont(fonte);
-        salvarAlteracoes.setBounds(110, 150, 100, 30);
         // ---------------------------------------------------------------------
         
         String hql = "SELECT fu.funcUsuario, fu.funcSenha, fu.tbCargo.carDescricao FROM TbFuncionario fu WHERE fu.tbEntidade.entCpfCnpj = :cpf";
