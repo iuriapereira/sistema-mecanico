@@ -156,6 +156,7 @@ class InterfaceInsereEstoque extends JDialog {
                     banco.TbFornecedorHasPeca tbfornecedor = new banco.TbFornecedorHasPeca();
                     tbfornecedor.setTbFornecedor((TbFornecedor) forne);
                     tbfornecedor.setTbPeca(tbpeca);
+                    tbfornecedor.setFpValorCompra(Float.parseFloat(custoField.getText().replace(",", ".")));
                     session.save(tbfornecedor);
 
                     banco.TbEstoque tbestoque = new banco.TbEstoque();
