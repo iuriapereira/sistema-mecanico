@@ -30,25 +30,16 @@ class InterfaceInsereEstoque extends JDialog {
     public InterfaceInsereEstoque(InterfaceEstoque panelFrame, Session session) {
         this.panelFrame = panelFrame;
         this.session = session;
-        
+
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
-        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Inserindo Produto");
         setResizable(false);
-        mainPanel.setPreferredSize(new Dimension(380, 320));
         // ---------------------------------------------------------------------
+        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
+        mainPanel.setPreferredSize(new Dimension(380, 320));
+
         Font fonte = new Font("Times New Roman", Font.BOLD, 16);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                // Habilita panelFrame
-                panelFrame.setEnabled(true);
-                panelFrame.requestFocus();
-                
-            }
-        });
-        
         // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO ------------------------------
         JComboBox<String> listUnidade = new JComboBox<>();
         DefaultComboBoxModel<String> prod = new DefaultComboBoxModel<>();
@@ -60,7 +51,7 @@ class InterfaceInsereEstoque extends JDialog {
         listUnidade.setFont(fonte);
         listUnidade.setModel(prod);
         // ---------------------------------------------------------------------
-        
+
         // CONEXÃO COM O BANCO NA TABELA FORNECEDOR
         Criteria estd = session.createCriteria(TbFornecedor.class);
         ArrayList<TbFornecedor> fornecedor = (ArrayList<TbFornecedor>) estd.list();
@@ -95,10 +86,8 @@ class InterfaceInsereEstoque extends JDialog {
         lucroField.setFont(fonte);
         finalField = new JFormattedTextField(formatter);
         finalField.setFont(fonte);
-        JLabel fornecedorLabel = new JLabel("Fornecedor");
-        fornecedorLabel.setFont(fonte);
         // ---------------------------------------------------------------------
-        
+
         // CRIANDO OS COMPONENTES LABEL DA TELA --------------------------------
         JLabel unidadeLabel = new JLabel("Unidade");
         unidadeLabel.setFont(fonte);
@@ -114,6 +103,8 @@ class InterfaceInsereEstoque extends JDialog {
         lucroLabel.setFont(fonte);
         JLabel finalLabel = new JLabel("VALOR FINAL:"); // float
         finalLabel.setFont(fonte);
+        JLabel fornecedorLabel = new JLabel("Fornecedor");
+        fornecedorLabel.setFont(fonte);
         // ---------------------------------------------------------------------
         // CRIANDO AS CAIXAS DE DIALOGO ----------------------------------------
         descricaoField = new JTextField(20);
@@ -121,7 +112,7 @@ class InterfaceInsereEstoque extends JDialog {
         // SETANDO AS FONTES PARA CADA CAIXA DE DIALOGO ------------------------
         descricaoField.setFont(fonte);
         // ---------------------------------------------------------------------
-        
+
         // AÇÃO QUE ATUALIZA O VALOR TOTAL QUANDO INSERIDO O VALOR NO CUSTO ----
         custoField.addPropertyChangeListener("value", new PropertyChangeListener() {
             @Override
@@ -138,7 +129,7 @@ class InterfaceInsereEstoque extends JDialog {
             }
         });
         // ---------------------------------------------------------------------
-        
+
         // BOTÃO CADASTRAR -----------------------------------------------------
         JButton cadastrar = new JButton();
         ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
@@ -158,7 +149,7 @@ class InterfaceInsereEstoque extends JDialog {
 
                     banco.TbPeca tbpeca = new banco.TbPeca();
                     tbpeca.setPeDescricao(descricaoField.getText());
-                    tbpeca.setPeQuantMin(Float.parseFloat(finalField.getText().replace(",", ".")));
+                    tbpeca.setPeQuantMin(Float.parseFloat(minimoField.getText().replace(",", ".")));
                     session.save(tbpeca);
 
                     Object forne = session.load(TbFornecedor.class, fornId);
@@ -171,14 +162,15 @@ class InterfaceInsereEstoque extends JDialog {
                     tbestoque.setTbFornecedorHasPeca(tbfornecedor);
                     tbestoque.setEstoMedida((String) listUnidade.getSelectedItem());
                     tbestoque.setEstoMargeLucro(Float.parseFloat(lucroField.getText().replace(",", ".")));
-                    tbestoque.setEstoQuantidade(Float.parseFloat(finalField.getText().replace(",", ".")));
-                    tbestoque.setEstoValorUni(Float.parseFloat(finalField.getText().replace(",", ".")));
+                    tbestoque.setEstoQuantidade(Float.parseFloat(maximoField.getText().replace(",", ".")));
+                    tbestoque.setEstoValorUni(Float.parseFloat(finalField.getText().replace(".", "").replace(",", ".")));
+
                     session.save(tbestoque);
 
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Peça Inserida no Estoque com Sucesso!");
                     dispose();
-
+                    panelFrame.setEnabled(true); // ABILITA A TEL ANTERIOR
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -203,7 +195,6 @@ class InterfaceInsereEstoque extends JDialog {
             }
         });
         // ---------------------------------------------------------------------
-        
         // ADICIONA OS COMPONENTES NO PAINEL PRINCIPAL -------------------------
         // Unidade
         mainPanel.add(unidadeLabel);

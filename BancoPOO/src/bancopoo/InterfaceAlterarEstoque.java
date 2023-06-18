@@ -32,24 +32,24 @@ class InterfaceAlterarEstoque extends JDialog {
         this.session = session;
         
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
-        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Inserindo Produto");
         setResizable(false);
-        mainPanel.setPreferredSize(new Dimension(380, 320));
         // ---------------------------------------------------------------------
+        JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
+        mainPanel.setPreferredSize(new Dimension(380, 320));
         Font fonte = new Font("Times New Roman", Font.BOLD, 16);
         
         // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO ------------------------------
         JComboBox<String> listUnidade = new JComboBox<>();
-        DefaultComboBoxModel<String> prod = new DefaultComboBoxModel<>();
-        prod.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
-        prod.addElement("UN");
-        prod.addElement("KG");
-        prod.addElement("PC");
-        prod.addElement("MT");
+        DefaultComboBoxModel<String> uni = new DefaultComboBoxModel<>();
+        uni.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA
+        uni.addElement("UN");
+        uni.addElement("KG");
+        uni.addElement("PC");
+        uni.addElement("MT");
         listUnidade.setFont(fonte);
-        listUnidade.setModel(prod);
+        listUnidade.setModel(uni);
         // ---------------------------------------------------------------------
         
         // CONEXÃO COM O BANCO NA TABELA FORNECEDOR
@@ -58,7 +58,7 @@ class InterfaceAlterarEstoque extends JDialog {
         // COMBOBOX DO FORNECEDOR ----------------------------------------------
         JComboBox<String> listFornecedor = new JComboBox<>();
         DefaultComboBoxModel<String> forn = new DefaultComboBoxModel<>();
-        forn.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        forn.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA
         listFornecedor.setModel(forn);
         listFornecedor.setFont(fonte);
         for (TbFornecedor descricao : fornecedor) {
@@ -139,7 +139,7 @@ class InterfaceAlterarEstoque extends JDialog {
         alterar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String hqlPecaId = "SELECT pe.tbPeca.peId FROM TbFornecedorHasPeca pe WHERE pe.fpId = '" + estoId + "'";
+                String hqlPecaId = "SELECT e.tbPeca.peId FROM TbFornecedorHasPeca e WHERE e.fpId = '" + estoId + "'";
                 Query querySelectPeca = session.createQuery(hqlPecaId);
                 
                 Transaction transaction = session.beginTransaction();
@@ -263,9 +263,7 @@ class InterfaceAlterarEstoque extends JDialog {
         listFornecedor.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
         
         
-        
-        
-         // Obtendo e inserindo todos os dados do produto
+        // Obtendo e inserindo todos os dados do produto
         String hql = "SELECT es.estoMedida, es.tbFornecedorHasPeca.tbPeca.peDescricao, es.tbFornecedorHasPeca.tbPeca.peQuantMin, es.estoQuantidade, es.estoValorUni, es.estoMargeLucro, es.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNome FROM TbEstoque es WHERE es.estoId = '" + estoId +"'";
         
         Query query = session.createQuery(hql);

@@ -24,10 +24,10 @@ class InterfaceEstoque extends InterfaceAbstrata {
     @Override
     protected JTable createTable(Session session) {
         // Código para buscar os dados do banco de dados usando Hibernate
-        String hql = "SELECT e.tbFornecedorHasPeca.fpId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
+        String hql = "SELECT e.estoId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
         Query query = session.createQuery(hql);
 
-        String[] columnNames = {"Vínculo ID", "Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Quantidade Mínima", "Fornecedor"};
+        String[] columnNames = {"Vínculo ID", "Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Fornecedor"};
 
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
@@ -43,10 +43,9 @@ class InterfaceEstoque extends InterfaceAbstrata {
             String nome = (String) result[1];
             float qtd_e = (float) result[2];
             Float valor = (Float) result[3];
-            float qtd_m = (float) result[4];
-            String fornecedor = (String) result[5];
+            String fornecedor = (String) result[4];
 
-            model.addRow(new Object[]{estoId, nome, qtd_e, valor, qtd_m, fornecedor}); // Adicione outras colunas conforme necessário
+            model.addRow(new Object[]{estoId, nome, qtd_e, valor, fornecedor}); // Adicione outras colunas conforme necessário
         }
         // Cria a tabela
         JTable table = new JTable(model);
@@ -65,9 +64,8 @@ class InterfaceEstoque extends InterfaceAbstrata {
                 button.addActionListener(e -> {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1){
-                        InterfaceAlterarEstoque alterar;
                         int selectedEstoque = (int) table.getValueAt(selectedRow, 0);
-                        alterar = new InterfaceAlterarEstoque(panelFrame, session, selectedEstoque);
+                        InterfaceAlterarEstoque alterar = new InterfaceAlterarEstoque(panelFrame, session, selectedEstoque);
                         alterar.showInterface();
                     }
                 });
@@ -119,7 +117,7 @@ class InterfaceEstoque extends InterfaceAbstrata {
     }
 
     public void updateTableData(DefaultTableModel model) {
-        String hql = "SELECT e.tbFornecedorHasPeca.fpId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbPeca.peQuantMin, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
+        String hql = "SELECT e.tbFornecedorHasPeca.fpId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
         Query query = session.createQuery(hql);
 
         model.setRowCount(0); // Limpa os dados da tabela antes de atualizar
@@ -129,10 +127,9 @@ class InterfaceEstoque extends InterfaceAbstrata {
             String nome = (String) result[1];
             float qtd_e = (float) result[2];
             Float valor = (Float) result[3];
-            float qtd_m = (float) result[4];
-            String fornecedor = (String) result[5];
+            String fornecedor = (String) result[4];
 
-            model.addRow(new Object[]{estoId, nome, qtd_e, valor, qtd_m, fornecedor}); // Adicione outras colunas conforme necessário
+            model.addRow(new Object[]{estoId, nome, qtd_e, valor, fornecedor}); // Adicione outras colunas conforme necessário
         }
     }
 }
