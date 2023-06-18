@@ -7,6 +7,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -63,7 +66,7 @@ class BancoPOO {
         loginButton = new JButton();
         JLabel checkPasswordLabel = new JLabel("Mostrar senha");
         JCheckBox passwordCheckBox = new JCheckBox();
-        
+
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Definindo a operação padrão ao finalizar o programa
         mainFrame.setLayout(null); // Definindo o layout
 
@@ -181,7 +184,7 @@ class BancoPOO {
 
     private static void createAndShowGUI() {
         // Configuração da janela principal
-        mainFrame = new JFrame("Mecãnica");
+        mainFrame = new JFrame("Mecânica");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -247,13 +250,38 @@ class BancoPOO {
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
 
         // Parte inferior com a foto da empresa
-        JLabel companyLogo = new JLabel(new ImageIcon("src/resources/images/fundo.png"));
+        JLabel companyLogo = new JLabel();
         companyLogo.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Adiciona os painéis no painel principal
+        // ComponentListener vai servir para poder ajustar a imagem de fundo de acordo a tela do computador
+        mainFrame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // Obter as dimensões do painel inferior
+                int logoHeight = companyLogo.getHeight();
+
+                // Obter a largura máxima da tela
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                int screenWidth = (int) screenSize.getWidth();
+
+                // Carregar a imagem
+                ImageIcon imageIcon = new ImageIcon("src/resources/images/fundo.png");
+                Image image = imageIcon.getImage();
+
+                // Calcular a largura proporcional da imagem
+                int logoWidth = (int) ((double) logoHeight / image.getHeight(null) * image.getWidth(null));
+
+                // Redimensionar a imagem de acordo com as dimensões do painel inferior
+                Image scaledImage = image.getScaledInstance(logoWidth, logoHeight, Image.SCALE_SMOOTH);
+
+                // Atualizar o ícone do JLabel com a imagem redimensionada
+                companyLogo.setIcon(new ImageIcon(scaledImage));
+            }
+        });
+
         mainPanel.add(buttonPanel, BorderLayout.NORTH);
         mainPanel.add(separator, BorderLayout.CENTER);
-        mainPanel.add(companyLogo, BorderLayout.SOUTH);
+        mainPanel.add(companyLogo, BorderLayout.CENTER);
 
         // Adiciona o painel principal na janela principal
         mainFrame.getContentPane().add(mainPanel);

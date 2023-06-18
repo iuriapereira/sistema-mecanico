@@ -331,7 +331,19 @@ class InterfaceInsereVenda extends JFrame {
                             dialog.setLocationRelativeTo(smallFrame); // DEIXA A TELA DE SELECIONAR PRODUTO NO MEIO
                             smallFrame.setVisible(true); // DEIXA A TELA DE VENDA VISIVEL
                             smallFrame.setEnabled(false); // A TELA DE VENDA FICA DESATIVADA
-
+                            // VERIFICAÇÃO SE A TELA ATUAL ESTÁ ABERTA -----------------------------
+                            /* Essa verificação, é caso o usuário feche a janela sem selecionar nada, 
+                            para não ocorrer de fechar a tela que tem a tabela com os produtos inseridos na venda */
+                            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                                @Override
+                                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                                    // Habilita panelFrame
+                                    smallFrame.setVisible(true);
+                                    smallFrame.setEnabled(true); // DEIXA A TELA ANTERIOR ABILITADA
+                                    smallFrame.requestFocus();
+                                }
+                            });
+                            // ---------------------------------------------------------------------
                             InterfaceEstoque tabela = new InterfaceEstoque(mainFrame, session);
                             tabela.updateTableData(model2);
                             // Criação da tabela dentro do dialog

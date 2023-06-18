@@ -27,7 +27,7 @@ class InterfaceEstoque extends InterfaceAbstrata {
         String hql = "SELECT e.estoId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
         Query query = session.createQuery(hql);
 
-        String[] columnNames = {"Vínculo ID", "Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Fornecedor"};
+        String[] columnNames = {"Vínculo ID", "Nome Produto", "Quantidade em Estoque", "Valor Unitário R$", "Fornecedor"};
 
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
