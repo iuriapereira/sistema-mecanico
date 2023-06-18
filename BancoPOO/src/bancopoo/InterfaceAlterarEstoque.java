@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
@@ -66,7 +67,7 @@ class InterfaceAlterarEstoque extends JDialog {
         }
         // ---------------------------------------------------------------------
 
-        // Define o formato para números de ponto flutuante --------------------
+        // Define o formato para números de ponto flutuante -------------------
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
         decimalFormat.setParseBigDecimal(true);
         // Cria um NumberFormatter com o formato definido
@@ -139,7 +140,7 @@ class InterfaceAlterarEstoque extends JDialog {
         alterar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String hqlPecaId = "SELECT e.tbPeca.peId FROM TbFornecedorHasPeca e WHERE e.fpId = '" + estoId + "'";
+                String hqlPecaId = "SELECT e.tbFornecedorHasPeca.tbPeca.peId FROM TbEstoque e WHERE e.estoId = '" + estoId + "'";
                 Query querySelectPeca = session.createQuery(hqlPecaId);
                 
                 Transaction transaction = session.beginTransaction();
@@ -147,12 +148,12 @@ class InterfaceAlterarEstoque extends JDialog {
                     int pecaId = (int) querySelectPeca.uniqueResult();
                     
                     String hqlUpdateProduto = "UPDATE TbPeca pe SET pe.peDescricao = '" + descricaoField.getText() +"', " +
-                                              "pe.peQuantMin = '" + minimoField.getText() + "' " +
+                                              "pe.peQuantMin = '" + minimoField.getText().replace(",", ".") + "' " +
                                               "WHERE pe.peId = '" + pecaId + "'";
                     
                     String hqlUpdateEstoque = "UPDATE TbEstoque es SET es.estoQuantidade = '" + maximoField.getText() + "', " +
-                                              "es.estoValorUni = '" + custoField.getText() + "', " +
-                                              "es.estoMargeLucro = '" + lucroField.getText() + "', " +
+                                              "es.estoValorUni = '" + finalField.getText().replace(".","").replace(",",".") + "', " +
+                                              "es.estoMargeLucro = '" + lucroField.getText().replace(",", ".") + "', " +
                                               "es.estoMedida = '" + listUnidade.getSelectedItem() + "' " +
                                               "WHERE es.estoId = '" + estoId + "'";
                     
@@ -264,18 +265,18 @@ class InterfaceAlterarEstoque extends JDialog {
         
         
         // Obtendo e inserindo todos os dados do produto
-        String hql = "SELECT es.estoMedida, es.tbFornecedorHasPeca.tbPeca.peDescricao, es.tbFornecedorHasPeca.tbPeca.peQuantMin, es.estoQuantidade, es.estoValorUni, es.estoMargeLucro, es.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNome FROM TbEstoque es WHERE es.estoId = '" + estoId +"'";
+        String hql = "SELECT es.estoMedida, es.tbFornecedorHasPeca.tbPeca.peDescricao, es.tbFornecedorHasPeca.tbPeca.peQuantMin, es.estoQuantidade, es.tbFornecedorHasPeca.fpValorCompra, es.estoMargeLucro, es.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNome FROM TbEstoque es WHERE es.estoId = '" + estoId +"'";
         
         Query query = session.createQuery(hql);
         java.util.List<Object[]> results = query.list();
         for (Object[] result : results) {
             listUnidade.setSelectedItem(result[0].toString());
             descricaoField.setText(result[1].toString());
-            minimoField.setText(result[2].toString());
-            maximoField.setText(result[3].toString());
+            minimoField.setValue(Float.parseFloat(result[2].toString().replace(",", ".")));
+            maximoField.setValue(Float.parseFloat(result[3].toString().replace(",", ".")));
             System.out.println(result[4]);
-            custoField.setValue(Float.parseFloat(result[4].toString()));
-            lucroField.setValue(Float.parseFloat(result[5].toString()));
+            custoField.setValue(Float.parseFloat(result[4].toString().replace(",", ".")));
+            lucroField.setValue(Float.parseFloat(result[5].toString().replace(",", ".")));
             listFornecedor.setSelectedItem(result[6].toString());
         }
         

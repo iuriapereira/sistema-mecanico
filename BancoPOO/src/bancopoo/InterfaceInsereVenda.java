@@ -324,9 +324,13 @@ class InterfaceInsereVenda extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         try {
                             // Criação da janela com a tabela
-                            JDialog dialog = new JDialog(mainFrame, "Selecione um produto");
+                            JDialog dialog = new JDialog(smallFrame, "Selecione um produto");
                             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                             dialog.setSize(600, 400);
+                            dialog.setResizable(false); // A TELA NÃO PODE SER ALTERADO O TAMANHO
+                            dialog.setLocationRelativeTo(smallFrame); // DEIXA A TELA DE SELECIONAR PRODUTO NO MEIO
+                            smallFrame.setVisible(true); // DEIXA A TELA DE VENDA VISIVEL
+                            smallFrame.setEnabled(false); // A TELA DE VENDA FICA DESATIVADA
 
                             InterfaceEstoque tabela = new InterfaceEstoque(mainFrame, session);
                             tabela.updateTableData(model2);
@@ -347,8 +351,8 @@ class InterfaceInsereVenda extends JFrame {
                                             vendaItems.add(vendaItem);
                                             atualizarTabela();
 
-                                            // Feche a janela de seleção do produto
-                                            dialog.dispose();
+                                            smallFrame.setEnabled(true); // ATIVA A TELA DE VENDA
+                                            dialog.dispose(); // FECHA A JANELA DE SELECIONAR PRODUTO
                                         }
                                     }
                                 }
