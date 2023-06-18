@@ -147,16 +147,16 @@ class InterfaceAlterarEstoque extends JDialog {
                 try {
                     int pecaId = (int) querySelectPeca.uniqueResult();
                     
-                    String hqlUpdateProduto = "UPDATE TbPeca pe SET pe.peDescricao = '" + descricaoField.getText() +"', " +
-                                              "pe.peQuantMin = '" + minimoField.getText().replace(",", ".") + "' " +
+                     String hqlUpdateProduto = "UPDATE TbPeca pe SET pe.peDescricao = '" + descricaoField.getText() +"', " +
+                                              "pe.peQuantMin = '" + minimoField.getText().replace(".","").replace(",",".") + "' " +
                                               "WHERE pe.peId = '" + pecaId + "'";
                     
-                    String hqlUpdateEstoque = "UPDATE TbEstoque es SET es.estoQuantidade = '" + maximoField.getText() + "', " +
+                    String hqlUpdateEstoque = "UPDATE TbEstoque es SET es.estoQuantidade = '" + maximoField.getText().replace(".","").replace(",",".") + "', " +
                                               "es.estoValorUni = '" + finalField.getText().replace(".","").replace(",",".") + "', " +
                                               "es.estoMargeLucro = '" + lucroField.getText().replace(",", ".") + "', " +
                                               "es.estoMedida = '" + listUnidade.getSelectedItem() + "' " +
                                               "WHERE es.estoId = '" + estoId + "'";
-                    
+
                     Query queryUpdateProduto = session.createQuery(hqlUpdateProduto);
                     Query queryUpdateEstoque = session.createQuery(hqlUpdateEstoque);
                    
@@ -166,7 +166,7 @@ class InterfaceAlterarEstoque extends JDialog {
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Peça atualizada com sucesso!");
                     dispose();
-
+                    panelFrame.setEnabled(true); // ABILITA A TEL ANTERIOR
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -272,19 +272,19 @@ class InterfaceAlterarEstoque extends JDialog {
         for (Object[] result : results) {
             listUnidade.setSelectedItem(result[0].toString());
             descricaoField.setText(result[1].toString());
-            minimoField.setValue(Float.parseFloat(result[2].toString().replace(",", ".")));
-            maximoField.setValue(Float.parseFloat(result[3].toString().replace(",", ".")));
+            minimoField.setValue(Float.parseFloat(result[2].toString()));
+            maximoField.setValue(Float.parseFloat(result[3].toString()));
             System.out.println(result[4]);
-            custoField.setValue(Float.parseFloat(result[4].toString().replace(",", ".")));
-            lucroField.setValue(Float.parseFloat(result[5].toString().replace(",", ".")));
+            custoField.setValue(Float.parseFloat(result[4].toString()));
+            lucroField.setValue(Float.parseFloat(result[5].toString()));
             listFornecedor.setSelectedItem(result[6].toString());
         }
         
         listFornecedor.setEnabled(false);
         atualizarValorTotal();
         // ---------------------------------------------------------------------
-        //getContentPane().add(mainPanel);
-        add(mainPanel);
+        getContentPane().add(mainPanel);
+        //add(mainPanel);
         pack();
         setLocationRelativeTo(panelFrame);
     }
