@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
@@ -40,7 +39,17 @@ class InterfaceAlterarEstoque extends JDialog {
         JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
         mainPanel.setPreferredSize(new Dimension(380, 320));
         Font fonte = new Font("Times New Roman", Font.BOLD, 16);
-        
+        // VERIFICAÇÃO SE A TELA ATUAL ESTÁ ABERTA -----------------------------
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // Habilita panelFrame
+                panelFrame.setVisible(true);
+                panelFrame.setEnabled(true); // DEIXA A TELA ANTERIOR ABILITADA
+                panelFrame.requestFocus();
+            }
+        });  
+        // ---------------------------------------------------------------------
         // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO ------------------------------
         JComboBox<String> listUnidade = new JComboBox<>();
         DefaultComboBoxModel<String> uni = new DefaultComboBoxModel<>();
@@ -140,33 +149,42 @@ class InterfaceAlterarEstoque extends JDialog {
         alterar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String hqlPecaId = "SELECT e.tbFornecedorHasPeca.tbPeca.peId FROM TbEstoque e WHERE e.estoId = '" + estoId + "'";
-                Query querySelectPeca = session.createQuery(hqlPecaId);
+                String hqlPecaId = "SELECT e.tbFornecedorHasPeca.tbPeca.peId FROM TbEstoque e WHERE e.estoId = '" + estoId + "'"; // BUSCA O ID DA PEÇA NA TABELA PEÇA
+                String hqlForPecaId = "SELECT e.tbFornecedorHasPeca.fpId FROM TbEstoque e WHERE e.estoId = '" + estoId + "'"; // BUSCA O FORPECAID NA TABELA FORNECEDOR HAS PECA
+                Query querySelectPeca = session.createQuery(hqlPecaId); // RECEBE O QUE FOI SELECIONADO DA TABELA PEÇA
+                Query querySelectForPeca = session.createQuery(hqlForPecaId); // RECEBE O QUE FOI SELECIONADO DA TABELA FORNECEDOR HAS PECA
                 
                 Transaction transaction = session.beginTransaction();
                 try {
-                    int pecaId = (int) querySelectPeca.uniqueResult();
+                    int pecaId = (int) querySelectPeca.uniqueResult(); // RECEBE O ID DA PEÇA 
+                    int fppeId = (int) querySelectForPeca.uniqueResult(); // RECEBE O ID FORNECEDOR HAS PECA QUE É O ID VINCULADO AO ID DA PEÇA
                     
-                     String hqlUpdateProduto = "UPDATE TbPeca pe SET pe.peDescricao = '" + descricaoField.getText() +"', " +
+                    // ATUALIZA NA PEÇA 
+                    String hqlUpdateProduto = "UPDATE TbPeca pe SET pe.peDescricao = '" + descricaoField.getText() +"', " +
                                               "pe.peQuantMin = '" + minimoField.getText().replace(".","").replace(",",".") + "' " +
                                               "WHERE pe.peId = '" + pecaId + "'";
-                    
+                    // ATUALIZA NA TABELA ESTOQUE
                     String hqlUpdateEstoque = "UPDATE TbEstoque es SET es.estoQuantidade = '" + maximoField.getText().replace(".","").replace(",",".") + "', " +
                                               "es.estoValorUni = '" + finalField.getText().replace(".","").replace(",",".") + "', " +
                                               "es.estoMargeLucro = '" + lucroField.getText().replace(",", ".") + "', " +
                                               "es.estoMedida = '" + listUnidade.getSelectedItem() + "' " +
                                               "WHERE es.estoId = '" + estoId + "'";
+                    // ATUALIZA NA TABELA FORNECEDOR HAS PECA
+                    String hqlUpdateHasFornecedor = "UPDATE TbFornecedorHasPeca fp SET fp.fpValorCompra = '" + custoField.getText().replace(".","").replace(",",".") + "' " +
+                                                    "WHERE fp.fpId = '" + fppeId + "'";
 
                     Query queryUpdateProduto = session.createQuery(hqlUpdateProduto);
                     Query queryUpdateEstoque = session.createQuery(hqlUpdateEstoque);
+                    Query queryUpdateFornePeca = session.createQuery(hqlUpdateHasFornecedor);
                    
                     queryUpdateProduto.executeUpdate();
                     queryUpdateEstoque.executeUpdate();
+                    queryUpdateFornePeca.executeUpdate();
 
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Peça atualizada com sucesso!");
                     dispose();
-                    panelFrame.setEnabled(true); // ABILITA A TEL ANTERIOR
+                    panelFrame.setEnabled(true); // HABILITA A TELA ANTERIOR
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -175,17 +193,6 @@ class InterfaceAlterarEstoque extends JDialog {
             }
         });
         // ---------------------------------------------------------------------
-        
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                // Habilita panelFrame
-                panelFrame.setEnabled(true);
-                panelFrame.requestFocus();
-                
-            }
-        });
-        
         // ADICIONA OS COMPONENTES NO PAINEL PRINCIPAL -------------------------
         // Unidade
         mainPanel.add(unidadeLabel);

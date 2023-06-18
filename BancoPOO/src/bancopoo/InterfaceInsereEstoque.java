@@ -38,6 +38,18 @@ class InterfaceInsereEstoque extends JDialog {
         // ---------------------------------------------------------------------
         JPanel mainPanel = new JPanel(null); // DEFINE O LAYOUT COMO NULL
         mainPanel.setPreferredSize(new Dimension(380, 320));
+        
+        // VERIFICAÇÃO SE A TELA ATUAL ESTÁ ABERTA -----------------------------
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // Habilita panelFrame
+                panelFrame.setVisible(true);
+                panelFrame.setEnabled(true); // DEIXA A TELA ANTERIOR ABILITADA
+                panelFrame.requestFocus();
+            }
+        });  
+        // ---------------------------------------------------------------------
 
         Font fonte = new Font("Times New Roman", Font.BOLD, 16);
         // COMBOBOX DO TIPO DE UNIDADE DO PRODUTO ------------------------------

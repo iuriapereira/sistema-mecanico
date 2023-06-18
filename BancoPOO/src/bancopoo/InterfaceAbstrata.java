@@ -29,8 +29,6 @@ public abstract class InterfaceAbstrata extends JFrame{
         // Painel da janela menor
         JPanel smallPanel = new JPanel(new BorderLayout());
 
-        
-       
         // Parte inferior com a tabela
         JTable table = createTable(session);
         table.setEnabled(true); // Torna a tabela não editável

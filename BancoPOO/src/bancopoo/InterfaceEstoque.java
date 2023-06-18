@@ -117,7 +117,7 @@ class InterfaceEstoque extends InterfaceAbstrata {
     }
 
     public void updateTableData(DefaultTableModel model) {
-        String hql = "SELECT e.tbFornecedorHasPeca.fpId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
+        String hql = "SELECT e.estoId, e.tbFornecedorHasPeca.tbPeca.peDescricao, e.estoQuantidade, e.estoValorUni, e.tbFornecedorHasPeca.tbFornecedor.tbEntidade.entNomeFantasia FROM TbEstoque e";
         Query query = session.createQuery(hql);
 
         model.setRowCount(0); // Limpa os dados da tabela antes de atualizar
