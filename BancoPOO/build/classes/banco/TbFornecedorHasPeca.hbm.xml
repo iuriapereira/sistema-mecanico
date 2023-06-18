@@ -14,6 +14,9 @@
         <many-to-one name="tbPeca" class="banco.TbPeca" fetch="select">
             <column name="fp_pe_id" not-null="true" />
         </many-to-one>
+        <property name="fpValorCompra" type="float">
+            <column name="fp_valor_compra" not-null="true" />
+        </property>
         <set name="tbEstoques" table="tb_estoque" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="esto_fp_id" not-null="true" />

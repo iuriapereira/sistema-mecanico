@@ -209,7 +209,7 @@ class InterfaceInsereVenda extends JFrame {
                 return true; // Permite a edição das outras colunas
             }
         };
-        String[] columnNames2 = {"Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Quantidade Mínima", "Fornecedor"};
+        String[] columnNames2 = {"ID", "Nome Produto", "Quantidade em Estoque", "Valor Unitário", "Quantidade Mínima", "Fornecedor"};
         DefaultTableModel model2 = new DefaultTableModel(columnNames2, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -341,7 +341,7 @@ class InterfaceInsereVenda extends JFrame {
                                     if (e.getClickCount() == 2) { // Verifica se foi um clique duplo
                                         int selectedRow = dialogTable.getSelectedRow();
                                         if (selectedRow != -1) {
-                                            String selectedProduct = (String) dialogTable.getValueAt(selectedRow, 0);
+                                            String selectedProduct = (String) dialogTable.getValueAt(selectedRow, 1);
                                             Float selectedProduct_valor = (Float) dialogTable.getValueAt(selectedRow, 3);
                                             Object[] vendaItem = {"Produto", selectedProduct, selectedProduct_valor, 0, 0, 0};
                                             vendaItems.add(vendaItem);

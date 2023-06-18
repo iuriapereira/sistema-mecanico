@@ -14,20 +14,23 @@ public class TbFornecedorHasPeca  implements java.io.Serializable {
      private Integer fpId;
      private TbFornecedor tbFornecedor;
      private TbPeca tbPeca;
+     private float fpValorCompra;
      private Set tbEstoques = new HashSet(0);
 
     public TbFornecedorHasPeca() {
     }
 
 	
-    public TbFornecedorHasPeca(TbFornecedor tbFornecedor, TbPeca tbPeca) {
+    public TbFornecedorHasPeca(TbFornecedor tbFornecedor, TbPeca tbPeca,float fpValorCompra) {
         this.tbFornecedor = tbFornecedor;
         this.tbPeca = tbPeca;
+        this.fpValorCompra = fpValorCompra;
     }
-    public TbFornecedorHasPeca(TbFornecedor tbFornecedor, TbPeca tbPeca, Set tbEstoques) {
+    public TbFornecedorHasPeca(TbFornecedor tbFornecedor, TbPeca tbPeca, Set tbEstoques,float fpValorCompra) {
        this.tbFornecedor = tbFornecedor;
        this.tbPeca = tbPeca;
        this.tbEstoques = tbEstoques;
+       this.fpValorCompra = fpValorCompra;
     }
    
     public Integer getFpId() {
@@ -59,7 +62,13 @@ public class TbFornecedorHasPeca  implements java.io.Serializable {
         this.tbEstoques = tbEstoques;
     }
 
+    public float getFpValorCompra() {
+        return fpValorCompra;
+    }
 
+    public void setFpValorCompra(float fpValorCompra) {
+        this.fpValorCompra = fpValorCompra;
+    }
 
 
 }
