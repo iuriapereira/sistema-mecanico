@@ -30,13 +30,14 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
     
     public InterfaceAlterarCredenciaisFuncionario(JDialog OverlayFrame, Session session, String cpf) {
         this.OverlayFrame = OverlayFrame;
+        // DEFINIÇÃO DO LAYOUT -------------------------------------------------
         setSize(320, 240); 
         setTitle("Alterar credenciais funcionário");
         setResizable(false);
         setLocationRelativeTo(OverlayFrame);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); //Definindo a operação padrão ao finalizar o programa
         setLayout(null); // Definindo o layout
-        
+        // ---------------------------------------------------------------------
         // COMBOBOX DO CARGO ---------------------------------------------------
         String hqlCargos = "SELECT car.carDescricao FROM TbCargo car";
         Query query = session.createQuery(hqlCargos);
@@ -45,11 +46,12 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         DefaultComboBoxModel<String> carg = new DefaultComboBoxModel<>();
         carg.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS CARGOS
         listCargo.setFont(fonte);
+        listCargo.setModel(carg);
         for (String cargo : cargos) {
             carg.addElement(cargo);
         };
-        listCargo.setModel(carg);
-        
+        // ---------------------------------------------------------------------
+        // VERIFICAÇÃO SE A TELA ATUAL ESTÁ ABERTA -----------------------------
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -58,7 +60,8 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
                 OverlayFrame.requestFocus();
             }
         });
-        
+        // ---------------------------------------------------------------------
+        // CRIANDO OS COMPONENTES LABEL DA TELA --------------------------------
         usuarioLabel = new JLabel("Usuário:");
         senhaLabel = new JLabel("Senha:");
         cargoLabel = new JLabel("Cargo:");
@@ -67,7 +70,8 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         checkPasswordLabel = new JLabel("Mostrar senha");
         passwordCheckBox = new JCheckBox();
         salvarAlteracoes = new JButton();
-        
+        // ---------------------------------------------------------------------
+        // MOSTRAR E NÃO MOSTRAR A SENHA ---------------------------------------
         passwordCheckBox.addActionListener(e -> {
             if (passwordCheckBox.isSelected()) {
                 senhaTextField.setEchoChar('\0');
@@ -75,7 +79,8 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
                 senhaTextField.setEchoChar('*');
             }
         });
-        
+        // ---------------------------------------------------------------------
+        // SALVA AS ALTERAÇÕES -------------------------------------------------
         salvarAlteracoes.addActionListener(e -> {
             String hqlCargoId = "SELECT c.carId FROM TbCargo c WHERE c.carDescricao = '" + listCargo.getSelectedItem() + "'";
             Query queryGetCargoId = session.createQuery(hqlCargoId);
@@ -100,20 +105,23 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
                     // ERRO PARA CASO NÃO PREENCHA TODOS OS CAMPOS
                     JOptionPane.showMessageDialog(null, "Preencha todos os campos!");
                 }
-            
-            
         });
-        
-        //Setando a posição de todos os elementos
+        // ---------------------------------------------------------------------
+        //Setando a posição de todos os elementos ------------------------------
         cargoLabel.setBounds(20, 20, 100, 20);
         listCargo.setBounds(80, 20, 200, 20);
         usuarioLabel.setBounds(20, 50, 100, 20);
         usuarioField.setBounds(80, 50, 200, 20);
+        usuarioField.setFont(fonte);
         senhaLabel.setBounds(20, 80, 100, 20);
         senhaTextField.setBounds(80, 80, 200, 20);
+        senhaTextField.setFont(fonte);
         passwordCheckBox.setBounds(76, 110, 20, 20);
+        passwordCheckBox.setFont(fonte);
         checkPasswordLabel.setBounds(100, 110, 100, 20);
+        checkPasswordLabel.setFont(fonte);
         salvarAlteracoes.setBounds(110, 150, 100, 30);
+        // ---------------------------------------------------------------------
         
         String hql = "SELECT fu.funcUsuario, fu.funcSenha, fu.tbCargo.carDescricao FROM TbFuncionario fu WHERE fu.tbEntidade.entCpfCnpj = :cpf";
         query = session.createQuery(hql);

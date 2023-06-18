@@ -26,7 +26,7 @@ public class InterfaceFuncionario extends InterfaceAbstrata {
         String hql = "SELECT f.tbEntidade.entCpfCnpj, f.tbEntidade.entNome, f.tbEntidade.entNomeFantasia, f.tbEntidade.entFone, f.tbEntidade.entSexo, f.tbEntidade.entEmail, f.tbCargo.carDescricao, f.funcUsuario FROM TbFuncionario f";
         Query query = session.createQuery(hql);
 
-        String[] columnNames = {"Nome", "Cpf/Cnpj", "Nome Fantasia", "Fone", "Sexo", "Email", "Cargo", "Login"};
+        String[] columnNames = {"CPF", "Nome", "Nome Fantasia", "Fone", "Sexo", "Email", "Cargo", "Login"};
 
         // Modelo da tabela não editável
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
@@ -47,7 +47,7 @@ public class InterfaceFuncionario extends InterfaceAbstrata {
             String cargo = (String) result[6]; // Corrigido índice do array
             String login = (String) result[7]; // Corrigido índice do array
 
-            model.addRow(new Object[]{nome, cpf, nome_fantasia, fone, sexo, email, cargo, login});
+            model.addRow(new Object[]{cpf, nome, nome_fantasia, fone, sexo, email, cargo, login});
         }
         // Cria a tabela
         JTable table = new JTable(model);
@@ -72,7 +72,7 @@ public class InterfaceFuncionario extends InterfaceAbstrata {
                     int selectedRow = table.getSelectedRow();
                     if(selectedRow != -1){
                         InterfaceAlterarEntidade inserir;
-                        selectedCPF = (String) table.getValueAt(selectedRow, 1);
+                        selectedCPF = (String) table.getValueAt(selectedRow, 0);
                         try {
                             inserir = new InterfaceAlterarEntidade(this, session, selectedCPF, "F");
                             inserir.showInterface();

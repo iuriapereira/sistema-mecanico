@@ -291,7 +291,6 @@ class InterfaceAlterarEstoque extends JDialog {
         atualizarValorTotal();
         // ---------------------------------------------------------------------
         getContentPane().add(mainPanel);
-        //add(mainPanel);
         pack();
         setLocationRelativeTo(panelFrame);
     }

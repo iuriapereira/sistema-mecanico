@@ -1,6 +1,5 @@
 package bancopoo;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -23,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.text.DefaultFormatterFactory;
@@ -49,8 +49,8 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
     private JTextField cidadeField;
     private JTextField estadoField;
     private JFormattedTextField dataNascimentoField;
-    private JRadioButton pessoaFisicaRadioButton;
-    private JRadioButton pessoaJuridicaRadioButton;
+    private JRadioButton pessoaFisica;
+    private JRadioButton pessoaJuridica;
     private JRadioButton sexoMasculino;
     private JRadioButton sexoFeminino;
     private JRadioButton sexoOutros;
@@ -60,124 +60,181 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
     private String endId;
     private String cpfCnpj;
     private SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+    private MaskFormatter cnpj;
+    private MaskFormatter CPF;
+    private MaskFormatter rgie;
+    private MaskFormatter fone;
+    private MaskFormatter dataNascimento;
+    private MaskFormatter cep;
     
     public InterfaceAlterarEntidade(JFrame panelFrame, Session session, String cpf, String tipo) throws ParseException{
         this.panelFrame = panelFrame;
         this.session = session;
         
+        // DEFINIÇÃO DO LAYOUT -------------------------------------------------
+        JPanel mainPanel = new JPanel(null); // Define o layout como null
+        mainPanel.setPreferredSize(new Dimension(380, 580));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
+        setResizable(false);
         setTitle("Alterando dados do cliente");
+        // ---------------------------------------------------------------------
         
         Font fonte = new Font("Times New Roman", Font.ROMAN_BASELINE, 14);
+        // Desabilitando a PanelFrame
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
+                panelFrame.setVisible(true);
                 panelFrame.setEnabled(true);
                 panelFrame.toFront();
-                
             }
         });
         
-        // CONEXÃO COM O BANCO TB_ESTADO
-        
+        // CONEXÃO COM O BANCO NA TABELA ESTADO
         String hql = "SELECT est.estSigla FROM TbEstado est";
         Query query = session.createQuery(hql);
         List<String> estados = (List<String>) query.list();
         
-        // COMBOBOX DO ESTADO
+        // COMBOBOX DO ESTADO --------------------------------------------------
         JComboBox<String> listEstado = new JComboBox<>();
         DefaultComboBoxModel<String> est = new DefaultComboBoxModel<>();
         est.addElement("Selecione...");
         listEstado.setModel(est); 
+        listEstado.setFont(fonte);
         for (String estado : estados) {
             listEstado.addItem(estado);
         }
-        
-        // COMBOBOX DA CIDADE
+        // ---------------------------------------------------------------------
+        // COMBOBOX DA CIDADE --------------------------------------------------
         JComboBox<String> listCidade = new JComboBox<>();
-        
+        listCidade.setFont(fonte);
         listEstado.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateEstado(listEstado, listCidade);
             }
         });
-        
-        // CONEXÃO COM O BANCO TB_LOGRADOURO
+        // ---------------------------------------------------------------------
+        // CONEXÃO COM O BANCO NA TABELA LOGRADOURO ----------------------------
         hql = "SELECT log.logDescricao FROM TbLogradouro log";
         query = session.createQuery(hql);
         java.util.List<String> logradouros = (java.util.List<String>) query.list();
-        
-        // COMBOBOX DO LOGRADOURO
+        // ---------------------------------------------------------------------
+        // COMBOBOX DO LOGRADOURO ----------------------------------------------
         JComboBox<String> listLogradouro = new JComboBox<>();
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
         listLogradouro.setModel(logr); 
+        listLogradouro.setFont(fonte);
         for (String logradouro : logradouros) {
             logr.addElement(logradouro);
         }
-        listLogradouro.setModel(logr);
-        
-        JPanel mainPanel = new JPanel(null); // Define o layout como null
-
-        JLabel nomeLabel = new JLabel("Nome:"); 
+        // ---------------------------------------------------------------------
+        // CRIANDO OS COMPONENTES LABEL DA TELA --------------------------------
+        JLabel nomeLabel = new JLabel("Nome:");
         nomeLabel.setFont(fonte);
-        nomeField = new JTextField(20);
-        nomeField.setFont(fonte);
         JLabel sexoLabel = new JLabel("Sexo:");
         sexoLabel.setFont(fonte);
-        JLabel documentoLabel = new JLabel();
+        JLabel documentoLabel = new JLabel("CPF:");
         documentoLabel.setFont(fonte);
         JLabel dataNascimentoLabel = new JLabel("Data de Nascimento:");
+        dataNascimentoLabel.setFont(fonte);
         JLabel fantasiaLabel = new JLabel("Nome Fantasia:");
-        fantasiaField = new JTextField(20);
-        JLabel rgieLabel = new JLabel("RG/Inscrição Estadual:");
+        fantasiaLabel.setFont(fonte);
+        JLabel rgieLabel = new JLabel("RG:");
+        rgieLabel.setFont(fonte);
         JLabel foneLabel = new JLabel("Fone:");
+        foneLabel.setFont(fonte);
         JLabel emailLabel = new JLabel("Email:");
-        emailField = new JTextField(20);
+        emailLabel.setFont(fonte);
         JLabel cepLabel = new JLabel("CEP:");
+        cepLabel.setFont(fonte);
         JLabel logradouroLabel = new JLabel("Logradouro:");
+        logradouroLabel.setFont(fonte);
         JLabel enderecoLabel = new JLabel("Endereço:");
-        enderecoField = new JTextField(20);
+        enderecoLabel.setFont(fonte);
         JLabel numeroLabel = new JLabel("Número:");
-        numeroField = new JTextField(20);
+        numeroLabel.setFont(fonte);
         JLabel complementoLabel = new JLabel("Complemento:");
-        complementoField = new JTextField(20);
+        complementoLabel.setFont(fonte);
         JLabel bairroLabel = new JLabel("Bairro:");
-        bairroField = new JTextField(20);
+        bairroLabel.setFont(fonte);
         JLabel estadoLabel = new JLabel("Estado:");
+        estadoLabel.setFont(fonte);
         JLabel cidadeLabel = new JLabel("Cidade:");
-        
-        
+        // ---------------------------------------------------------------------
+        // CRIANDO AS CAIXAS DE DIALOGO ----------------------------------------
+        nomeField = new JTextField(20);
+        fantasiaField = new JTextField(20);
+        emailField = new JTextField(20);
+        enderecoField = new JTextField(20);
+        numeroField = new JTextField(20);
+        complementoField = new JTextField(20);
+        bairroField = new JTextField(20);
+        // ---------------------------------------------------------------------
+        // FORMATAÇÕES ---------------------------------------------------------
+        cnpj = new MaskFormatter("##.###.###/####-##");
+        CPF = new MaskFormatter("###.###.###-##");
+        rgie = new MaskFormatter("##############");
+        fone = new MaskFormatter("(##) #####-####");
+        cep = new MaskFormatter("#####-###");
+        dataNascimento = new MaskFormatter("##/##/####");
+        // ---------------------------------------------------------------------
+        // INSTANCIANDO AS CAIXAS DE DIALOGO DO TIPO TEXT FROMATTED ------------
+        documentoField = new JFormattedTextField();
+        rgieField = new JFormattedTextField();
+        foneField = new JFormattedTextField();
+        cepField = new JFormattedTextField();
+        dataNascimentoField = new JFormattedTextField();
+        // ---------------------------------------------------------------------
+        // SETANDO AS FONTES PARA CADA CAIXA DE DIALOGO ------------------------
+        documentoField.setFont(fonte);
+        rgieField.setFont(fonte);
+        foneField.setFont(fonte);
+        cepField.setFont(fonte);
+        dataNascimentoField.setFont(fonte);
+        nomeField.setFont(fonte);
+        fantasiaField.setFont(fonte);
+        emailField.setFont(fonte);
+        enderecoField.setFont(fonte);
+        numeroField.setFont(fonte);
+        complementoField.setFont(fonte);
+        bairroField.setFont(fonte);
+        // ---------------------------------------------------------------------
+        // CONFIGURAÇÃO DE TODOS OS RADIOSBUTTON -------------------------------
+        pessoaFisica = new JRadioButton("Pessoa Física");
+        pessoaFisica.setBounds(10, 10, 150, 20);
+        pessoaFisica.setSelected(true);
+        pessoaFisica.setFont(fonte);
 
-        pessoaFisicaRadioButton = new JRadioButton("Pessoa Física");
-        pessoaFisicaRadioButton.setBounds(10, 10, 150, 20);
-        pessoaFisicaRadioButton.setSelected(true);
+        pessoaJuridica = new JRadioButton("Pessoa Jurídica");
+        pessoaJuridica.setBounds(170, 10, 150, 20);
+        pessoaJuridica.setFont(fonte);
 
-        pessoaJuridicaRadioButton = new JRadioButton("Pessoa Jurídica");
-        pessoaJuridicaRadioButton.setBounds(170, 10, 150, 20);
-        
         ButtonGroup tipoClienteGroup = new ButtonGroup();
-        tipoClienteGroup.add(pessoaFisicaRadioButton);
-        tipoClienteGroup.add(pessoaJuridicaRadioButton);
-        
+        tipoClienteGroup.add(pessoaFisica);
+        tipoClienteGroup.add(pessoaJuridica);
+
         sexoMasculino = new JRadioButton("Masculino");
         sexoMasculino.setBounds(80, 70, 90, 20);
         sexoMasculino.setSelected(true);
+        sexoMasculino.setFont(fonte);
 
         sexoFeminino = new JRadioButton("Feminino");
         sexoFeminino.setBounds(170, 70, 80, 20);
-        
+        sexoFeminino.setFont(fonte);
+
         sexoOutros = new JRadioButton("Outro");
         sexoOutros.setBounds(250, 70, 60, 20);
-        
+        sexoOutros.setFont(fonte);
+
         ButtonGroup tipoSexoGroup = new ButtonGroup();
         tipoSexoGroup.add(sexoMasculino);
         tipoSexoGroup.add(sexoFeminino);
         tipoSexoGroup.add(sexoOutros);
-
+        // ---------------------------------------------------------------------
+        // BOTÃO SALVAR --------------------------------------------------------
         JButton alterarButton = new JButton();
         ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
@@ -253,22 +310,23 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
                     
                     // Commit caso tudo ocorra bem
                     transaction.commit();
-                    JOptionPane.showMessageDialog(null, "Cleinte Alterado com Sucesso!");
-                    dispose();
-
+                    JOptionPane.showMessageDialog(null, "Cliente Alterado com Sucesso!");
+                    dispose(); // FECHA ATUAL JANELA
+                    panelFrame.setEnabled(true); // ATIVA A JANELA ANTERIOR
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+        // ---------------------------------------------------------------------
         
         if(tipo.equals("F")){
             JButton alterarFuncionario = new JButton();
             alterarFuncionario.addActionListener(e -> {
                 InterfaceAlterarCredenciaisFuncionario alterar;
-                    alterar = new InterfaceAlterarCredenciaisFuncionario(this, session, cpf);
-                    alterar.showInterface();
+                alterar = new InterfaceAlterarCredenciaisFuncionario(this, session, cpf);
+                alterar.showInterface();
             });
             
             alterarButton.setBounds(70, 540, 100, 30);
@@ -281,39 +339,23 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
             mainPanel.add(alterarButton);
         }
         
-        pessoaJuridicaRadioButton.addActionListener(new ActionListener() {
+        // Quando escolhido esse botão, preenche os campos de pessoa juridica
+        pessoaJuridica.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    MaskFormatter mf = new MaskFormatter("##.###.###/####-##");
-                    documentoField.setFormatterFactory(new DefaultFormatterFactory(mf));
-                } catch (ParseException ex) {
-                    Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                mainPanel.remove(documentoField); // Remova o documentoField existente do mainPanel
-                mainPanel.add(documentoField); // Adicione o documentoField atualizado ao mainPanel
-                mainPanel.revalidate(); // Revalide o mainPanel para atualizar a exibição
-                mainPanel.repaint(); // Repinte o mainPanel para atualizar a exibição
+                CPF.uninstall();
+                cnpj.install(documentoField);
                 documentoLabel.setText("CNPJ:");
                 dataNascimentoField.setEnabled(false);
-                dataNascimentoField.setText("");
                 sexoMasculino.setEnabled(false);
                 sexoFeminino.setEnabled(false);
                 sexoOutros.setEnabled(false);
             }
         });
 
-        pessoaFisicaRadioButton.addActionListener(new ActionListener() {
+        pessoaFisica.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    MaskFormatter mf = new MaskFormatter("###.###.###-##");
-                    documentoField.setFormatterFactory(new DefaultFormatterFactory(mf));
-                } catch (ParseException ex) {
-                    Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                mainPanel.remove(documentoField); // Remova o documentoField existente do mainPanel
-                mainPanel.add(documentoField); // Adicione o documentoField atualizado ao mainPanel
-                mainPanel.revalidate(); // Revalide o mainPanel para atualizar a exibição
-                mainPanel.repaint(); // Repinte o mainPanel para atualizar a exibição
+                cnpj.uninstall();
+                CPF.install(documentoField);
                 documentoLabel.setText("CPF:");
                 dataNascimentoField.setEnabled(true);
                 sexoMasculino.setEnabled(true);
@@ -322,110 +364,67 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
             }
         });
         
-        
-        
-        // Adicione os componentes ao painel principal
-        mainPanel.add(pessoaFisicaRadioButton);
-        mainPanel.add(pessoaJuridicaRadioButton);
-
+        // ADICIONA OS COMPONENTES NO PAINEL PRINCIPAL -------------------------
+        // Pessoa fisica e juridica
+        mainPanel.add(pessoaFisica);
+        mainPanel.add(pessoaJuridica);
+        // Nome 
         mainPanel.add(nomeLabel);
         mainPanel.add(nomeField);
-        
+        // Documento
         mainPanel.add(documentoLabel);
-
+        mainPanel.add(documentoField);
+        // Sexo
         mainPanel.add(sexoLabel);
         mainPanel.add(sexoMasculino);
         mainPanel.add(sexoFeminino);
         mainPanel.add(sexoOutros);
-
+        // Nome fantasia
         mainPanel.add(fantasiaLabel);
         mainPanel.add(fantasiaField);
-
-        // RG/IE NA TELA
+        // RG/IE e formata só para aceitar numero
         mainPanel.add(rgieLabel);
-        
-        
-        // JFormattedTextField usando o MaskFormatter
-        
-        MaskFormatter rgie = new MaskFormatter("##############"); // MaskFormatter para permitir apenas números
-        rgieField = new JFormattedTextField();
-        
         mainPanel.add(rgieField);
-
-        // DATA DE NASCIMENTO NA TELA 
+        rgie.install(rgieField);
+        // Data Nascimento e formata em forma de data
         mainPanel.add(dataNascimentoLabel);
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            MaskFormatter maskFormatter = new MaskFormatter("##/##/####");
-            maskFormatter.setPlaceholderCharacter('_');
-            JFormattedTextField.AbstractFormatter formatter = new JFormattedTextField.AbstractFormatter() {
-                @Override
-                public Object stringToValue(String text) throws ParseException {
-                    return dateFormat.parseObject(text);
-                }
-
-                @Override
-                public String valueToString(Object value) throws ParseException {
-                    if (value instanceof java.util.Date) {
-                        return dateFormat.format(value);
-                    }
-                    return "";
-                }
-            };
-            dataNascimentoField = new JFormattedTextField(formatter);
-            dataNascimentoField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(maskFormatter));
-        } catch (ParseException ex) {
-            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-        }
         mainPanel.add(dataNascimentoField);
-        
-        // TELEFONE NA TELA
+        dataNascimento.install(dataNascimentoField);
+        // Telefone e formata na forma de telefone
         mainPanel.add(foneLabel);
-        try {
-            MaskFormatter mf = new MaskFormatter("(##) #####-####");
-            foneField = new JFormattedTextField(mf);
-        } catch (ParseException ex) {
-            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-        }
         mainPanel.add(foneField);
-
+        fone.install(foneField);
+        // Email
         mainPanel.add(emailLabel);
         mainPanel.add(emailField);
-
-        // CEP NA TELA
+        // CEP e formata na forma de cep
         mainPanel.add(cepLabel);
-        try {
-            MaskFormatter mf = new MaskFormatter("#####-###");
-            cepField = new JFormattedTextField(mf);
-        } catch (ParseException ex) {
-            Logger.getLogger(InterfaceInsereFuncionario.class.getName()).log(Level.SEVERE, null, ex);
-        }
         mainPanel.add(cepField);
-
+        cep.install(cepField);
+        // Logradouro
         mainPanel.add(logradouroLabel);
         mainPanel.add(listLogradouro);
-        
+        // Endereco
         mainPanel.add(enderecoLabel);
         mainPanel.add(enderecoField);
-
+        // Numero
         mainPanel.add(numeroLabel);
         mainPanel.add(numeroField);
-
+        // Complemento
         mainPanel.add(complementoLabel);
         mainPanel.add(complementoField);
-
+        // Bairro
         mainPanel.add(bairroLabel);
         mainPanel.add(bairroField);
-        
-        // Adiciona o JComboBox ao JFrame
+        // Combobox do Estado
         mainPanel.add(estadoLabel);
         mainPanel.add(listEstado);
-        
+        // Combobox da Cidade
         mainPanel.add(cidadeLabel);
         mainPanel.add(listCidade);
-        
+        // ---------------------------------------------------------------------
 
-        // Define as coordenadas de posicionamento dos componentes
+        // Define as coordenadas de posicionamento dos componentes -------------
         int x = 10;
         int y = 40;
         int yGap = 30;
@@ -493,8 +492,9 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
         y += yGap;
         cidadeLabel.setBounds(x, y, labelWidth, 20);
         listCidade.setBounds(x + labelWidth + 10, y, fieldWidth, 20);
-        pessoaFisicaRadioButton.doClick();
-
+        // ---------------------------------------------------------------------
+        
+        pessoaFisica.doClick();
         // Obtendo e inserindo todos os dados do cliente
         hql = "SELECT ent.entTipo, ent.entNome, ent.entNomeFantasia, ent.entSexo, ent.entCpfCnpj, "
                 + "ent.entDtNasc, ent.entRgIe, ent.entFone, ent.entEmail, ent.tbEndereco.tbEndPostal.endPCep, "
@@ -508,12 +508,12 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
         List<Object[]> results = query.list();
         for (Object[] result : results) {
             if(result[0].toString().equals("Fisico")){
-                pessoaFisicaRadioButton.doClick();
+                pessoaFisica.doClick();
             }else{
-                pessoaJuridicaRadioButton.doClick();
+                pessoaJuridica.doClick();
             }
-            pessoaJuridicaRadioButton.setEnabled(false);
-            pessoaFisicaRadioButton.setEnabled(false);
+            pessoaJuridica.setEnabled(false);
+            pessoaFisica.setEnabled(false);
             
             nomeField.setText(result[1].toString());
             fantasiaField.setText(result[2].toString());
@@ -557,35 +557,32 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
             bairroId = result[19].toString();
         }
         
-        // Defina o tamanho do painel principal
-        mainPanel.setPreferredSize(new Dimension(380, 580));
-
         // Adicione o painel principal à janela de diálogo
         getContentPane().add(mainPanel);
         pack();
-        setLocationRelativeTo((Component) panelFrame);
+        setLocationRelativeTo(panelFrame);
     }
     
     private void updateEstado(JComboBox listEstado, JComboBox listCidade){
-                String selectedEstado = (String) listEstado.getSelectedItem();
-                // Obter as cidades correspondentes ao estado selecionado
-                String hql = "SELECT ce.tbCidade.cidDescricao FROM TbCidEst ce WHERE ce.tbEstado.estSigla = '" + selectedEstado + "'";
-                Query query = session.createQuery(hql);
-                List<String> cidades = (List<String>) query.list();
+        String selectedEstado = (String) listEstado.getSelectedItem();
+        // Obter as cidades correspondentes ao estado selecionado
+        String hql = "SELECT ce.tbCidade.cidDescricao FROM TbCidEst ce WHERE ce.tbEstado.estSigla = '" + selectedEstado + "'";
+        Query query = session.createQuery(hql);
+        List<String> cidades = (List<String>) query.list();
 
-                DefaultComboBoxModel<String> modelEst = new DefaultComboBoxModel<>();
-                modelEst.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
-                for (String cidade : cidades) {
-                    modelEst.addElement(cidade);
-                }
-                //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
-                
-                listCidade.setModel(modelEst);
-                
+        DefaultComboBoxModel<String> modelEst = new DefaultComboBoxModel<>();
+        modelEst.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
+        for (String cidade : cidades) {
+            modelEst.addElement(cidade);
+        }
+        //ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
 
-                // Atualizar a interface
-                revalidate();
-                repaint();
+        listCidade.setModel(modelEst);
+
+
+        // Atualizar a interface
+        revalidate();
+        repaint();
     }
     
     public void showInterface() {

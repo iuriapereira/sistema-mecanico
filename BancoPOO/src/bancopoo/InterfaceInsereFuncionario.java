@@ -74,12 +74,12 @@ class InterfaceInsereFuncionario extends JDialog {
                 // Habilita panelFrame
                 panelFrame.setEnabled(true);
                 panelFrame.requestFocus();
-                
             }
         });
         // CONEXÃO COM O BANCO NA TABELA ESTADO
-        Criteria estd = session.createCriteria(TbEstado.class);
-        ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
+        String EST = "SELECT est.estSigla FROM TbEstado est";
+        Query estd = session.createQuery(EST);
+        List<String> estado = (List<String>) estd.list();
 
         // COMBOBOX DO ESTADO --------------------------------------------------
         JComboBox<String> listEstado = new JComboBox<>();
@@ -87,14 +87,10 @@ class InterfaceInsereFuncionario extends JDialog {
         est.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
         listEstado.setModel(est);
         listEstado.setFont(fonte);
-        for (TbEstado descricao : estado) {
-            listEstado.addItem(descricao.getEstSigla());
+        for (String estados : estado) {
+            listEstado.addItem(estados);
         }
         // ---------------------------------------------------------------------
-        // CONEXÃO COM O BANCO NA TABELA CIDEST
-        Criteria cid = session.createCriteria(TbCidEst.class);
-        ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
-
         // COMBOBOX DA CIDADE --------------------------------------------------
         JComboBox<String> listCidade = new JComboBox<>();
         listCidade.setFont(fonte);
@@ -125,9 +121,9 @@ class InterfaceInsereFuncionario extends JDialog {
         });
         // ---------------------------------------------------------------------
         // CONEXÃO COM O BANCO NA TABELA LOGRADOURO ----------------------------
-        String hql = "SELECT log.logDescricao FROM TbLogradouro log";
-        Query query = session.createQuery(hql);
-        java.util.List<String> logradouros = (java.util.List<String>) query.list();
+        String log = "SELECT log.logDescricao FROM TbLogradouro log";
+        Query logd = session.createQuery(log);
+        java.util.List<String> logradouros = (java.util.List<String>) logd.list();
         // ---------------------------------------------------------------------
 
         // COMBOBOX DO LOGRADOURO ----------------------------------------------
@@ -135,23 +131,24 @@ class InterfaceInsereFuncionario extends JDialog {
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
         listLogradouro.setModel(logr);
+        listLogradouro.setFont(fonte);
         for (String logradouro : logradouros) {
             logr.addElement(logradouro);
         }
-        listLogradouro.setModel(logr);
         // ---------------------------------------------------------------------
 
         // CONEXÃO COM O BANCO NA TABELA CARGO
-        Criteria cag = session.createCriteria(TbCargo.class);
-        ArrayList<TbCargo> cargo = (ArrayList<TbCargo>) cag.list();
+        String car = "SELECT ca.carDescricao FROM TbCargo ca";
+        Query carg = session.createQuery(car);
+        java.util.List<String> cargos = (java.util.List<String>) carg.list();
         // COMBOBOX DO CARGO ---------------------------------------------------
         JComboBox<String> listCargo = new JComboBox<>();
-        DefaultComboBoxModel<String> carg = new DefaultComboBoxModel<>();
-        carg.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS CARGOS
-        listCargo.setModel(carg);
+        DefaultComboBoxModel<String> cgs = new DefaultComboBoxModel<>();
+        cgs.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS CARGOS
+        listCargo.setModel(cgs);
         listCargo.setFont(fonte);
-        for (TbCargo descricao : cargo) {
-            listCargo.addItem(descricao.getCarDescricao());
+        for (String cargo : cargos) {
+            cgs.addElement(cargo);
         }
         // ---------------------------------------------------------------------
         
@@ -344,6 +341,8 @@ class InterfaceInsereFuncionario extends JDialog {
 
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Funcionario Inserido com Sucesso!");
+                    dispose();
+                    panelFrame.setEnabled(true);
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -383,6 +382,7 @@ class InterfaceInsereFuncionario extends JDialog {
         // Documento
         mainPanel.add(documentoLabel);
         mainPanel.add(documentoField);
+        cpf.install(documentoField);
         // Sexo
         mainPanel.add(sexoLabel);
         mainPanel.add(sexoMasculino);
