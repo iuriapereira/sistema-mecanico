@@ -264,7 +264,7 @@ class InterfaceInsereFornecedor extends JDialog {
                     JOptionPane.showMessageDialog(null, "Fornecedor Inserido com Sucesso!");
                     dispose();
                     panelFrame.setEnabled(true);
-
+                    panelFrame.setVisible(true);
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);

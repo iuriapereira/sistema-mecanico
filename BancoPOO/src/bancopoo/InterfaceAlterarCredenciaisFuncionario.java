@@ -1,5 +1,6 @@
 package bancopoo;
 
+import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Image;
 import java.util.List;
@@ -38,6 +39,7 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         setResizable(false);
         setLocationRelativeTo(OverlayFrame);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE); //Definindo a operação padrão ao finalizar o programa
+        setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setLayout(null); // Definindo o layout
         // ---------------------------------------------------------------------
         // COMBOBOX DO CARGO ---------------------------------------------------
@@ -58,6 +60,7 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita o overlay
+                OverlayFrame.setVisible(true);
                 OverlayFrame.setEnabled(true);
                 OverlayFrame.requestFocus();
             }

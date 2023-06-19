@@ -1,5 +1,6 @@
 package bancopoo;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -72,6 +73,7 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
         mainPanel.setPreferredSize(new Dimension(380, 580));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
+        setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Alterando dados do cliente");
         // ---------------------------------------------------------------------
         

@@ -319,9 +319,8 @@ class InterfaceInsereCliente extends JDialog {
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Cliente Inserido com Sucesso!");
                     dispose();
-                    panelFrame.setVisible(true);
                     panelFrame.setEnabled(true);
-
+                    panelFrame.setVisible(true);
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);

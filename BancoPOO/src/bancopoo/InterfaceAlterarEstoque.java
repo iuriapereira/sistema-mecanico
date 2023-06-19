@@ -33,6 +33,7 @@ class InterfaceAlterarEstoque extends JDialog {
         
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo Produto");
         setResizable(false);
         // ---------------------------------------------------------------------

@@ -33,6 +33,7 @@ class InterfaceInsereEstoque extends JDialog {
 
         // DEFINIÇÃO DO LAYOUT -------------------------------------------------
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setTitle("Inserindo Produto");
         setResizable(false);
         // ---------------------------------------------------------------------
@@ -184,6 +185,7 @@ class InterfaceInsereEstoque extends JDialog {
                     JOptionPane.showMessageDialog(null, "Peça Inserida no Estoque com Sucesso!");
                     dispose();
                     panelFrame.setEnabled(true); // ABILITA A TEL ANTERIOR
+                    panelFrame.setVisible(true);
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
