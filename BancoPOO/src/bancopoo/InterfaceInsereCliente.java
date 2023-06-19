@@ -72,9 +72,9 @@ class InterfaceInsereCliente extends JDialog {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
+                panelFrame.setVisible(true);
                 panelFrame.setEnabled(true);
                 panelFrame.requestFocus();
-                
             }
         });
 
@@ -299,7 +299,7 @@ class InterfaceInsereCliente extends JDialog {
                         tbentidade.setEntSexo(null);
                     }
                     SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                    if (dataNascimentoField.getText().isEmpty()) {
+                    if ("  /  /    ".equals(dataNascimentoField.getText())) {
                         tbentidade.setEntDtNasc(null);
                     } else {
                         Date data = formato.parse(dataNascimentoField.getText());
@@ -319,6 +319,8 @@ class InterfaceInsereCliente extends JDialog {
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Cliente Inserido com Sucesso!");
                     dispose();
+                    panelFrame.setVisible(true);
+                    panelFrame.setEnabled(true);
 
                 } catch (HibernateException ex) {
                     transaction.rollback();

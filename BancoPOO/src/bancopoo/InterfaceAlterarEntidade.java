@@ -9,8 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -22,10 +20,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -312,6 +308,7 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Cliente Alterado com Sucesso!");
                     dispose(); // FECHA ATUAL JANELA
+                    panelFrame.setVisible(true);
                     panelFrame.setEnabled(true); // ATIVA A JANELA ANTERIOR
                 } catch (HibernateException ex) {
                     transaction.rollback();

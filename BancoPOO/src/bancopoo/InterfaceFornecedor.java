@@ -126,4 +126,8 @@ public class InterfaceFornecedor extends InterfaceAbstrata {
             model.addRow(new Object[]{nome, cnpj, fone,email});// Adicione outras colunas conforme necessário
         }
     }
+
+    void setEnable(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

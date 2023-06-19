@@ -87,7 +87,7 @@ public class InterfaceFuncionario extends InterfaceAbstrata {
                     // Verifica se uma linha está selecionada
                     if (selectedRow != -1) {
                         // Obtém o CPF da linha selecionada
-                        selectedCPF = (String) table.getValueAt(selectedRow, 1);
+                        selectedCPF = (String) table.getValueAt(selectedRow, 0);
                         Transaction transaction = session.beginTransaction();
                         try {
                             String hqlDelete = "DELETE FROM TbFuncionario f WHERE f.tbEntidade.entCpfCnpj = :cpf";

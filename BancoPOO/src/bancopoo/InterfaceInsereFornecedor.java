@@ -64,6 +64,7 @@ class InterfaceInsereFornecedor extends JDialog {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
+                panelFrame.setVisible(true);
                 panelFrame.setEnabled(true); // DEIXA A TELA ANTERIOR ABILITADA
                 panelFrame.requestFocus();
             }
@@ -262,6 +263,7 @@ class InterfaceInsereFornecedor extends JDialog {
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Fornecedor Inserido com Sucesso!");
                     dispose();
+                    panelFrame.setEnabled(true);
 
                 } catch (HibernateException ex) {
                     transaction.rollback();

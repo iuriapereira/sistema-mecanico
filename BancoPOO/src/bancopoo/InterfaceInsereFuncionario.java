@@ -72,6 +72,7 @@ class InterfaceInsereFuncionario extends JDialog {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
+                panelFrame.setVisible(true);
                 panelFrame.setEnabled(true);
                 panelFrame.requestFocus();
             }
