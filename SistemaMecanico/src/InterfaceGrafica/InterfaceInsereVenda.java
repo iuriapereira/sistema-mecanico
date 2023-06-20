@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -333,7 +334,7 @@ class InterfaceInsereVenda extends JFrame {
                             smallFrame.setEnabled(false); // A TELA DE VENDA FICA DESATIVADA
                             // VERIFICAÇÃO SE A TELA ATUAL ESTÁ ABERTA -----------------------------
                             /* Essa verificação, é caso o usuário feche a janela sem selecionar nada, 
-                            para não ocorrer de fechar a tela que tem a tabela com os produtos inseridos na venda */
+                             para não ocorrer de fechar a tela que tem a tabela com os produtos inseridos na venda */
                             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                                 @Override
                                 public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -463,6 +464,13 @@ class InterfaceInsereVenda extends JFrame {
                     Query query = session.createQuery(hql);
                     int EstoqueId = (int) query.uniqueResult();
 
+                    String EstoqueAtual = "SELECT e.estoQuantidade FROM TbEstoque e WHERE e.tbFornecedorHasPeca.tbPeca.peDescricao = '" + item[1] + "'";
+                    Query queryestoqueqnt = session.createQuery(EstoqueAtual);
+
+                    String UpdateEstoque = "UPDATE TbEstoque e SET e.estoQuantidade = " + ((float) queryestoqueqnt.uniqueResult() - (int) item[3]) + "WHERE e.estoId = '" + EstoqueId + "'";
+                    Query queryestoqueup = session.createQuery(UpdateEstoque);
+                    queryestoqueup.executeUpdate();
+
                     BancoDeDados.TbVenPeca tbvenpeca = new BancoDeDados.TbVenPeca();
                     Object estoque = session.load(TbEstoque.class, EstoqueId);
                     tbvenpeca.setTbEstoque((TbEstoque) estoque);
@@ -491,10 +499,14 @@ class InterfaceInsereVenda extends JFrame {
             tbven.setVenTotal(ValorTotal - Float.parseFloat(descontoField.getText().replace(",", ".")));
             session.save(tbven);
             transaction.commit();
+            JOptionPane.showMessageDialog(null, "Venda Concluida");
             smallFrame.dispose();
         } catch (HibernateException ex) {
             transaction.rollback();
-            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            Throwable rootCause = ex.getCause();
+            SQLException sqlException = (SQLException) rootCause;
+            String errorMessage = sqlException.getMessage();
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + errorMessage, "Erro", JOptionPane.ERROR_MESSAGE);
             session.clear();
         } catch (NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "Preencha todos os campos!");
