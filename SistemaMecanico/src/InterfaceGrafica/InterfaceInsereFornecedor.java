@@ -8,12 +8,9 @@ import java.awt.event.*;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.text.MaskFormatter;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -70,8 +67,9 @@ class InterfaceInsereFornecedor extends JDialog {
         });  
         // ---------------------------------------------------------------------
         // CONEXÃO COM O BANCO NA TABELA ESTADO
-        Criteria estd = session.createCriteria(TbEstado.class);
-        ArrayList<TbEstado> estado = (ArrayList<TbEstado>) estd.list();
+        String EST = "SELECT est.estSigla FROM TbEstado est";
+        Query estd = session.createQuery(EST);
+        List<String> estado = (List<String>) estd.list();
         
         // COMBOBOX DO ESTADO --------------------------------------------------
         JComboBox<String> listEstado = new JComboBox<>();
@@ -79,14 +77,10 @@ class InterfaceInsereFornecedor extends JDialog {
         est.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER AS LITA DE TODOS OS ESTADOS
         listEstado.setModel(est);
         listEstado.setFont(fonte);
-        for (TbEstado descricao : estado) {
-            listEstado.addItem(descricao.getEstSigla());
+        for (String estados : estado) {
+            listEstado.addItem(estados);
         }
         // ---------------------------------------------------------------------
-        
-        // CONEXÃO COM O BANCO NA TABELA CIDEST
-        Criteria cid = session.createCriteria(TbCidEst.class);
-        ArrayList<TbCidEst> cidade = (ArrayList<TbCidEst>) cid.list();
 
         // COMBOBOX DA CIDADE --------------------------------------------------
         JComboBox<String> listCidade = new JComboBox<>();
@@ -128,11 +122,12 @@ class InterfaceInsereFornecedor extends JDialog {
         DefaultComboBoxModel<String> logr = new DefaultComboBoxModel<>();
         logr.addElement("Selecione..."); // PALAVRA QUE VAI FICAR ANTES DE APARACER A LISTA DE TODOS OS ESTADOS
         listLogradouro.setModel(logr);
+        listLogradouro.setFont(fonte);
         for (String logradouro : logradouros) {
             logr.addElement(logradouro);
         }
-        listLogradouro.setModel(logr);
         // ---------------------------------------------------------------------
+        
         // CRIANDO OS COMPONENTES LABEL DA TELA --------------------------------
         JLabel nomeLabel = new JLabel("Nome:");
         nomeLabel.setFont(fonte);
