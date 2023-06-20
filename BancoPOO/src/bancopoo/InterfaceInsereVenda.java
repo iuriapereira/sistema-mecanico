@@ -37,8 +37,8 @@ class InterfaceInsereVenda extends JFrame {
     private final JFormattedTextField totalVendaField;
     private Session session;
     protected String[] buttonLabels = {"Inserir Produto", "Inserir Serviço", "Excluir", "Concluir Venda"};
-    protected String[] buttonIcons = {"src/resources/images/inserirproduto.png", "src/resources/images/inserirservico.png",
-        "src/resources/images/excluir2.png", "src/resources/images/finalizar.png"};
+    protected String[] buttonIcons = {"resources/inserirproduto.png", "resources/inserirservico.png",
+        "resources/excluir2.png", "resources/finalizar.png"};
     protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     private banco.TbVenda tbvenda;
     private ArrayList<Object[]> vendaItems = new ArrayList<>();
@@ -190,7 +190,7 @@ class InterfaceInsereVenda extends JFrame {
     protected JButton createSmallButton(String iconPath) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(150, 50));
-        ImageIcon icon = new ImageIcon(iconPath);
+        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource(iconPath));
         Image scaledImage = icon.getImage().getScaledInstance(120, 45, Image.SCALE_SMOOTH);
         button.setIcon(new ImageIcon(scaledImage));
         button.setFocusPainted(false);

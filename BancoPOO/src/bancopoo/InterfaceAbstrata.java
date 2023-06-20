@@ -7,10 +7,9 @@ import org.hibernate.Session;
 public abstract class InterfaceAbstrata extends JFrame{
     protected final JFrame PanelFrame = this;
     protected final JFrame mainFrame;
-    protected static boolean isSmallWindowOpen = false;
     private final Session session;
     protected String[] buttonLabels = {"Inserir", "Alterar", "Remover", "Atualizar"};
-    protected String[] buttonIcons = {"src/resources/images/inserir.png", "src/resources/images/alterar.png", "src/resources/images/excluir.png","src/resources/images/atualizar.png"};
+    protected String[] buttonIcons = {"resources/inserir.png", "resources/alterar.png", "resources/excluir.png","resources/atualizar.png"};
     protected JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
     public InterfaceAbstrata(JFrame mainFrame, Session session, String titulo) {
@@ -63,7 +62,7 @@ public abstract class InterfaceAbstrata extends JFrame{
     protected JButton createSmallButton(String iconPath) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(50, 50));
-        ImageIcon icon = new ImageIcon(iconPath);
+        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource(iconPath));
         Image scaledImage = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         button.setIcon(new ImageIcon(scaledImage));
         button.setFocusPainted(false);

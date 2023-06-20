@@ -234,7 +234,7 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
         // ---------------------------------------------------------------------
         // BOTÃO SALVAR --------------------------------------------------------
         JButton alterarButton = new JButton();
-        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        ImageIcon cads = new ImageIcon(ClassLoader.getSystemResource("resources/salvar.png"));
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         alterarButton.setIcon(new ImageIcon(scaledCads));
         alterarButton.addActionListener(new ActionListener() {
@@ -310,8 +310,8 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
                     transaction.commit();
                     JOptionPane.showMessageDialog(null, "Cliente Alterado com Sucesso!");
                     dispose(); // FECHA ATUAL JANELA
-                    panelFrame.setVisible(true);
                     panelFrame.setEnabled(true); // ATIVA A JANELA ANTERIOR
+                    panelFrame.requestFocus();
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -331,7 +331,7 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
             alterarButton.setBounds(70, 540, 100, 30);
             
             alterarFuncionario.setBounds(200, 540, 100, 30);
-            ImageIcon cred = new ImageIcon("src/resources/images/alteraCredenciais.png");
+            ImageIcon cred = new ImageIcon(ClassLoader.getSystemResource("resources/alteraCredenciais.png"));
             Image scaledCred = cred.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
             alterarFuncionario.setIcon(new ImageIcon(scaledCred));
             

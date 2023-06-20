@@ -90,7 +90,7 @@ class BancoPOO {
         });
 
         //Instanciando a logo do programa
-        ImageIcon icon = new ImageIcon("src/resources/images/logo.png");
+        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource("resources/logo.png"));
         Image scaledLogo = icon.getImage().getScaledInstance(270, 153, Image.SCALE_SMOOTH);
         logo.setIcon(new ImageIcon(scaledLogo));
 
@@ -206,8 +206,8 @@ class BancoPOO {
         buttonPanel.setBackground(new Color(255, 246, 216)); // Define uma cor diferente para o painel de botões
 
         String[] buttonLabels = {"Cliente", "Fornecedor", "Funcionário", "Peça", "Venda"};
-        String[] buttonIcons = {"src/resources/images/clientes.png", "src/resources/images/fornecedor.png", "src/resources/images/funcionario.png",
-            "src/resources/images/produto.png", "src/resources/images/vendas.png"};
+        String[] buttonIcons = {"resources/clientes.png", "resources/fornecedor.png", "resources/funcionario.png",
+            "resources/produto.png", "resources/vendas.png"};
 
         for (int i = 0; i < buttonLabels.length; i++) {
             JButton button = createSquareButton(buttonIcons[i]);
@@ -265,7 +265,7 @@ class BancoPOO {
                 int screenWidth = (int) screenSize.getWidth();
 
                 // Carregar a imagem
-                ImageIcon imageIcon = new ImageIcon("src/resources/images/fundo.png");
+                ImageIcon imageIcon = new ImageIcon(ClassLoader.getSystemResource("resources/fundo.png"));
                 Image image = imageIcon.getImage();
 
                 // Calcular a largura proporcional da imagem
@@ -295,7 +295,7 @@ class BancoPOO {
         button.setContentAreaFilled(false); // Torna o preenchimento do botão transparente
         button.setBorderPainted(false);
         button.setPreferredSize(new Dimension(100, 100));
-        ImageIcon icon = new ImageIcon(iconPath);
+        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource(iconPath));
         Image scaledImage = icon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
         button.setIcon(new ImageIcon(scaledImage));
         button.setVerticalTextPosition(SwingConstants.BOTTOM);

@@ -64,7 +64,6 @@ class InterfaceInsereFornecedor extends JDialog {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
-                panelFrame.setVisible(true);
                 panelFrame.setEnabled(true); // DEIXA A TELA ANTERIOR ABILITADA
                 panelFrame.requestFocus();
             }
@@ -208,7 +207,7 @@ class InterfaceInsereFornecedor extends JDialog {
         // ---------------------------------------------------------------------
         // BOTÃO SALVAR --------------------------------------------------------
         JButton cadastrarButton = new JButton();
-        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        ImageIcon cads = new ImageIcon(ClassLoader.getSystemResource("resources/salvar.png"));
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         cadastrarButton.setIcon(new ImageIcon(scaledCads));
         cadastrarButton.setBounds(70, 500, 100, 30);
@@ -264,7 +263,7 @@ class InterfaceInsereFornecedor extends JDialog {
                     JOptionPane.showMessageDialog(null, "Fornecedor Inserido com Sucesso!");
                     dispose();
                     panelFrame.setEnabled(true);
-                    panelFrame.setVisible(true);
+                    panelFrame.requestFocus();
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -278,7 +277,7 @@ class InterfaceInsereFornecedor extends JDialog {
 
         JButton limparCampos = new JButton();
         limparCampos = new JButton();
-        ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
+        ImageIcon limp = new ImageIcon(ClassLoader.getSystemResource("resources/limpar.png"));
         Image scaledLimpar = limp.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         limparCampos.setIcon(new ImageIcon(scaledLimpar));
         limparCampos.setBounds(200, 500, 100, 30);

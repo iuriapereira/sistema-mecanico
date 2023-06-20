@@ -40,10 +40,6 @@ class InterfaceInsereServico extends JFrame {
         // Verifica se a janela menor está aberta
         isSmallWindowOpen = false;
 
-        // Painel da janela menor
-        JPanel smallPanel = new JPanel();
-        smallPanel.setLayout(new BoxLayout(smallPanel, BoxLayout.Y_AXIS));
-
         // Define o formato para números de ponto flutuante
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
         decimalFormat.setParseBigDecimal(true);
@@ -129,7 +125,7 @@ class InterfaceInsereServico extends JFrame {
 
         // BOTÕES -----------------------------------------------------------------------
         // BOTÃO SALVAR ---------------------------------------
-        ImageIcon slv = new ImageIcon("src/resources/images/salvar.png");
+        ImageIcon slv = new ImageIcon(ClassLoader.getSystemResource("resources/salvar.png"));
         Image scaledSlv = slv.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         salvar.setIcon(new ImageIcon(scaledSlv));
         salvar.setBounds(80, 300, 100, 30);
@@ -138,7 +134,7 @@ class InterfaceInsereServico extends JFrame {
         
         // BOTÃO LIMPAR ---------------------------------------
         JButton limpar = new JButton();
-        ImageIcon lip = new ImageIcon("src/resources/images/limpar.png");
+        ImageIcon lip = new ImageIcon(ClassLoader.getSystemResource("resources/limpar.png"));
         Image scaledLip = lip.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         limpar.setIcon(new ImageIcon(scaledLip));
         limpar.setBounds(200, 300, 100, 30);

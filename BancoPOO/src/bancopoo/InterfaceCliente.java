@@ -79,6 +79,9 @@ class InterfaceCliente extends InterfaceAbstrata {
                         try {
                             alterar = new InterfaceAlterarEntidade(this, session, selectedCPF, "C");
                             alterar.showInterface();
+                            if(alterar == null)
+                                mainFrame.requestFocus();
+                            updateTableData(model);
                         } catch (ParseException ex) {
                             Logger.getLogger(InterfaceCliente.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -108,7 +111,7 @@ class InterfaceCliente extends InterfaceAbstrata {
                 });
             } else if(label.equals("Atualizar")){
                 button.addActionListener(e -> {
-                        updateTableData(model); 
+                    updateTableData(model); 
                 });
             }
 

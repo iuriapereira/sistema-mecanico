@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.text.MaskFormatter;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -72,7 +71,6 @@ class InterfaceInsereFuncionario extends JDialog {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
-                panelFrame.setVisible(true);
                 panelFrame.setEnabled(true);
                 panelFrame.requestFocus();
             }
@@ -267,7 +265,7 @@ class InterfaceInsereFuncionario extends JDialog {
 
         // BOTÃO CADASTRAR
         JButton cadastrarButton = new JButton();
-        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        ImageIcon cads = new ImageIcon(ClassLoader.getSystemResource("resources/salvar.png"));
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         cadastrarButton.setIcon(new ImageIcon(scaledCads));
         cadastrarButton.setBounds(70, 620, 100, 30);
@@ -344,7 +342,7 @@ class InterfaceInsereFuncionario extends JDialog {
                     JOptionPane.showMessageDialog(null, "Funcionario Inserido com Sucesso!");
                     dispose();
                     panelFrame.setEnabled(true);
-                    panelFrame.setVisible(true);
+                    panelFrame.requestFocus();
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -358,7 +356,7 @@ class InterfaceInsereFuncionario extends JDialog {
         // BOTÃO LIMPAR --------------------------------------------------------
         JButton limparCampos = new JButton();
         limparCampos = new JButton();
-        ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
+        ImageIcon limp = new ImageIcon(ClassLoader.getSystemResource("resources/limpar.png"));
         Image scaledLimpar = limp.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         limparCampos.setIcon(new ImageIcon(scaledLimpar));
         limparCampos.setBounds(200, 620, 100, 30);

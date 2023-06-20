@@ -143,7 +143,7 @@ class InterfaceAlterarEstoque extends JDialog {
         
         // BOTÃO ALTERA -----------------------------------------------------
         JButton alterar = new JButton();
-        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        ImageIcon cads = new ImageIcon(ClassLoader.getSystemResource("resources/salvar.png"));
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         alterar.setIcon(new ImageIcon(scaledCads));
         alterar.setBounds(140, 270, 100, 30);

@@ -88,7 +88,7 @@ public class InterfaceAlterarCredenciaisFuncionario extends JDialog{
         // SALVA AS ALTERAÇÕES -------------------------------------------------
         salvarAlteracoes = new JButton();
         salvarAlteracoes.setBounds(110, 150, 100, 30);
-        ImageIcon salvar = new ImageIcon("src/resources/images/salvar.png");
+        ImageIcon salvar = new ImageIcon(ClassLoader.getSystemResource("resources/salvar.png"));
         Image scaledSalvar = salvar.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         salvarAlteracoes.setIcon(new ImageIcon(scaledSalvar));
         salvarAlteracoes.addActionListener(e -> {

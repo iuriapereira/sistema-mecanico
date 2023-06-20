@@ -3,13 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceInsereEstoque.java</file>
-            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceInsereCliente.java</file>
-            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceInsereFornecedor.java</file>
-            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceInsereFuncionario.java</file>
+            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceInsereVenda.java</file>
+            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceVenda.java</file>
             <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/BancoPOO.java</file>
-            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceAlterarCredenciaisFuncionario.java</file>
-            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceAlterarEstoque.java</file>
+            <file>file:/C:/Users/iuric/OneDrive/Documentos/sistema-mecanico/BancoPOO/src/bancopoo/InterfaceFornecedor.java</file>
         </group>
     </open-files>
 </project-private>

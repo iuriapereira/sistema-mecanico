@@ -72,7 +72,6 @@ class InterfaceInsereCliente extends JDialog {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 // Habilita panelFrame
-                panelFrame.setVisible(true);
                 panelFrame.setEnabled(true);
                 panelFrame.requestFocus();
             }
@@ -93,7 +92,7 @@ class InterfaceInsereCliente extends JDialog {
         // ---------------------------------------------------------------------
         // COMBOBOX DA CIDADE --------------------------------------------------
         JComboBox<String> listCidade = new JComboBox<>();
-        listEstado.setFont(fonte);
+        listCidade.setFont(fonte);
         listEstado.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -242,7 +241,7 @@ class InterfaceInsereCliente extends JDialog {
         // ---------------------------------------------------------------------
         // BOTÃO CADASTRAR -----------------------------------------------------
         JButton cadastrarButton = new JButton();
-        ImageIcon cads = new ImageIcon("src/resources/images/salvar.png");
+        ImageIcon cads = new ImageIcon(ClassLoader.getSystemResource("resources/salvar.png"));
         Image scaledCads = cads.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         cadastrarButton.setIcon(new ImageIcon(scaledCads));
         cadastrarButton.setBounds(70, 540, 100, 30);
@@ -320,7 +319,7 @@ class InterfaceInsereCliente extends JDialog {
                     JOptionPane.showMessageDialog(null, "Cliente Inserido com Sucesso!");
                     dispose();
                     panelFrame.setEnabled(true);
-                    panelFrame.setVisible(true);
+                    panelFrame.requestFocus();
                 } catch (HibernateException ex) {
                     transaction.rollback();
                     JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -337,7 +336,7 @@ class InterfaceInsereCliente extends JDialog {
         // BOTÃO LIMPAR --------------------------------------------------------
         JButton limparCampos = new JButton();
         limparCampos = new JButton();
-        ImageIcon limp = new ImageIcon("src/resources/images/limpar.png");
+        ImageIcon limp = new ImageIcon(ClassLoader.getSystemResource("resources/limpar.png"));
         Image scaledLimpar = limp.getImage().getScaledInstance(100, 30, Image.SCALE_SMOOTH);
         limparCampos.setIcon(new ImageIcon(scaledLimpar));
         limparCampos.setBounds(200, 540, 100, 30);
@@ -359,6 +358,7 @@ class InterfaceInsereCliente extends JDialog {
                 cnpj.install(documentoField);
                 documentoLabel.setText("CNPJ:");
                 dataNascimentoField.setEnabled(false);
+                tipoSexoGroup.clearSelection();
                 sexoMasculino.setEnabled(false);
                 sexoFeminino.setEnabled(false);
                 sexoOutros.setEnabled(false);
