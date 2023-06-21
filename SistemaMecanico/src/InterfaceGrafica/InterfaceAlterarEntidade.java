@@ -321,6 +321,8 @@ public class InterfaceAlterarEntidade<T> extends JDialog{
         // ---------------------------------------------------------------------
         
         if(tipo.equals("F")){
+            pessoaFisica.setVisible(false);
+            pessoaJuridica.setVisible(false);
             JButton alterarFuncionario = new JButton();
             alterarFuncionario.addActionListener(e -> {
                 InterfaceAlterarCredenciaisFuncionario alterar;
