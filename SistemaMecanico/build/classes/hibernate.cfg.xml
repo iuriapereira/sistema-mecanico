@@ -3,7 +3,7 @@
 <hibernate-configuration>
   <session-factory>
     <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-    <property name="hibernate.connection.url">jdbc:mysql://186.250.29.200:3306/app_mecanico?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.url">jdbc:mysql://186.250.29.8:3306/app_mecanico?zeroDateTimeBehavior=convertToNull</property>
     <property name="hibernate.connection.username">projeto_poo</property>
     <property name="hibernate.connection.password">21062023_projetopoo</property>
     <mapping resource="BancoDeDados/TbCargo.hbm.xml"/>
